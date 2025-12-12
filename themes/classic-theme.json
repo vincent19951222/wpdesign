@@ -1,0 +1,279 @@
+{
+  "meta": {
+    "headerType": "classic",
+    "footerType": "classic",
+    "author": "Classic Corp",
+    "description": "Professional Design"
+  },
+  "wrapper": {
+    "margin": "0",
+    "padding": "20px 10px",
+    "backgroundColor": "#ffffff",
+    "fontFamily": "'Times New Roman', Times, serif",
+    "minHeight": "auto",
+    "boxSizing": "border-box",
+    "width": "100%",
+    "maxWidth": "100%",
+    "overflow": "hidden"
+  },
+  "section": {
+    "backgroundColor": "#ffffff",
+    "padding": "20px 0",
+    "borderRadius": "0",
+    "boxShadow": "none",
+    "marginBottom": "30px",
+    "boxSizing": "border-box",
+    "borderBottom": "1px solid #eee"
+  },
+  "h1Container": {
+    "textAlign": "center",
+    "marginBottom": "40px",
+    "lineHeight": "1.2"
+  },
+  "h1": {
+    "display": "block",
+    "backgroundColor": "transparent",
+    "color": "#333",
+    "padding": "10px 0",
+    "border": "none",
+    "borderBottom": "3px solid #333",
+    "boxShadow": "none",
+    "fontFamily": "'Times New Roman', Times, serif",
+    "fontSize": "28px",
+    "fontWeight": "bold",
+    "margin": "0 auto",
+    "lineHeight": "1.4",
+    "letterSpacing": "0",
+    "boxSizing": "border-box",
+    "textAlign": "center",
+    "width": "fit-content"
+  },
+  "h1Subtitle": {
+    "fontSize": "14px",
+    "color": "#666",
+    "marginTop": "10px",
+    "fontFamily": "'Times New Roman', Times, serif",
+    "display": "block",
+    "fontStyle": "italic"
+  },
+  "h2Container": {
+    "textAlign": "center",
+    "marginTop": "40px",
+    "marginBottom": "25px",
+    "lineHeight": "1.2"
+  },
+  "h2": {
+    "display": "inline-block",
+    "backgroundColor": "transparent",
+    "color": "#0056b3",
+    "fontFamily": "Arial, sans-serif",
+    "fontSize": "20px",
+    "fontWeight": "bold",
+    "padding": "5px 15px",
+    "border": "1px solid #0056b3",
+    "boxShadow": "none",
+    "borderRadius": "50px",
+    "margin": "0",
+    "letterSpacing": "0.5px",
+    "boxSizing": "border-box"
+  },
+  "h3Container": {
+    "marginTop": "25px",
+    "marginBottom": "15px",
+    "display": "flex",
+    "alignItems": "center"
+  },
+  "h3Badge": {
+    "backgroundColor": "#0056b3",
+    "color": "#fff",
+    "fontWeight": "normal",
+    "fontSize": "14px",
+    "padding": "2px 8px",
+    "marginRight": "8px",
+    "borderRadius": "4px",
+    "display": "inline-block",
+    "lineHeight": "1.2"
+  },
+  "h3": {
+    "fontSize": "18px",
+    "fontWeight": "bold",
+    "color": "#333",
+    "margin": "0",
+    "display": "inline-block"
+  },
+  "h4": {
+    "fontSize": "16px",
+    "fontWeight": "bold",
+    "color": "#444",
+    "margin": "20px 0 10px 0",
+    "paddingLeft": "10px",
+    "borderLeft": "4px solid #0056b3",
+    "lineHeight": "1.4"
+  },
+  "p": {
+    "fontSize": "16px",
+    "lineHeight": "1.8",
+    "color": "#333",
+    "marginBottom": "20px",
+    "textAlign": "justify",
+    "fontFamily": "Georgia, serif"
+  },
+  "strong": {
+    "background": "transparent",
+    "borderBottom": "none",
+    "padding": "0",
+    "fontWeight": "bold",
+    "color": "#0056b3"
+  },
+  "code": {
+    "backgroundColor": "#f5f5f5",
+    "color": "#d63384",
+    "padding": "2px 4px",
+    "borderRadius": "3px",
+    "fontFamily": "Menlo, monospace",
+    "fontSize": "14px"
+  },
+  "a": {
+    "color": "#0056b3",
+    "textDecoration": "underline",
+    "borderBottom": "none",
+    "fontWeight": "normal"
+  },
+  "blockquote": {
+    "backgroundColor": "#f8f9fa",
+    "border": "none",
+    "borderLeft": "4px solid #ccc",
+    "padding": "10px 15px",
+    "margin": "20px 0",
+    "fontSize": "15px",
+    "color": "#666",
+    "boxShadow": "none",
+    "overflow": "hidden",
+    "boxSizing": "border-box",
+    "fontStyle": "italic"
+  },
+  "blockquoteBadge": {
+    "background": "transparent",
+    "color": "#999",
+    "padding": "0",
+    "fontSize": "0px",
+    "fontWeight": "bold",
+    "display": "none",
+    "borderRight": "none",
+    "borderBottom": "none",
+    "fontFamily": "inherit"
+  },
+  "blockquoteContent": {
+    "padding": "5px 0"
+  },
+  "ul": {
+    "paddingLeft": "20px",
+    "marginBottom": "25px",
+    "fontSize": "16px",
+    "lineHeight": "1.8",
+    "color": "#333",
+    "listStyleType": "disc"
+  },
+  "ol": {
+    "paddingLeft": "20px",
+    "marginBottom": "25px",
+    "fontSize": "16px",
+    "lineHeight": "1.8",
+    "color": "#333",
+    "listStyleType": "decimal"
+  },
+  "liUl": {
+    "marginBottom": "5px",
+    "display": "list-item",
+    "alignItems": "baseline"
+  },
+  "liOl": {
+    "marginBottom": "5px",
+    "display": "list-item"
+  },
+  "ulMarker": {
+    "display": "none",
+    "width": "0",
+    "height": "0",
+    "border": "none",
+    "marginRight": "0",
+    "flexShrink": 0,
+    "boxShadow": "none"
+  },
+  "olMarker": {
+    "background": "transparent",
+    "color": "inherit",
+    "fontFamily": "inherit",
+    "width": "auto",
+    "height": "auto",
+    "display": "none",
+    "alignItems": "center",
+    "justifyContent": "center",
+    "fontSize": "inherit",
+    "marginRight": "0",
+    "marginTop": "0",
+    "border": "none",
+    "flexShrink": 0
+  },
+  "hrContainer": {
+    "textAlign": "center",
+    "margin": "40px 0",
+    "opacity": 0.6
+  },
+  "hrText": {
+    "fontSize": "14px",
+    "color": "#ccc",
+    "letterSpacing": "2px"
+  },
+  "pre": {
+    "margin": "10px 0 30px 0",
+    "border": "1px solid #ddd",
+    "borderRadius": "4px",
+    "overflow": "hidden",
+    "boxShadow": "none",
+    "backgroundColor": "#f6f8fa",
+    "textAlign": "left",
+    "boxSizing": "border-box",
+    "width": "100%"
+  },
+  "preHeader": {
+    "backgroundColor": "#f6f8fa",
+    "padding": "5px 10px",
+    "borderBottom": "1px solid #ddd",
+    "display": "flex",
+    "alignItems": "center",
+    "gap": "5px"
+  },
+  "preDot": {
+    "width": "8px",
+    "height": "8px",
+    "borderRadius": "50%",
+    "display": "inline-block",
+    "backgroundColor": "#ccc"
+  },
+  "preBody": {
+    "padding": "12px",
+    "overflowX": "auto",
+    "backgroundColor": "#f6f8fa",
+    "fontFamily": "Menlo, Monaco, Consolas, 'Courier New', monospace",
+    "fontSize": "13px",
+    "lineHeight": "1.5",
+    "color": "#24292e",
+    "whiteSpace": "pre"
+  },
+  "footer": {
+    "marginTop": "50px",
+    "paddingTop": "20px",
+    "borderTop": "1px solid #eee",
+    "textAlign": "center"
+  },
+  "footerIcon": {
+    "display": "none"
+  },
+  "footerText": {
+    "fontSize": "12px",
+    "color": "#999",
+    "margin": "10px 0",
+    "fontFamily": "Arial, sans-serif"
+  }
+}

@@ -1,42 +1,38 @@
 import React, { Children, isValidElement, cloneElement } from 'react';
 import ReactMarkdown from 'react-markdown';
 import RemarkGfm from 'remark-gfm';
-import { styles } from '../utils/pixelStyles';
+import { ITheme } from '../types/ITheme';
 
 interface Props {
   content: string;
+  theme: ITheme;
 }
 
-const WeChatRenderer: React.FC<Props> = ({ content }) => {
+const WeChatRenderer: React.FC<Props> = ({ content, theme }) => {
+  const styles = theme;
+  const headerType = theme.meta?.headerType || 'none';
+  const footerType = theme.meta?.footerType || 'none';
+
   return (
     <section id="wechat-output" style={styles.wrapper}>
       {/* Header Bar */}
-      <section style={{
-            backgroundColor: '#1a1a1a',
-            color: '#00E099',
-            padding: '10px 15px',
-            borderRadius: '12px 12px 0 0',
-            fontFamily: "'Courier New', Courier, monospace",
-            fontSize: '12px',
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            borderBottom: '4px solid #FFD700',
-            boxShadow: '0 4px 6px rgba(0,0,0,0.05)',
-            marginBottom: '20px'
-      }}>
-         <div>
-            <span style={{marginRight: '10px'}}>👾 MOOD: CODING</span>
-            <span>📡 AI: 99%</span>
-        </div>
-        <div style={{display: 'flex', alignItems: 'center'}}>
-             <span style={{marginRight: '5px'}}>PWR</span>
-             <div style={{width: '20px', height: '10px', border: '1px solid #00E099', padding: '1px', display: 'flex'}}>
-                <div style={{width: '100%', height: '100%', backgroundColor: '#FFD700'}}></div>
-             </div>
-        </div>
-      </section>
+      {headerType === 'pixel' && (
+        <section style={styles.headerBar}>
+          <div style={styles.headerBarLeft}>
+              <span style={styles.headerMood}>👾 MOOD: CODING</span>
+              <span style={styles.headerWifi}>📡 AI: 99%</span>
+          </div>
+          <div style={styles.headerBarRight}>
+              <span style={styles.headerPower}>PWR</span>
+              <div style={styles.headerBatteryBody}>
+                  <div style={styles.headerBatteryLevel}></div>
+              </div>
+          </div>
+        </section>
+      )}
 
+      {/* Classic / Simple Header could be added here if needed */}
+      
       <section style={styles.section}>
         <ReactMarkdown
           remarkPlugins={[RemarkGfm]}
@@ -44,7 +40,9 @@ const WeChatRenderer: React.FC<Props> = ({ content }) => {
             h1: ({ node, ...props }) => (
               <div style={styles.h1Container}>
                 <h1 style={styles.h1} {...props} />
-                <p style={styles.h1Subtitle}>DEMO VERSION 3.3 | BY PIXEL LAB</p>
+                <p style={styles.h1Subtitle}>
+                    {theme.meta?.description || 'DEMO VERSION 3.3 | BY PIXEL LAB'}
+                </p>
               </div>
             ),
             h2: ({ node, ...props }) => (
@@ -174,23 +172,35 @@ const WeChatRenderer: React.FC<Props> = ({ content }) => {
 
         {/* Footer Signature */}
         <section style={styles.footer}>
-             <div style={styles.footerIcon}>🍜</div>
-             <h4 style={{margin: '0', fontSize: '16px', color: '#1a1a1a'}}>李面条的实验室</h4>
-             <p style={{fontSize: '12px', color: '#999', margin: '5px 0 20px 0', fontFamily: "'Courier New', monospace"}}>
-                BUILDING WITH AI & CATS
-             </p>
-             
-             <div style={{textAlign: 'center'}}>
-                <h2 style={styles.h2}>
-                    <a href="#" style={{color: '#ffffff', textDecoration: 'none', borderBottom: 'none'}}>INSERT COIN TO FOLLOW</a>
-                </h2>
-             </div>
+             {footerType === 'pixel' && (
+                <>
+                 <div style={styles.footerIcon}>🍜</div>
+                 <h4 style={{margin: '0', fontSize: '16px', color: '#1a1a1a'}}>李面条的实验室</h4>
+                 <p style={{fontSize: '12px', color: '#999', margin: '5px 0 20px 0', fontFamily: "'Courier New', monospace"}}>
+                    BUILDING WITH AI & CATS
+                 </p>
+                 
+                 <div style={{textAlign: 'center'}}>
+                    <h2 style={styles.h2}>
+                        <a href="#" style={{color: '#ffffff', textDecoration: 'none', borderBottom: 'none'}}>INSERT COIN TO FOLLOW</a>
+                    </h2>
+                 </div>
+                </>
+             )}
+
+             {footerType === 'classic' && (
+                <>
+                    <p style={styles.footerText}>
+                        © {new Date().getFullYear()} {theme.meta?.author || 'Pixel Lab'}. All Rights Reserved.
+                    </p>
+                </>
+             )}
         </section>
 
       </section>
       
       <section style={{textAlign: 'center', paddingBottom: '20px', fontSize: '12px', color: '#ccc', fontFamily: 'monospace'}}>
-         © 2025 PIXEL LAB. ALL RIGHTS RESERVED.
+         © {new Date().getFullYear()} {theme.meta?.author || 'Pixel Lab'}. ALL RIGHTS RESERVED.
       </section>
     </section>
   );

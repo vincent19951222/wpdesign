@@ -1,8 +1,11 @@
-import React, { useState } from 'react';
-import { Terminal, FileText, Smartphone, ArrowRight, Copy, Check, ChevronLeft, Sun, Upload } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Terminal, FileText, Smartphone, ArrowRight, Copy, Check, ChevronLeft, Sun, Upload, Palette } from 'lucide-react';
 import WeChatRenderer from './components/WeChatRenderer';
 import { PixelButton, TemplateCard } from './components/UI';
 import { Template } from './types';
+import { ITheme } from './types/ITheme';
+import pixelThemeDefault from './themes/pixel-theme.json';
+import classicThemeDefault from './themes/classic-theme.json';
 
 // Default Markdown Template
 const DEFAULT_MD = `# 像素实验室 DEMO
@@ -28,18 +31,20 @@ console.log(pixel);
 \`\`\`
 `;
 
-const TEMPLATES: Template[] = [
+const TEMPLATES: (Template & { theme: ITheme })[] = [
   {
     id: 'pixel-classic',
     name: 'Pixel Classic',
     description: 'A retro cyberpunk style inspired by 8-bit games. Features bright yellow accents and console-style headers.',
-    thumbnailColor: '#FFD700'
+    thumbnailColor: '#FFD700',
+    theme: pixelThemeDefault as unknown as ITheme
   },
   {
-    id: 'pixel-neon',
-    name: 'Neon Night (Coming Soon)',
-    description: 'Dark mode optimization with heavy neon glow effects.',
-    thumbnailColor: '#7058FF'
+    id: 'classic-theme',
+    name: 'Classic Corporate',
+    description: 'A clean, professional style suitable for official documents and newsletters.',
+    thumbnailColor: '#0056b3',
+    theme: classicThemeDefault as unknown as ITheme
   }
 ];
 
@@ -47,6 +52,42 @@ const App: React.FC = () => {
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const [markdown, setMarkdown] = useState(DEFAULT_MD);
   const [copied, setCopied] = useState(false);
+  const [currentTheme, setCurrentTheme] = useState<ITheme>(pixelThemeDefault as unknown as ITheme);
+
+  // Auto-load theme from public folder if exists (VPS/Deployment support)
+  useEffect(() => {
+    fetch('/theme.json')
+        .then(res => {
+            if (res.ok) return res.json();
+            throw new Error('No custom theme found');
+        })
+        .then(data => {
+            console.log('Custom theme loaded from /theme.json');
+            setCurrentTheme(data as ITheme);
+        })
+        .catch(() => {
+            // console.log('Using default theme');
+        });
+  }, []);
+
+  // Theme Upload Logic
+  const handleThemeUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const json = JSON.parse(e.target?.result as string);
+        setCurrentTheme(json as ITheme);
+        alert('Theme loaded successfully!');
+      } catch (err) {
+        alert('Invalid JSON file');
+      }
+    };
+    reader.readAsText(file);
+    event.target.value = '';
+  };
 
   // File Upload Logic
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -111,8 +152,11 @@ const App: React.FC = () => {
                     title={t.name}
                     description={t.description}
                     color={t.thumbnailColor}
-                    active={t.id === 'pixel-classic'}
-                    onClick={() => t.id === 'pixel-classic' ? setStep(2) : alert('Coming soon!')}
+                    active={false}
+                    onClick={() => {
+                        setCurrentTheme(t.theme);
+                        setStep(2);
+                    }}
                 />
             ))}
         </div>
@@ -130,6 +174,18 @@ const App: React.FC = () => {
              </div>
              
              <div className="flex gap-3">
+                 {/* Theme Upload */}
+                 <input 
+                    type="file" 
+                    id="theme-upload" 
+                    accept=".json" 
+                    className="hidden" 
+                    onChange={handleThemeUpload}
+                 />
+                 <PixelButton onClick={() => document.getElementById('theme-upload')?.click()} icon={Palette}>
+                    THEME
+                 </PixelButton>
+
                  <input 
                     type="file" 
                     id="md-upload" 
@@ -198,7 +254,7 @@ const App: React.FC = () => {
 
             {/* Scrollable Content */}
             <div className="w-full h-full overflow-y-auto bg-[#f7f9fa] custom-scrollbar">
-                <WeChatRenderer content={markdown} />
+                <WeChatRenderer content={markdown} theme={currentTheme} />
             </div>
         </div>
         
