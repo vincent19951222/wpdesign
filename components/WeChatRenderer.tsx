@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Children, isValidElement, cloneElement } from 'react';
 import ReactMarkdown from 'react-markdown';
 import RemarkGfm from 'remark-gfm';
 import { styles } from '../utils/pixelStyles';
@@ -15,6 +15,7 @@ const WeChatRenderer: React.FC<Props> = ({ content }) => {
             backgroundColor: '#1a1a1a',
             color: '#00E099',
             padding: '10px 15px',
+            borderRadius: '12px 12px 0 0',
             fontFamily: "'Courier New', Courier, monospace",
             fontSize: '12px',
             display: 'flex',
@@ -26,6 +27,7 @@ const WeChatRenderer: React.FC<Props> = ({ content }) => {
       }}>
          <div>
             <span style={{marginRight: '10px'}}>👾 MOOD: CODING</span>
+            <span>📡 AI: 99%</span>
         </div>
         <div style={{display: 'flex', alignItems: 'center'}}>
              <span style={{marginRight: '5px'}}>PWR</span>
@@ -96,16 +98,54 @@ const WeChatRenderer: React.FC<Props> = ({ content }) => {
                     <span style={styles.hrText}>•••••</span>
                 </section>
             ),
-            ul: ({ node, ...props }) => <ul style={styles.ul} {...props} />,
-            ol: ({ node, ...props }) => <ol style={styles.ol} {...props} />,
-            li: ({ node, index, ordered, ...props }) => {
+            // Custom OL renderer to handle numbering manually
+            ol: ({ node, children, ...props }) => {
+                // Filter out non-element children (like whitespace/text nodes) to get accurate count
+                const validChildren = Children.toArray(children).filter(child => isValidElement(child));
+                
                 return (
-                    <li style={styles.li}>
-                       <span style={{position: 'absolute', left: 0, color: '#FFD700', fontWeight: 'bold'}}>►</span>
-                       {props.children}
-                    </li>
+                    <ol style={styles.ol} {...props}>
+                        {validChildren.map((child, index) => {
+                             if (isValidElement(child)) {
+                                 // Inject marker for ordered list
+                                 return cloneElement(child as React.ReactElement<any>, {
+                                     style: styles.liOl
+                                 }, [
+                                     <span key="marker" style={styles.olMarker}>{index + 1}</span>,
+                                     <span key="content" style={{flex: 1}}>{child.props.children}</span>
+                                 ]);
+                            }
+                            return child;
+                        })}
+                    </ol>
                 )
             },
+            // Custom UL renderer to handle bullets manually
+            ul: ({ node, children, ...props }) => {
+                const colors = ['#FF4757', '#FFD700', '#00E099'];
+                // Filter out non-element children to keep colors consistent
+                const validChildren = Children.toArray(children).filter(child => isValidElement(child));
+                
+                return (
+                    <ul style={styles.ul} {...props}>
+                        {validChildren.map((child, index) => {
+                             if (isValidElement(child)) {
+                                 const color = colors[index % 3];
+                                 return cloneElement(child as React.ReactElement<any>, {
+                                     style: styles.liUl
+                                 }, [
+                                     <span key="marker" style={{...styles.ulMarker, backgroundColor: color}} />,
+                                     <span key="content" style={{flex: 1}}>{child.props.children}</span>
+                                 ]);
+                            }
+                            return child;
+                        })}
+                    </ul>
+                )
+            },
+            // REMOVED explicit `li` renderer so it defaults to <li>
+            // We clone/modify it in the parent ol/ul renderers instead.
+            
             // Handling tables for the "Data Table" look
             table: ({node, ...props}) => (
                 <section style={{
@@ -139,6 +179,12 @@ const WeChatRenderer: React.FC<Props> = ({ content }) => {
              <p style={{fontSize: '12px', color: '#999', margin: '5px 0 20px 0', fontFamily: "'Courier New', monospace"}}>
                 BUILDING WITH AI & CATS
              </p>
+             
+             <div style={{textAlign: 'center'}}>
+                <h2 style={styles.h2}>
+                    <a href="#" style={{color: '#ffffff', textDecoration: 'none', borderBottom: 'none'}}>INSERT COIN TO FOLLOW</a>
+                </h2>
+             </div>
         </section>
 
       </section>

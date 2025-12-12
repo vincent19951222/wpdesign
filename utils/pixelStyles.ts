@@ -175,23 +175,15 @@ export const styles = {
     padding: '15px',
   } as CSSProperties,
 
-  // List (UL)
+  // List Containers
   ul: {
-    paddingLeft: '10px',
-    marginBottom: '20px',
+    paddingLeft: '0',
+    marginBottom: '25px',
     fontSize: '16px',
     lineHeight: '1.8',
     color: '#333',
     listStyleType: 'none',
   } as CSSProperties,
-  li: {
-    marginBottom: '12px',
-    position: 'relative',
-    paddingLeft: '20px',
-  } as CSSProperties,
-
-  // Lists (OL) - Handled with custom counters in rendering mapping if possible, 
-  // but for simple markdown->html in WeChat, we might use simple number spans.
   ol: {
     paddingLeft: '0',
     marginBottom: '25px',
@@ -199,6 +191,45 @@ export const styles = {
     lineHeight: '1.8',
     color: '#333',
     listStyleType: 'none',
+  } as CSSProperties,
+
+  // List Items
+  liUl: {
+    marginBottom: '8px',
+    display: 'flex',
+    alignItems: 'baseline',
+  } as CSSProperties,
+  liOl: {
+    marginBottom: '8px',
+    display: 'flex',
+    // No align-items: baseline in demo for OL, effectively 'stretch' or 'flex-start' depending on browser default, 
+    // but usually text aligns top. The demo has margin-top: 4px on the marker to align with text.
+  } as CSSProperties,
+
+  // Markers
+  ulMarker: {
+    display: 'inline-block',
+    width: '10px',
+    height: '10px',
+    border: '2px solid #1a1a1a',
+    marginRight: '12px',
+    flexShrink: 0,
+    boxShadow: '2px 2px 0 #1a1a1a',
+  } as CSSProperties,
+  olMarker: {
+    background: '#1a1a1a',
+    color: '#FFD700',
+    fontFamily: 'monospace',
+    width: '20px',
+    height: '20px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    fontSize: '12px',
+    marginRight: '10px',
+    marginTop: '4px', // Visual alignment correction
+    border: '1px solid #1a1a1a',
+    flexShrink: 0,
   } as CSSProperties,
   
   // Divider / HR
