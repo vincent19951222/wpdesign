@@ -1,0 +1,243 @@
+import React, { useState } from 'react';
+import { Terminal, FileText, Smartphone, ArrowRight, Copy, Check, ChevronLeft, Sun, Upload } from 'lucide-react';
+import WeChatRenderer from './components/WeChatRenderer';
+import { PixelButton, TemplateCard } from './components/UI';
+import { Template } from './types';
+
+// Default Markdown Template
+const DEFAULT_MD = `# 像素实验室 DEMO
+
+## LEVEL 1. 核心功能
+
+这是普通段落，通过简单的Markdown转换，我们生成**全像素风格**的微信排版。
+
+### 小标题示例
+
+*   列表项一：自动识别
+*   列表项二：样式覆盖
+*   列表项三：一键复制
+
+> 这是一个引用块。
+> 这里的文字会被包裹在特殊的边框中。
+
+#### 代码演示
+
+\`\`\`javascript
+const pixel = "awesome";
+console.log(pixel);
+\`\`\`
+`;
+
+const TEMPLATES: Template[] = [
+  {
+    id: 'pixel-classic',
+    name: 'Pixel Classic',
+    description: 'A retro cyberpunk style inspired by 8-bit games. Features bright yellow accents and console-style headers.',
+    thumbnailColor: '#FFD700'
+  },
+  {
+    id: 'pixel-neon',
+    name: 'Neon Night (Coming Soon)',
+    description: 'Dark mode optimization with heavy neon glow effects.',
+    thumbnailColor: '#7058FF'
+  }
+];
+
+const App: React.FC = () => {
+  const [step, setStep] = useState<1 | 2 | 3>(1);
+  const [markdown, setMarkdown] = useState(DEFAULT_MD);
+  const [copied, setCopied] = useState(false);
+
+  // File Upload Logic
+  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const content = e.target?.result;
+      if (typeof content === 'string') {
+        setMarkdown(content);
+      }
+    };
+    reader.readAsText(file);
+    // Reset input so same file can be uploaded again if needed
+    event.target.value = '';
+  };
+
+  // Copy Logic
+  const handleCopy = () => {
+    const node = document.getElementById('wechat-output');
+    if (!node) return;
+
+    const selection = window.getSelection();
+    const range = document.createRange();
+    
+    // Select the node specifically
+    range.selectNode(node);
+    
+    if (selection) {
+      selection.removeAllRanges();
+      selection.addRange(range);
+      
+      try {
+        const success = document.execCommand('copy');
+        if (success) {
+            setCopied(true);
+            setTimeout(() => setCopied(false), 2000);
+        } else {
+            throw new Error('execCommand returned false');
+        }
+      } catch (err) {
+        console.error('Copy failed', err);
+        alert('Copy failed. Please manually select the content (Ctrl+A) inside the preview and copy.');
+      }
+      
+      selection.removeAllRanges();
+    }
+  };
+
+  const renderStep1 = () => (
+    <div className="max-w-4xl mx-auto animate-fade-in">
+        <h1 className="font-pixel text-2xl md:text-4xl text-white mb-4 text-center">
+            <span className="text-pixel-yellow">SELECT</span> THEME
+        </h1>
+        <p className="font-mono text-gray-400 text-center mb-12">Choose a visual cartridge for your content.</p>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {TEMPLATES.map(t => (
+                <TemplateCard 
+                    key={t.id}
+                    title={t.name}
+                    description={t.description}
+                    color={t.thumbnailColor}
+                    active={t.id === 'pixel-classic'}
+                    onClick={() => t.id === 'pixel-classic' ? setStep(2) : alert('Coming soon!')}
+                />
+            ))}
+        </div>
+    </div>
+  );
+
+  const renderStep2 = () => (
+    <div className="h-[calc(100vh-140px)] flex flex-col">
+        <div className="flex justify-between items-center mb-6">
+             <div className="flex items-center gap-4">
+                 <button onClick={() => setStep(1)} className="text-gray-400 hover:text-white transition-colors">
+                    <ChevronLeft />
+                 </button>
+                 <h2 className="font-pixel text-xl text-white">EDITOR_V1.0</h2>
+             </div>
+             
+             <div className="flex gap-3">
+                 <input 
+                    type="file" 
+                    id="md-upload" 
+                    accept=".md" 
+                    className="hidden" 
+                    onChange={handleFileUpload}
+                 />
+                 <PixelButton onClick={() => document.getElementById('md-upload')?.click()} icon={Upload}>
+                    UPLOAD MD
+                 </PixelButton>
+                 <PixelButton primary onClick={() => setStep(3)} icon={ArrowRight}>
+                    GENERATE
+                 </PixelButton>
+             </div>
+        </div>
+        
+        <div className="flex-1 bg-pixel-darker border-2 border-gray-700 p-4 relative shadow-[4px_4px_0px_0px_#333]">
+            <div className="absolute top-0 left-0 bg-pixel-yellow text-pixel-dark font-pixel text-[10px] px-2 py-1">
+                MARKDOWN INPUT
+            </div>
+            <textarea
+                className="w-full h-full bg-transparent text-gray-300 font-mono resize-none focus:outline-none pt-6 p-2"
+                value={markdown}
+                onChange={(e) => setMarkdown(e.target.value)}
+                spellCheck={false}
+                placeholder="# Start typing or upload a markdown file..."
+            />
+        </div>
+    </div>
+  );
+
+  const renderStep3 = () => (
+     <div className="h-full flex flex-col items-center justify-center">
+        <div className="w-full max-w-4xl flex justify-between items-center mb-6 px-4">
+             <div className="flex items-center gap-4">
+                 <button onClick={() => setStep(2)} className="text-gray-400 hover:text-white transition-colors">
+                    <ChevronLeft />
+                 </button>
+                 <h2 className="font-pixel text-xl text-white">PREVIEW</h2>
+             </div>
+             
+             <div className="hidden md:block">
+                 <PixelButton primary={!copied} onClick={handleCopy} icon={copied ? Check : Copy}>
+                    {copied ? 'COPIED!' : 'COPY HTML'}
+                 </PixelButton>
+             </div>
+        </div>
+
+        {/* Mobile Simulator Container */}
+        <div className="relative w-full max-w-[400px] h-[75vh] md:h-[80vh] border-[10px] border-gray-800 rounded-[30px] bg-white overflow-hidden shadow-2xl">
+            {/* Notch */}
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-6 bg-gray-800 rounded-b-xl z-20"></div>
+            
+            {/* Floating Copy Button for Mobile UX */}
+            <div className="absolute bottom-6 right-6 z-50 md:hidden">
+                <button 
+                    onClick={handleCopy}
+                    className={`
+                        w-14 h-14 rounded-full flex items-center justify-center shadow-lg transition-all
+                        ${copied ? 'bg-pixel-green text-black' : 'bg-pixel-yellow text-black'}
+                    `}
+                >
+                    {copied ? <Check /> : <Copy />}
+                </button>
+            </div>
+
+            {/* Scrollable Content */}
+            <div className="w-full h-full overflow-y-auto bg-[#f7f9fa] custom-scrollbar">
+                <WeChatRenderer content={markdown} />
+            </div>
+        </div>
+        
+        <p className="mt-4 font-mono text-gray-500 text-xs text-center max-w-lg">
+            * Preview mode. Click "Copy HTML" to copy rich text. 
+            <br/>If formatting is lost in WeChat, try selecting the text in the preview manually (Ctrl+A) and copying.
+        </p>
+     </div>
+  );
+
+  return (
+    <div className="min-h-screen bg-pixel-dark flex flex-col">
+      {/* Top Navbar */}
+      <nav className="h-16 border-b border-gray-800 flex items-center justify-between px-6 bg-pixel-darker z-10">
+        <div className="flex items-center gap-3">
+            <div className="w-8 h-8 bg-pixel-yellow flex items-center justify-center border-2 border-white">
+                <Terminal size={18} className="text-black" />
+            </div>
+            <span className="font-pixel text-white text-sm hidden sm:block">NOODLE LAB</span>
+        </div>
+        
+        <div className="flex gap-2">
+            {[1, 2, 3].map(i => (
+                <div 
+                    key={i} 
+                    className={`w-3 h-3 rounded-sm ${step >= i ? 'bg-pixel-green' : 'bg-gray-700'}`}
+                />
+            ))}
+        </div>
+      </nav>
+
+      {/* Main Content Area */}
+      <main className="flex-1 p-4 md:p-8 overflow-hidden">
+        {step === 1 && renderStep1()}
+        {step === 2 && renderStep2()}
+        {step === 3 && renderStep3()}
+      </main>
+    </div>
+  );
+};
+
+export default App;
