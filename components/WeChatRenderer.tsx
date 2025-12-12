@@ -60,14 +60,15 @@ const WeChatRenderer: React.FC<Props> = ({ content, theme }) => {
               <h4 style={styles.h4} {...props} />
             ),
             h5: ({ node, ...props }) => (
-              <h5 style={{ ...styles.h4, borderLeftColor: '#00E099' }} {...props} />
+              <h5 style={styles.h5 || { ...styles.h4, borderLeftColor: '#00E099' }} {...props} />
             ),
             p: ({ node, ...props }) => <p style={styles.p} {...props} />,
             strong: ({ node, ...props }) => <strong style={styles.strong} {...props} />,
-            em: ({ node, ...props }) => <em style={{ fontStyle: 'italic', color: '#888' }} {...props} />,
-            code: ({ node, inline, ...props }) => {
-              if (inline) {
-                return <code style={styles.code} {...props} />
+            em: ({ node, ...props }) => <em style={styles.em || { fontStyle: 'italic', color: '#888' }} {...props} />,
+            code: ({ node, className, children, ...props }: any) => {
+              const isInline = !className;
+              if (isInline) {
+                return <code style={styles.code} {...props}>{children}</code>
               }
               return (
                 <section style={{
@@ -84,7 +85,7 @@ const WeChatRenderer: React.FC<Props> = ({ content, theme }) => {
                     <span style={{ marginLeft: 'auto', color: '#00E099', fontFamily: "'Courier New'", fontSize: '12px' }}>code.block</span>
                   </section>
                   <section style={styles.preBody}>
-                    <code {...props} />
+                    <code {...props}>{children}</code>
                   </section>
                 </section>
               )
@@ -103,7 +104,7 @@ const WeChatRenderer: React.FC<Props> = ({ content, theme }) => {
               </section>
             ),
             // Custom OL renderer to handle numbering manually
-            ol: ({ node, children, ...props }) => {
+            ol: ({ node, children, ...props }: any) => {
               // Filter out non-element children (like whitespace/text nodes) to get accurate count
               const validChildren = Children.toArray(children).filter(child => isValidElement(child));
 
@@ -116,7 +117,7 @@ const WeChatRenderer: React.FC<Props> = ({ content, theme }) => {
                         style: styles.liOl
                       }, [
                         <span key="marker" style={styles.olMarker}>{index + 1}</span>,
-                        <span key="content" style={{ flex: 1 }}>{child.props.children}</span>
+                        <span key="content" style={{ flex: 1 }}>{(child as any).props.children}</span>
                       ]);
                     }
                     return child;
@@ -125,7 +126,7 @@ const WeChatRenderer: React.FC<Props> = ({ content, theme }) => {
               )
             },
             // Custom UL renderer to handle bullets manually
-            ul: ({ node, children, ...props }) => {
+            ul: ({ node, children, ...props }: any) => {
               const colors = ['#FF4757', '#FFD700', '#00E099'];
               // Filter out non-element children to keep colors consistent
               const validChildren = Children.toArray(children).filter(child => isValidElement(child));
@@ -139,7 +140,7 @@ const WeChatRenderer: React.FC<Props> = ({ content, theme }) => {
                         style: styles.liUl
                       }, [
                         <span key="marker" style={{ ...styles.ulMarker, backgroundColor: color }} />,
-                        <span key="content" style={{ flex: 1 }}>{child.props.children}</span>
+                        <span key="content" style={{ flex: 1 }}>{(child as any).props.children}</span>
                       ]);
                     }
                     return child;
@@ -152,24 +153,24 @@ const WeChatRenderer: React.FC<Props> = ({ content, theme }) => {
 
             // Handling tables for the "Data Table" look
             table: ({ node, ...props }) => (
-              <section style={{
+              <section style={styles.tableContainer || {
                 margin: '20px 0',
                 border: '2px solid #1a1a1a',
                 overflowX: 'auto',
                 width: '100%',
                 boxShadow: '4px 4px 0 #ccc'
               }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '14px', textAlign: 'center', minWidth: '300px' }} {...props} />
+                <table style={styles.table || { width: '100%', borderCollapse: 'collapse', fontSize: '14px', textAlign: 'center', minWidth: '300px' }} {...props} />
               </section>
             ),
             thead: ({ node, ...props }) => (
-              <thead style={{ backgroundColor: '#1a1a1a', color: '#00E099' }} {...props} />
+              <thead style={styles.thead || { backgroundColor: '#1a1a1a', color: '#00E099' }} {...props} />
             ),
             th: ({ node, ...props }) => (
-              <th style={{ padding: '10px', border: '1px solid #333', fontFamily: "'Courier New', monospace" }} {...props} />
+              <th style={styles.th || { padding: '10px', border: '1px solid #333', fontFamily: "'Courier New', monospace" }} {...props} />
             ),
             td: ({ node, ...props }) => (
-              <td style={{ padding: '10px', border: '1px solid #eee' }} {...props} />
+              <td style={styles.td || { padding: '10px', border: '1px solid #eee' }} {...props} />
             )
           }}
         >

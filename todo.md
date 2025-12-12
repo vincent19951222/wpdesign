@@ -22,7 +22,7 @@
 
 2.  **AI 翻译层 (The AI Translator):**
 
-      * **核心逻辑：** 调用大模型 API (GPT-4o / Claude 3.5)。
+      * **核心逻辑：** 调用大模型 API (kimi2-thinking)。接入方式参考：https://platform.moonshot.cn/docs/guide/kimi-k2-quickstart#kimi-k2-%E6%A6%82%E8%A7%88
       * **输入：** 用户清洗后的 HTML (Source) + **标准骨架 HTML (Target)**。
       * **任务：** AI 分析 Source 的视觉风格，将其映射并通过 **内联样式 (Inline Style)** 的方式，填入 Target 的对应节点中。
       * **输出：** 带有完整内联样式的标准 HTML 字符串。
@@ -35,7 +35,7 @@
 
 4.  **兜底与输出 (Fallback & Output):**
 
-      * **合并：** 将提取的 JSON 与系统的 `Default_Theme.json` 进行合并（Deep Merge）。
+      * **合并：** 将提取的 JSON 与系统的 `Default_Theme.json` 进行合并（Deep Merge）。如果没有需要创建一个 default 的theme，采用标准的 blog 文章 theme
       * **输出：** 最终生成 `custom_style.json` 并入库。
 
 -----
@@ -44,7 +44,7 @@
 
 ### 1\. 开发栈建议
 
-  * **AI Model:** GPT-4o 或 Claude 3.5 Sonnet (对代码理解和 CSS 逻辑最强)。
+  * **AI Model:** kimi2-thinking (对代码理解和 CSS 逻辑最强)。
   * **HTML Parser:** `cheerio` (Node.js 后端) 或 `DOMParser` (纯前端)。
   * **CSS Utils:** `style-to-object` (将 "color:red" 转为对象), `camelcase` (命名转换)。
 
@@ -68,58 +68,73 @@
 
 ## 四、 AI 翻译层配置 (Prompt Design)
 
-这是连接用户创意和标准骨架的桥梁。
+这是连接用户创意和标准骨架的桥梁。用户只需上传 HTML 文件，无需提供任何额外指令。
 
-**System Prompt:**
-
-```markdown
-You are an expert Frontend Engineer and CSS Specialist. Your task is to perform "Style Extraction and Mapping".
-```
-
-**User Prompt:**
+**System Prompt (完整版):**
 
 ````markdown
-I have a "Source HTML" file (provided by a user) and a "Target Skeleton HTML" (standard structure).
+You are an expert Frontend Engineer and CSS Specialist. Your task is to perform "Style Extraction and Mapping".
 
-Your Goal:
-Extract the visual styles (typography, colors, borders, shadows, spacing, etc.) from the "Source HTML" and apply them as INLINE STYLES (style="...") to the corresponding elements in the "Target Skeleton HTML".
+## Your Task
+You will receive a "Source HTML" file (user's custom design) and a "Target Skeleton HTML" (standard structure).
+Your job is to extract visual styles from the Source and apply them as INLINE STYLES (style="...") to the Target Skeleton.
 
-Rules:
-1. **Mapping:**
-   - Analyze how the user designed their H1, H2, H3, Paragraphs, Blockquotes, and Lists.
-   - Find the matching element in the "Target Skeleton HTML" by semantic meaning (or provided context).
-   - Apply the computed visual styles to the Target elements.
+## Automatic Workflow
+When the user uploads an HTML file without any instructions:
+1. Treat the uploaded content as the "Source HTML"
+2. Use the "Target Skeleton HTML" provided below
+3. Extract and map styles according to the rules below
+4. Output ONLY the styled Target Skeleton HTML
 
-2. **Pseudo-elements Handling (Crucial):**
-   - If the user uses `::before` or `::after` for decoration (e.g., bullets in lists, icons in blockquotes, badges in titles), you MUST translate these styles onto the specific marker elements I provided in the Target (e.g., id="pattern-ul-marker", id="pattern-h3-badge"). Do not use pseudo-elements in the output; use inline styles on these real spans.
+## Rules
 
-3. **Structural Integrity:**
-   - DO NOT add, remove, or rename any ID in the "Target Skeleton HTML".
-   - DO NOT output the "Source HTML".
-   - ONLY output the fully styled "Target Skeleton HTML" code.
+### 1. Style Mapping
+- Analyze the user's design for H1, H2, H3, H4, Paragraphs, Blockquotes, Lists (ul/ol), Tables, Code blocks, Links, etc.
+- Find matching elements in the Target Skeleton by semantic meaning
+- Extract visual properties: typography, colors, borders, shadows, spacing, backgrounds
 
-4. **Style Cleaning:**
-   - Convert standard CSS classes into inline styles.
-   - Ensure colors are hex/rgb/rgba codes.
+### 2. Pseudo-elements Handling (Crucial)
+- If the source uses `::before` or `::after` for decorative purposes (e.g., list bullets, blockquote icons, badges):
+  - Translate these styles onto the marker span elements in the Target (e.g., `id="pattern-ul-marker"`, `id="pattern-h3-badge"`, `id="pattern-blockquote-badge"`)
+  - NEVER use pseudo-elements in the output; use inline styles on real elements only
 
-Here is the Source HTML:
-```html
-{{USER_UPLOADED_HTML_CONTENT}}
-````
+### 3. Structural Integrity
+- DO NOT add, remove, or rename any ID in the Target Skeleton
+- DO NOT output the Source HTML
+- ONLY output the fully styled Target Skeleton HTML code
+- Preserve all `id` attributes exactly as provided
 
-Here is the Target Skeleton HTML:
+### 4. Style Cleaning
+- Convert all CSS classes into inline styles
+- Ensure colors are in hex/rgb/rgba format
+- Merge related styles (e.g., margin-top, margin-bottom → margin shorthand if appropriate)
+
+### 5. Output Format
+- Return ONLY valid HTML code
+- No explanations, no markdown code fences
+- The output should start with `<!DOCTYPE html>` and end with `</html>`
+
+## Target Skeleton HTML
 
 ```html
 {{STANDARD_SKELETON_HTML_CONTENT}}
 ```
-
 ````
+
+**User Prompt (简化版):**
+
+用户只需上传 HTML 文件，无需输入任何文字。如果用户输入文字，可以是：
+- 空白
+- 直接粘贴 HTML 代码
+- 任何简短说明（AI 会自动将其视为 Source HTML）
 
 ---
 
 ## 五、 标准骨架 HTML (The Standard Skeleton)
 
-这是你的“答题卡”。无论用户上传什么，AI 都必须把答案填到这就这张卡上。它严格对应你之前的 `styles.ts` 结构。
+这是你的"答题卡"。无论用户上传什么，AI 都必须把答案填到这张卡上。它严格对应 `WeChatRenderer.tsx` 中的组件结构。
+
+> **注意：** 所有容器元素已从 `div` 更改为 `section`，以匹配微信公众号兼容性要求。
 
 ```html
 <!DOCTYPE html>
@@ -130,33 +145,47 @@ Here is the Target Skeleton HTML:
 </head>
 <body>
 
-    <div id="pattern-wrapper">
+    <section id="pattern-wrapper">
         
-        <div id="pattern-h1-container">
+        <!-- H1 标题区域 -->
+        <section id="pattern-h1-container">
             <h1 id="pattern-h1">Sample Title</h1>
-            <span id="pattern-h1-subtitle">Subtitle Demo</span>
-        </div>
+            <p id="pattern-h1-subtitle">Subtitle Demo</p>
+        </section>
 
-        <div id="pattern-h2-container">
+        <!-- H2 二级标题 -->
+        <section id="pattern-h2-container">
             <h2 id="pattern-h2">Section Level 2</h2>
-        </div>
+        </section>
 
-        <div id="pattern-h3-container">
-            <span id="pattern-h3-badge">H3</span> 
+        <!-- H3 三级标题（带徽章） -->
+        <section id="pattern-h3-container">
+            <span id="pattern-h3-badge">H3</span>
             <h3 id="pattern-h3">Section Level 3</h3>
-        </div>
+        </section>
 
+        <!-- H4 四级标题 -->
+        <h4 id="pattern-h4">Section Level 4</h4>
+
+        <!-- H5 五级标题 -->
+        <h5 id="pattern-h5">Section Level 5</h5>
+
+        <!-- 段落文本 -->
         <p id="pattern-p">This is a standard paragraph text.</p>
         <p><strong id="pattern-strong">Bold Text</strong></p>
+        <p><em id="pattern-em">Italic Text</em></p>
+        <p><code id="pattern-code">inline code</code></p>
         <p><a id="pattern-link" href="#">Hyperlink Style</a></p>
         
-        <div id="pattern-blockquote">
-            <span id="pattern-blockquote-badge">NOTE</span> 
-            <div id="pattern-blockquote-content">
+        <!-- 引用块 -->
+        <blockquote id="pattern-blockquote">
+            <section id="pattern-blockquote-badge">NOTE</section>
+            <section id="pattern-blockquote-content">
                 Reference text content.
-            </div>
-        </div>
+            </section>
+        </blockquote>
 
+        <!-- 无序列表 -->
         <ul id="pattern-ul">
             <li id="pattern-li-ul">
                 <span id="pattern-ul-marker"></span>
@@ -164,6 +193,7 @@ Here is the Target Skeleton HTML:
             </li>
         </ul>
 
+        <!-- 有序列表 -->
         <ol id="pattern-ol">
             <li id="pattern-li-ol">
                 <span id="pattern-ol-marker">1</span>
@@ -171,26 +201,51 @@ Here is the Target Skeleton HTML:
             </li>
         </ol>
 
-        <div id="pattern-pre">
-            <div id="pattern-pre-header">
-                <span id="pattern-pre-dot"></span>
-            </div>
-            <div id="pattern-pre-body">
+        <!-- 代码块 -->
+        <section id="pattern-pre">
+            <section id="pattern-pre-header">
+                <section id="pattern-pre-dot" style="background:#FF4757"></section>
+                <section id="pattern-pre-dot" style="background:#FFD700"></section>
+                <section id="pattern-pre-dot" style="background:#00E099"></section>
+                <span id="pattern-pre-label">code.block</span>
+            </section>
+            <section id="pattern-pre-body">
                 <code>console.log('Hello World');</code>
-            </div>
-        </div>
+            </section>
+        </section>
 
-        <div id="pattern-hr-container">
-            <span id="pattern-hr-text">---</span>
-        </div>
+        <!-- 表格 -->
+
+        <section id="pattern-table-container">
+            <table id="pattern-table">
+                <thead id="pattern-thead">
+                    <tr>
+                        <th id="pattern-th">Header</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td id="pattern-td">Cell Data</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- 分割线 -->
+        <section id="pattern-hr-container">
+            <span id="pattern-hr-text">•••••</span>
+        </section>
         
-        <div id="pattern-footer">
-            <div id="pattern-footer-icon">END</div>
-        </div>
+        <!-- 页脚 -->
+        <section id="pattern-footer">
+            <section id="pattern-footer-icon">🎮</section>
+            <p id="pattern-footer-text">Footer Text</p>
+        </section>
 
-    </div>
+    </section>
 
 </body>
+
 </html>
 ````
 

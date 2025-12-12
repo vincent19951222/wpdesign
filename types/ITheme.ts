@@ -7,11 +7,11 @@ export interface ITheme {
     author?: string;
     description?: string;
   };
-  
+
   // Base Styles
   wrapper: CSSProperties;
   section: CSSProperties;
-  
+
   // Header Bar (Pixel Style)
   headerBar?: CSSProperties;
   headerBarLeft?: CSSProperties;
@@ -32,8 +32,10 @@ export interface ITheme {
   h3Badge: CSSProperties;
   h3: CSSProperties;
   h4: CSSProperties;
+  h5?: CSSProperties;
   p: CSSProperties;
   strong: CSSProperties;
+  em?: CSSProperties;
   code: CSSProperties;
   a: CSSProperties;
   blockquote: CSSProperties;
@@ -51,9 +53,18 @@ export interface ITheme {
   preHeader: CSSProperties;
   preDot: CSSProperties;
   preBody: CSSProperties;
-  
+  preLabel?: CSSProperties;
+
+  // Table
+  tableContainer?: CSSProperties;
+  table?: CSSProperties;
+  thead?: CSSProperties;
+  th?: CSSProperties;
+  td?: CSSProperties;
+
   // Footer
   footer: CSSProperties;
   footerIcon: CSSProperties;
   footerText?: CSSProperties;
 }
+

@@ -315,5 +315,45 @@
     "color": "#999",
     "margin": "5px 0 20px 0",
     "fontFamily": "'Courier New', monospace"
+  },
+  "em": {
+    "fontStyle": "italic",
+    "color": "#888"
+  },
+  "h5": {
+    "fontSize": "15px",
+    "fontWeight": "bold",
+    "color": "#333",
+    "margin": "15px 0 10px 0",
+    "paddingLeft": "10px",
+    "borderLeft": "4px solid #00E099",
+    "lineHeight": "1.4"
+  },
+  "tableContainer": {
+    "margin": "20px 0",
+    "border": "2px solid #1a1a1a",
+    "overflowX": "auto",
+    "width": "100%",
+    "boxShadow": "4px 4px 0 #ccc"
+  },
+  "table": {
+    "width": "100%",
+    "borderCollapse": "collapse",
+    "fontSize": "14px",
+    "textAlign": "center",
+    "minWidth": "300px"
+  },
+  "thead": {
+    "backgroundColor": "#1a1a1a",
+    "color": "#00E099"
+  },
+  "th": {
+    "padding": "10px",
+    "border": "1px solid #333",
+    "fontFamily": "'Courier New', monospace"
+  },
+  "td": {
+    "padding": "10px",
+    "border": "1px solid #eee"
   }
 }
