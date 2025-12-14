@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Terminal, FileText, Smartphone, ArrowRight, Copy, Check, ChevronLeft, Sun, Upload, Palette } from 'lucide-react';
+import { Terminal, FileText, Smartphone, ArrowRight, Copy, Check, ChevronLeft, Sun, Upload, Palette, Wand2 } from 'lucide-react';
 import WeChatRenderer from './components/WeChatRenderer';
+import ThemeExtractorUI from './components/ThemeExtractorUI';
 import { PixelButton, TemplateCard } from './components/UI';
 import { Template } from './types';
 import { ITheme } from './types/ITheme';
@@ -53,21 +54,22 @@ const App: React.FC = () => {
   const [markdown, setMarkdown] = useState(DEFAULT_MD);
   const [copied, setCopied] = useState(false);
   const [currentTheme, setCurrentTheme] = useState<ITheme>(pixelThemeDefault as unknown as ITheme);
+  const [showExtractor, setShowExtractor] = useState(false);
 
   // Auto-load theme from public folder if exists (VPS/Deployment support)
   useEffect(() => {
     fetch('/theme.json')
-        .then(res => {
-            if (res.ok) return res.json();
-            throw new Error('No custom theme found');
-        })
-        .then(data => {
-            console.log('Custom theme loaded from /theme.json');
-            setCurrentTheme(data as ITheme);
-        })
-        .catch(() => {
-            // console.log('Using default theme');
-        });
+      .then(res => {
+        if (res.ok) return res.json();
+        throw new Error('No custom theme found');
+      })
+      .then(data => {
+        console.log('Custom theme loaded from /theme.json');
+        setCurrentTheme(data as ITheme);
+      })
+      .catch(() => {
+        // console.log('Using default theme');
+      });
   }, []);
 
   // Theme Upload Logic
@@ -113,156 +115,167 @@ const App: React.FC = () => {
 
     const selection = window.getSelection();
     const range = document.createRange();
-    
+
     // Select the node specifically
     range.selectNode(node);
-    
+
     if (selection) {
       selection.removeAllRanges();
       selection.addRange(range);
-      
+
       try {
         const success = document.execCommand('copy');
         if (success) {
-            setCopied(true);
-            setTimeout(() => setCopied(false), 2000);
+          setCopied(true);
+          setTimeout(() => setCopied(false), 2000);
         } else {
-            throw new Error('execCommand returned false');
+          throw new Error('execCommand returned false');
         }
       } catch (err) {
         console.error('Copy failed', err);
         alert('Copy failed. Please manually select the content (Ctrl+A) inside the preview and copy.');
       }
-      
+
       selection.removeAllRanges();
     }
   };
 
   const renderStep1 = () => (
     <div className="max-w-4xl mx-auto animate-fade-in">
-        <h1 className="font-pixel text-2xl md:text-4xl text-white mb-4 text-center">
-            <span className="text-pixel-yellow">SELECT</span> THEME
-        </h1>
-        <p className="font-mono text-gray-400 text-center mb-12">Choose a visual cartridge for your content.</p>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {TEMPLATES.map(t => (
-                <TemplateCard 
-                    key={t.id}
-                    title={t.name}
-                    description={t.description}
-                    color={t.thumbnailColor}
-                    active={false}
-                    onClick={() => {
-                        setCurrentTheme(t.theme);
-                        setStep(2);
-                    }}
-                />
-            ))}
-        </div>
+      <h1 className="font-pixel text-2xl md:text-4xl text-white mb-4 text-center">
+        <span className="text-pixel-yellow">SELECT</span> THEME
+      </h1>
+      <p className="font-mono text-gray-400 text-center mb-12">Choose a visual cartridge for your content.</p>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {TEMPLATES.map(t => (
+          <TemplateCard
+            key={t.id}
+            title={t.name}
+            description={t.description}
+            color={t.thumbnailColor}
+            active={false}
+            onClick={() => {
+              setCurrentTheme(t.theme);
+              setStep(2);
+            }}
+          />
+        ))}
+      </div>
+
+      {/* Theme Extractor Entry */}
+      <div className="mt-8 text-center">
+        <p className="text-gray-500 text-sm mb-4">— or —</p>
+        <PixelButton icon={Wand2} onClick={() => setShowExtractor(true)}>
+          EXTRACT FROM HTML
+        </PixelButton>
+        <p className="text-gray-600 text-xs mt-2">
+          Upload any HTML file to auto-extract its styles as a theme
+        </p>
+      </div>
     </div>
   );
 
   const renderStep2 = () => (
     <div className="h-[calc(100vh-140px)] flex flex-col">
-        <div className="flex justify-between items-center mb-6">
-             <div className="flex items-center gap-4">
-                 <button onClick={() => setStep(1)} className="text-gray-400 hover:text-white transition-colors">
-                    <ChevronLeft />
-                 </button>
-                 <h2 className="font-pixel text-xl text-white">EDITOR_V1.0</h2>
-             </div>
-             
-             <div className="flex gap-3">
-                 {/* Theme Upload */}
-                 <input 
-                    type="file" 
-                    id="theme-upload" 
-                    accept=".json" 
-                    className="hidden" 
-                    onChange={handleThemeUpload}
-                 />
-                 <PixelButton onClick={() => document.getElementById('theme-upload')?.click()} icon={Palette}>
-                    THEME
-                 </PixelButton>
+      <div className="flex justify-between items-center mb-6">
+        <div className="flex items-center gap-4">
+          <button onClick={() => setStep(1)} className="text-gray-400 hover:text-white transition-colors">
+            <ChevronLeft />
+          </button>
+          <h2 className="font-pixel text-xl text-white">EDITOR_V1.0</h2>
+        </div>
 
-                 <input 
-                    type="file" 
-                    id="md-upload" 
-                    accept=".md" 
-                    className="hidden" 
-                    onChange={handleFileUpload}
-                 />
-                 <PixelButton onClick={() => document.getElementById('md-upload')?.click()} icon={Upload}>
-                    UPLOAD MD
-                 </PixelButton>
-                 <PixelButton primary onClick={() => setStep(3)} icon={ArrowRight}>
-                    GENERATE
-                 </PixelButton>
-             </div>
+        <div className="flex gap-3">
+          {/* Theme Upload */}
+          <input
+            type="file"
+            id="theme-upload"
+            accept=".json"
+            className="hidden"
+            onChange={handleThemeUpload}
+          />
+          <PixelButton onClick={() => document.getElementById('theme-upload')?.click()} icon={Palette}>
+            THEME
+          </PixelButton>
+
+          <input
+            type="file"
+            id="md-upload"
+            accept=".md"
+            className="hidden"
+            onChange={handleFileUpload}
+          />
+          <PixelButton onClick={() => document.getElementById('md-upload')?.click()} icon={Upload}>
+            UPLOAD MD
+          </PixelButton>
+          <PixelButton primary onClick={() => setStep(3)} icon={ArrowRight}>
+            GENERATE
+          </PixelButton>
         </div>
-        
-        <div className="flex-1 bg-pixel-darker border-2 border-gray-700 p-4 relative shadow-[4px_4px_0px_0px_#333]">
-            <div className="absolute top-0 left-0 bg-pixel-yellow text-pixel-dark font-pixel text-[10px] px-2 py-1">
-                MARKDOWN INPUT
-            </div>
-            <textarea
-                className="w-full h-full bg-transparent text-gray-300 font-mono resize-none focus:outline-none pt-6 p-2"
-                value={markdown}
-                onChange={(e) => setMarkdown(e.target.value)}
-                spellCheck={false}
-                placeholder="# Start typing or upload a markdown file..."
-            />
+      </div>
+
+      <div className="flex-1 bg-pixel-darker border-2 border-gray-700 p-4 relative shadow-[4px_4px_0px_0px_#333]">
+        <div className="absolute top-0 left-0 bg-pixel-yellow text-pixel-dark font-pixel text-[10px] px-2 py-1">
+          MARKDOWN INPUT
         </div>
+        <textarea
+          className="w-full h-full bg-transparent text-gray-300 font-mono resize-none focus:outline-none pt-6 p-2"
+          value={markdown}
+          onChange={(e) => setMarkdown(e.target.value)}
+          spellCheck={false}
+          placeholder="# Start typing or upload a markdown file..."
+        />
+      </div>
     </div>
   );
 
   const renderStep3 = () => (
-     <div className="h-full flex flex-col items-center justify-center">
-        <div className="w-full max-w-4xl flex justify-between items-center mb-6 px-4">
-             <div className="flex items-center gap-4">
-                 <button onClick={() => setStep(2)} className="text-gray-400 hover:text-white transition-colors">
-                    <ChevronLeft />
-                 </button>
-                 <h2 className="font-pixel text-xl text-white">PREVIEW</h2>
-             </div>
-             
-             <div className="hidden md:block">
-                 <PixelButton primary={!copied} onClick={handleCopy} icon={copied ? Check : Copy}>
-                    {copied ? 'COPIED!' : 'COPY HTML'}
-                 </PixelButton>
-             </div>
+    <div className="h-full flex flex-col items-center justify-center">
+      <div className="w-full max-w-4xl flex justify-between items-center mb-6 px-4">
+        <div className="flex items-center gap-4">
+          <button onClick={() => setStep(2)} className="text-gray-400 hover:text-white transition-colors">
+            <ChevronLeft />
+          </button>
+          <h2 className="font-pixel text-xl text-white">PREVIEW</h2>
         </div>
 
-        {/* Mobile Simulator Container */}
-        <div className="relative w-full max-w-[400px] h-[75vh] md:h-[80vh] border-[10px] border-gray-800 rounded-[30px] bg-white overflow-hidden shadow-2xl">
-            {/* Notch */}
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-6 bg-gray-800 rounded-b-xl z-20"></div>
-            
-            {/* Floating Copy Button for Mobile UX */}
-            <div className="absolute bottom-6 right-6 z-50 md:hidden">
-                <button 
-                    onClick={handleCopy}
-                    className={`
+        <div className="hidden md:block">
+          <PixelButton primary={!copied} onClick={handleCopy} icon={copied ? Check : Copy}>
+            {copied ? 'COPIED!' : 'COPY HTML'}
+          </PixelButton>
+        </div>
+      </div>
+
+      {/* Mobile Simulator Container */}
+      <div className="relative w-full max-w-[400px] h-[75vh] md:h-[80vh] border-[10px] border-gray-800 rounded-[30px] bg-white overflow-hidden shadow-2xl">
+        {/* Notch */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-6 bg-gray-800 rounded-b-xl z-20"></div>
+
+        {/* Floating Copy Button for Mobile UX */}
+        <div className="absolute bottom-6 right-6 z-50 md:hidden">
+          <button
+            onClick={handleCopy}
+            className={`
                         w-14 h-14 rounded-full flex items-center justify-center shadow-lg transition-all
                         ${copied ? 'bg-pixel-green text-black' : 'bg-pixel-yellow text-black'}
                     `}
-                >
-                    {copied ? <Check /> : <Copy />}
-                </button>
-            </div>
-
-            {/* Scrollable Content */}
-            <div className="w-full h-full overflow-y-auto bg-[#f7f9fa] custom-scrollbar">
-                <WeChatRenderer content={markdown} theme={currentTheme} />
-            </div>
+          >
+            {copied ? <Check /> : <Copy />}
+          </button>
         </div>
-        
-        <p className="mt-4 font-mono text-gray-500 text-xs text-center max-w-lg">
-            * Preview mode. Click "Copy HTML" to copy rich text. 
-            <br/>If formatting is lost in WeChat, try selecting the text in the preview manually (Ctrl+A) and copying.
-        </p>
-     </div>
+
+        {/* Scrollable Content */}
+        <div className="w-full h-full overflow-y-auto bg-[#f7f9fa] custom-scrollbar">
+          <WeChatRenderer content={markdown} theme={currentTheme} />
+        </div>
+      </div>
+
+      <p className="mt-4 font-mono text-gray-500 text-xs text-center max-w-lg">
+        * Preview mode. Click "Copy HTML" to copy rich text.
+        <br />If formatting is lost in WeChat, try selecting the text in the preview manually (Ctrl+A) and copying.
+      </p>
+    </div>
   );
 
   return (
@@ -270,19 +283,19 @@ const App: React.FC = () => {
       {/* Top Navbar */}
       <nav className="h-16 border-b border-gray-800 flex items-center justify-between px-6 bg-pixel-darker z-10">
         <div className="flex items-center gap-3">
-            <div className="w-8 h-8 bg-pixel-yellow flex items-center justify-center border-2 border-white">
-                <Terminal size={18} className="text-black" />
-            </div>
-            <span className="font-pixel text-white text-sm hidden sm:block">NOODLE LAB</span>
+          <div className="w-8 h-8 bg-pixel-yellow flex items-center justify-center border-2 border-white">
+            <Terminal size={18} className="text-black" />
+          </div>
+          <span className="font-pixel text-white text-sm hidden sm:block">NOODLE LAB</span>
         </div>
-        
+
         <div className="flex gap-2">
-            {[1, 2, 3].map(i => (
-                <div 
-                    key={i} 
-                    className={`w-3 h-3 rounded-sm ${step >= i ? 'bg-pixel-green' : 'bg-gray-700'}`}
-                />
-            ))}
+          {[1, 2, 3].map(i => (
+            <div
+              key={i}
+              className={`w-3 h-3 rounded-sm ${step >= i ? 'bg-pixel-green' : 'bg-gray-700'}`}
+            />
+          ))}
         </div>
       </nav>
 
@@ -292,6 +305,18 @@ const App: React.FC = () => {
         {step === 2 && renderStep2()}
         {step === 3 && renderStep3()}
       </main>
+
+      {/* Theme Extractor Modal */}
+      {showExtractor && (
+        <ThemeExtractorUI
+          onThemeExtracted={(theme) => {
+            setCurrentTheme(theme);
+            setShowExtractor(false);
+            setStep(2);
+          }}
+          onClose={() => setShowExtractor(false)}
+        />
+      )}
     </div>
   );
 };
