@@ -265,11 +265,14 @@
     "th": {
         "padding": "10px",
         "border": "1px solid #e1e1e1",
-        "fontWeight": "bold"
+        "fontWeight": "bold",
+        "color": "#1a1a1a"
     },
     "td": {
         "padding": "10px",
-        "border": "1px solid #e1e1e1"
+        "border": "1px solid #e1e1e1",
+        "color": "#1a1a1a",
+        "backgroundColor": "#ffffff"
     },
     "footer": {
         "marginTop": "40px",

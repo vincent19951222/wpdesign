@@ -7,29 +7,65 @@ import { Template } from './types';
 import { ITheme } from './types/ITheme';
 import pixelThemeDefault from './themes/pixel-theme.json';
 import classicThemeDefault from './themes/classic-theme.json';
+import defaultThemeDefault from './themes/default-theme.json';
+import handDrawnThemeDefault from './themes/hand-drawn-theme.json';
 
 // Default Markdown Template
 const DEFAULT_MD = `# 像素实验室 DEMO
 
-## LEVEL 1. 核心功能
+## 1. 基础排版元素
 
-这是普通段落，通过简单的Markdown转换，我们生成**全像素风格**的微信排版。
+这是普通段落 (p)，通过简单的 Markdown 转换，我们生成符合主题风格的微信排版。
+这里展示了 **加粗文字 (strong)** 和 *斜体文字 (em)* 以及 \`行内代码 (code)\` 的混合排版效果。
 
-### 小标题示例
+你可以访问 [像素实验室 (Link)](https://github.com) 了解更多详情。
 
-*   列表项一：自动识别
-*   列表项二：样式覆盖
-*   列表项三：一键复制
+### 2. 列表与引用 (H3)
 
-> 这是一个引用块。
-> 这里的文字会被包裹在特殊的边框中。
+#### 无序列表 (H4)
 
-#### 代码演示
+*   列表项一：自动识别样式
+*   列表项二：支持多级嵌套
+*   列表项三：完美的对齐
+
+#### 有序列表 (H4)
+
+1.  第一步：准备 Markdown 素材
+2.  第二步：选择喜欢的主题
+3.  第三步：一键复制到公众号
+
+> **引用块 (Blockquote)**
+> 这是一个带有徽章装饰的引用块。
+> 它可以用来突出显示重要信息或提示。
+
+### 3. 代码与表格 (H3)
+
+#### 代码演示 (H4)
 
 \`\`\`javascript
-const pixel = "awesome";
-console.log(pixel);
+// 这是一个代码块 (Pre + Code)
+function pixelArt() {
+  const style = "retro";
+  console.log(\`Generating \${style} style...\`);
+  return true;
+}
 \`\`\`
+
+##### 五级标题示例 (H5)
+
+这里是更细分的层级，通常用于注释或补充说明。
+
+#### 数据表格 (Table)
+
+| 组件名称 | 渲染状态 | 复杂度 |
+| :--- | :---: | ---: |
+| 标题系统 | ✅ 完美 | ⭐⭐ |
+| 代码高亮 | ✅ 支持 | ⭐⭐⭐ |
+| 复杂表格 | 🚧 适配中 | ⭐⭐⭐⭐ |
+
+---
+
+(上方是分割线 HR)
 `;
 
 const TEMPLATES: (Template & { theme: ITheme })[] = [
@@ -46,6 +82,20 @@ const TEMPLATES: (Template & { theme: ITheme })[] = [
     description: 'A clean, professional style suitable for official documents and newsletters.',
     thumbnailColor: '#0056b3',
     theme: classicThemeDefault as unknown as ITheme
+  },
+  {
+    id: 'default-theme',
+    name: 'Default Minimal',
+    description: 'A clean, minimal default theme for WeChat articles.',
+    thumbnailColor: '#ffffff',
+    theme: defaultThemeDefault as unknown as ITheme
+  },
+  {
+    id: 'hand-drawn-theme',
+    name: 'Hand Drawn',
+    description: 'A playful hand-drawn style with comic fonts and dashed borders.',
+    thumbnailColor: '#ffb347',
+    theme: handDrawnThemeDefault as unknown as ITheme
   }
 ];
 

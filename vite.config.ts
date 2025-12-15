@@ -1,12 +1,71 @@
 import path from 'path';
+import fs from 'fs';
+import { fileURLToPath } from 'url';
 import { defineConfig, loadEnv } from 'vite';
 import react from '@vitejs/plugin-react';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const saveThemePlugin = () => ({
+  name: 'save-theme',
+  configureServer(server) {
+    server.middlewares.use('/api/save-theme', async (req, res, next) => {
+      console.log(`[save-theme] Received request: ${req.method} ${req.url}`);
+      
+      if (req.method === 'POST') {
+        let body = '';
+        req.on('data', chunk => body += chunk);
+        req.on('end', () => {
+          console.log('[save-theme] Body received, parsing...');
+          try {
+            const { theme, filename } = JSON.parse(body);
+            console.log(`[save-theme] Saving theme: ${filename}`);
+            
+            if (!theme || !filename) {
+              console.error('[save-theme] Missing theme or filename');
+              res.statusCode = 400;
+              res.end(JSON.stringify({ error: 'Missing theme or filename' }));
+              return;
+            }
+            
+            // Ensure filename ends with .json
+            const safeFilename = filename.endsWith('.json') ? filename : `${filename}.json`;
+            // Sanitize filename to prevent directory traversal
+            const sanitizedFilename = safeFilename.replace(/[^a-zA-Z0-9._-]/g, '');
+            const filePath = path.resolve(__dirname, 'themes', sanitizedFilename);
+            
+            console.log(`[save-theme] Writing to: ${filePath}`);
+
+            // Ensure directory exists
+            if (!fs.existsSync(path.dirname(filePath))) {
+              fs.mkdirSync(path.dirname(filePath), { recursive: true });
+            }
+
+            fs.writeFileSync(filePath, JSON.stringify(theme, null, 2));
+            console.log('[save-theme] Save successful');
+            
+            res.statusCode = 200;
+            res.setHeader('Content-Type', 'application/json');
+            res.end(JSON.stringify({ success: true, path: filePath }));
+          } catch (err) {
+            console.error('[save-theme] Error saving theme:', err);
+            res.statusCode = 500;
+            res.end(JSON.stringify({ error: 'Failed to save theme' }));
+          }
+        });
+      } else {
+        next();
+      }
+    });
+  }
+});
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, '.', '');
   return {
     server: {
-      port: 3000,
+      port: 5173,
       host: '0.0.0.0',
       proxy: {
         // Proxy for Kimi K2 API (local development only)
@@ -23,7 +82,7 @@ export default defineConfig(({ mode }) => {
         },
       },
     },
-    plugins: [react()],
+    plugins: [react(), saveThemePlugin()],
     define: {
       'process.env.API_KEY': JSON.stringify(env.GEMINI_API_KEY),
       'process.env.GEMINI_API_KEY': JSON.stringify(env.GEMINI_API_KEY)

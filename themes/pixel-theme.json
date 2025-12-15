@@ -350,10 +350,13 @@
   "th": {
     "padding": "10px",
     "border": "1px solid #333",
-    "fontFamily": "'Courier New', monospace"
+    "fontFamily": "'Courier New', monospace",
+    "color": "#00E099"
   },
   "td": {
     "padding": "10px",
-    "border": "1px solid #eee"
+    "border": "1px solid #eee",
+    "color": "#1a1a1a",
+    "backgroundColor": "#ffffff"
   }
 }

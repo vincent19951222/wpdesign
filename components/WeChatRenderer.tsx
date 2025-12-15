@@ -166,12 +166,39 @@ const WeChatRenderer: React.FC<Props> = ({ content, theme }) => {
             thead: ({ node, ...props }) => (
               <thead style={styles.thead || { backgroundColor: '#1a1a1a', color: '#00E099' }} {...props} />
             ),
-            th: ({ node, ...props }) => (
-              <th style={styles.th || { padding: '10px', border: '1px solid #333', fontFamily: "'Courier New', monospace" }} {...props} />
-            ),
-            td: ({ node, ...props }) => (
-              <td style={styles.td || { padding: '10px', border: '1px solid #eee' }} {...props} />
-            )
+            th: ({ node, ...props }) => {
+              const thStyle = styles.th || { padding: '10px', border: '1px solid #333', fontFamily: "'Courier New', monospace" };
+              // Ensure header text is visible
+              if (!thStyle.color && styles.thead?.color) {
+                 thStyle.color = styles.thead.color;
+              }
+              return <th style={thStyle} {...props} />;
+            },
+            td: ({ node, style, ...props }) => {
+              // Destructure style from props to prevent it from overriding our styles
+              const pColor = styles.p?.color;
+              const sectionBg = styles.section?.backgroundColor;
+              
+              // Construct base style with fallbacks
+              const baseStyle = {
+                color: pColor || '#333',
+                backgroundColor: sectionBg || '#ffffff',
+                padding: '10px',
+                border: '1px solid #eee'
+              };
+
+              // Merge: baseStyle < theme.td < any passed style (if needed)
+              const finalStyle = {
+                ...baseStyle,
+                ...(styles.td || {}),
+                // Ensure color is explicitly set from td.color, not from parent inheritance
+                color: styles.td?.color || pColor || '#1a1a1a'
+              };
+
+              return (
+                <td style={finalStyle} {...props} />
+              );
+            }
           }}
         >
           {content}

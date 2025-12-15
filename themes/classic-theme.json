@@ -311,10 +311,13 @@
     "padding": "12px",
     "border": "1px solid #ddd",
     "fontFamily": "Arial, sans-serif",
-    "fontWeight": "bold"
+    "fontWeight": "bold",
+    "color": "#1a1a1a"
   },
   "td": {
     "padding": "10px",
-    "border": "1px solid #ddd"
+    "border": "1px solid #ddd",
+    "color": "#1a1a1a",
+    "backgroundColor": "#ffffff"
   }
 }
