@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>手绘卡通风格 Demo - Theme Extraction Test</title>
+    <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&family=Noto+Sans+SC:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Comic Neue', 'Noto Sans SC', cursive, sans-serif;
+            background: linear-gradient(135deg, #fff5e6 0%, #ffe4cc 50%, #ffd4b3 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .wrapper {
+            max-width: 680px;
+            margin: 0 auto;
+            background: #fffbf5;
+            border: 4px solid #2d2d2d;
+            border-radius: 20px;
+            padding: 40px 30px;
+            box-shadow: 
+                8px 8px 0 #ffb347,
+                12px 12px 0 #2d2d2d;
+            position: relative;
+        }
+
+        /* 装饰性涂鸦角落 */
+        .wrapper::before {
+            content: "✏️";
+            position: absolute;
+            top: -15px;
+            right: 30px;
+            font-size: 30px;
+            transform: rotate(15deg);
+        }
+
+        .wrapper::after {
+            content: "🎨";
+            position: absolute;
+            bottom: -15px;
+            left: 30px;
+            font-size: 30px;
+            transform: rotate(-10deg);
+        }
+
+        /* H1 主标题 - 手绘气泡风格 */
+        .h1-container {
+            text-align: center;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        h1 {
+            display: inline-block;
+            background: linear-gradient(135deg, #ff6b9d 0%, #ff8a80 100%);
+            color: #fff;
+            font-size: 28px;
+            font-weight: 700;
+            padding: 18px 35px;
+            border: 4px solid #2d2d2d;
+            border-radius: 30px 10px 30px 10px;
+            box-shadow: 
+                5px 5px 0 #ffeb3b,
+                8px 8px 0 #2d2d2d;
+            transform: rotate(-1deg);
+            text-shadow: 2px 2px 0 rgba(0,0,0,0.2);
+        }
+
+        .subtitle {
+            font-size: 14px;
+            color: #888;
+            margin-top: 15px;
+            font-style: italic;
+        }
+
+        /* H2 二级标题 - 便签纸风格 */
+        .h2-container {
+            text-align: center;
+            margin: 50px 0 25px 0;
+        }
+
+        h2 {
+            display: inline-block;
+            background: #fff9c4;
+            color: #5d4037;
+            font-size: 20px;
+            font-weight: 700;
+            padding: 12px 25px;
+            border: 3px solid #2d2d2d;
+            border-radius: 8px;
+            box-shadow: 4px 4px 0 #ffcc80;
+            transform: rotate(1deg);
+            position: relative;
+        }
+
+        h2::before {
+            content: "📌";
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 18px;
+        }
+
+        /* H3 三级标题 - 蜡笔风格 */
+        .h3-container {
+            display: flex;
+            align-items: center;
+            margin: 35px 0 15px 0;
+        }
+
+        .h3-badge {
+            background: linear-gradient(135deg, #4fc3f7 0%, #29b6f6 100%);
+            color: #fff;
+            font-weight: 700;
+            font-size: 12px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            margin-right: 12px;
+            border: 2px solid #2d2d2d;
+            box-shadow: 2px 2px 0 #2d2d2d;
+        }
+
+        h3 {
+            font-size: 18px;
+            font-weight: 700;
+            color: #37474f;
+            border-bottom: 3px dashed #4fc3f7;
+            padding-bottom: 3px;
+        }
+
+        /* H4 四级标题 - 彩色铅笔下划线 */
+        h4 {
+            font-size: 16px;
+            font-weight: 700;
+            color: #455a64;
+            margin: 25px 0 12px 0;
+            padding-left: 15px;
+            border-left: 5px solid #ff7043;
+            background: linear-gradient(90deg, #fff3e0 0%, transparent 100%);
+            padding-top: 5px;
+            padding-bottom: 5px;
+        }
+
+        /* H5 五级标题 */
+        h5 {
+            font-size: 15px;
+            font-weight: 700;
+            color: #546e7a;
+            margin: 20px 0 10px 0;
+            padding-left: 15px;
+            border-left: 5px solid #66bb6a;
+            background: linear-gradient(90deg, #e8f5e9 0%, transparent 100%);
+            padding-top: 5px;
+            padding-bottom: 5px;
+        }
+
+        /* 段落 */
+        p {
+            font-size: 16px;
+            line-height: 2;
+            color: #37474f;
+            margin-bottom: 18px;
+            text-align: justify;
+        }
+
+        /* 加粗 - 荧光笔效果 */
+        strong {
+            background: linear-gradient(180deg, transparent 50%, #ffeb3b 50%);
+            font-weight: 700;
+            padding: 0 3px;
+            color: #2d2d2d;
+        }
+
+        /* 斜体 */
+        em {
+            font-style: italic;
+            color: #7986cb;
+            font-weight: 500;
+        }
+
+        /* 行内代码 - 便利贴风格 */
+        code {
+            background: #e8f5e9;
+            color: #2e7d32;
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-family: 'Comic Neue', monospace;
+            font-size: 14px;
+            border: 2px dashed #81c784;
+        }
+
+        /* 链接 - 手写下划线 */
+        a {
+            color: #e91e63;
+            text-decoration: none;
+            font-weight: 700;
+            border-bottom: 2px wavy #e91e63;
+            transition: all 0.2s;
+        }
+
+        a:hover {
+            color: #c2185b;
+            background: #fce4ec;
+        }
+
+        /* 引用块 - 对话气泡风格 */
+        blockquote {
+            background: #e3f2fd;
+            border: 3px solid #2d2d2d;
+            border-radius: 20px 20px 20px 5px;
+            padding: 0;
+            margin: 25px 0;
+            box-shadow: 5px 5px 0 #90caf9;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .blockquote-badge {
+            background: linear-gradient(135deg, #42a5f5 0%, #1e88e5 100%);
+            color: #fff;
+            padding: 8px 16px;
+            font-size: 12px;
+            font-weight: 700;
+            display: inline-block;
+            border-radius: 15px;
+            margin: 15px 15px 0 15px;
+            border: 2px solid #2d2d2d;
+        }
+
+        .blockquote-content {
+            padding: 15px 20px;
+            font-style: italic;
+            color: #1565c0;
+        }
+
+        /* 无序列表 - 手绘圆点 */
+        ul {
+            list-style: none;
+            padding-left: 0;
+            margin: 20px 0;
+        }
+
+        ul li {
+            display: flex;
+            align-items: baseline;
+            margin-bottom: 12px;
+            font-size: 16px;
+            color: #37474f;
+            line-height: 1.8;
+        }
+
+        .ul-marker {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            margin-right: 12px;
+            flex-shrink: 0;
+            border: 3px solid #2d2d2d;
+        }
+
+        .marker-pink { background: #f48fb1; }
+        .marker-yellow { background: #fff176; }
+        .marker-green { background: #aed581; }
+        .marker-blue { background: #81d4fa; }
+
+        /* 有序列表 - 手绘数字 */
+        ol {
+            list-style: none;
+            padding-left: 0;
+            margin: 20px 0;
+            counter-reset: item;
+        }
+
+        ol li {
+            display: flex;
+            margin-bottom: 12px;
+            font-size: 16px;
+            color: #37474f;
+            line-height: 1.8;
+        }
+
+        .ol-marker {
+            min-width: 28px;
+            height: 28px;
+            background: linear-gradient(135deg, #ba68c8 0%, #9c27b0 100%);
+            color: #fff;
+            font-family: 'Comic Neue', cursive;
+            font-weight: 700;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            border-radius: 50%;
+            border: 2px solid #2d2d2d;
+            box-shadow: 2px 2px 0 #2d2d2d;
+            flex-shrink: 0;
+        }
+
+        /* 代码块 - 黑板风格 */
+        .pre-container {
+            margin: 25px 0;
+            background: #263238;
+            border: 4px solid #2d2d2d;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 6px 6px 0 #78909c;
+        }
+
+        .pre-header {
+            background: #37474f;
+            padding: 10px 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 3px solid #455a64;
+        }
+
+        .pre-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            border: 2px solid #2d2d2d;
+        }
+
+        .pre-dot-red { background: #ef5350; }
+        .pre-dot-yellow { background: #ffee58; }
+        .pre-dot-green { background: #66bb6a; }
+
+        .pre-label {
+            margin-left: auto;
+            color: #80cbc4;
+            font-family: 'Comic Neue', monospace;
+            font-size: 12px;
+        }
+
+        .pre-body {
+            padding: 20px;
+            background: #263238;
+            color: #80cbc4;
+            font-family: 'Comic Neue', monospace;
+            font-size: 14px;
+            line-height: 1.7;
+            overflow-x: auto;
+        }
+
+        /* 表格 - 手绘网格 */
+        .table-container {
+            margin: 25px 0;
+            border: 4px solid #2d2d2d;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 5px 5px 0 #b0bec5;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        thead {
+            background: linear-gradient(135deg, #ffcc80 0%, #ffb74d 100%);
+        }
+
+        th {
+            padding: 12px;
+            font-weight: 700;
+            color: #3e2723;
+            border: 2px solid #2d2d2d;
+            font-size: 15px;
+        }
+
+        td {
+            padding: 12px;
+            border: 2px dashed #bdbdbd;
+            text-align: center;
+            background: #fffde7;
+            color: #37474f;
+        }
+
+        tr:hover td {
+            background: #fff8e1;
+        }
+
+        /* 分割线 - 手绘涂鸦 */
+        .hr-container {
+            text-align: center;
+            margin: 40px 0;
+            position: relative;
+        }
+
+        .hr-text {
+            font-size: 24px;
+            color: #90a4ae;
+            letter-spacing: 15px;
+        }
+
+        /* 页脚 - 签名风格 */
+        .footer {
+            margin-top: 50px;
+            padding-top: 25px;
+            border-top: 3px dashed #90a4ae;
+            text-align: center;
+        }
+
+        .footer-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #ffab91 0%, #ff8a65 100%);
+            margin: 0 auto 15px auto;
+            border: 3px solid #2d2d2d;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            box-shadow: 3px 3px 0 #2d2d2d;
+        }
+
+        .footer-text {
+            font-size: 13px;
+            color: #90a4ae;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+
+<div class="wrapper">
+
+    <!-- H1 主标题 -->
+    <div class="h1-container">
+        <h1>🎨 手绘卡通风格指南</h1>
+        <p class="subtitle">✨ A Playful Hand-drawn Style Demo ✨</p>
+    </div>
+
+    <!-- H2 二级标题 -->
+    <div class="h2-container">
+        <h2>🖍️ 文字排版展示</h2>
+    </div>
+
+    <!-- H3 三级标题 -->
+    <div class="h3-container">
+        <span class="h3-badge">TIP</span>
+        <h3>基础文字样式</h3>
+    </div>
+
+    <p>这是一段普通的文字内容，用来展示手绘风格的阅读体验。我们通过**温暖的配色**和<strong>柔和的边框</strong>来营造轻松愉快的氛围。</p>
+
+    <p>你还可以使用<em>斜体文字</em>来表达强调，或者用<code>行内代码</code>来展示代码片段。当然，<a href="#">超链接</a>也有独特的手绘波浪下划线效果！</p>
+
+    <!-- H4 四级标题 -->
+    <h4>🎯 小技巧提示</h4>
+    <p>在写作时，合理使用<strong>加粗</strong>和<em>斜体</em>可以让内容更有层次感。</p>
+
+    <!-- H5 五级标题 -->
+    <h5>📝 补充说明</h5>
+    <p>这是五级标题下的内容，适合用于更细分的章节。</p>
+
+    <!-- 引用块 -->
+    <blockquote>
+        <span class="blockquote-badge">💡 NOTE</span>
+        <div class="blockquote-content">
+            创意来源于生活，而手绘风格能唤起我们童年的美好回忆。每一笔涂鸦都是独一无二的艺术表达！
+        </div>
+    </blockquote>
+
+    <!-- H2 列表展示 -->
+    <div class="h2-container">
+        <h2>📋 列表与数据</h2>
+    </div>
+
+    <div class="h3-container">
+        <span class="h3-badge">01</span>
+        <h3>无序列表</h3>
+    </div>
+
+    <ul>
+        <li>
+            <span class="ul-marker marker-pink"></span>
+            <span>粉色马卡龙 - 甜蜜的视觉享受</span>
+        </li>
+        <li>
+            <span class="ul-marker marker-yellow"></span>
+            <span>柠檬黄阳光 - 活力四射的设计</span>
+        </li>
+        <li>
+            <span class="ul-marker marker-green"></span>
+            <span>薄荷绿清新 - 舒适的阅读体验</span>
+        </li>
+        <li>
+            <span class="ul-marker marker-blue"></span>
+            <span>天空蓝宁静 - 平和的心灵享受</span>
+        </li>
+    </ul>
+
+    <div class="h3-container">
+        <span class="h3-badge">02</span>
+        <h3>有序列表</h3>
+    </div>
+
+    <ol>
+        <li>
+            <span class="ol-marker">1</span>
+            <span>首先，选择你喜欢的配色方案</span>
+        </li>
+        <li>
+            <span class="ol-marker">2</span>
+            <span>然后，设计独特的边框样式</span>
+        </li>
+        <li>
+            <span class="ol-marker">3</span>
+            <span>最后，添加有趣的装饰元素</span>
+        </li>
+    </ol>
+
+    <!-- 代码块 -->
+    <div class="h2-container">
+        <h2>💻 代码示例</h2>
+    </div>
+
+    <div class="pre-container">
+        <div class="pre-header">
+            <span class="pre-dot pre-dot-red"></span>
+            <span class="pre-dot pre-dot-yellow"></span>
+            <span class="pre-dot pre-dot-green"></span>
+            <span class="pre-label">sketch.js</span>
+        </div>
+        <div class="pre-body">
+// 🎨 创建你的手绘世界
+const canvas = {
+  style: 'hand-drawn',
+  colors: ['pink', 'yellow', 'mint'],
+  mood: 'playful'
+};
+
+console.log('Let\'s draw something amazing! ✏️');
+        </div>
+    </div>
+
+    <!-- 表格 -->
+    <div class="h2-container">
+        <h2>📊 数据表格</h2>
+    </div>
+
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>🎨 颜色</th>
+                    <th>💭 情绪</th>
+                    <th>⭐ 推荐指数</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>珊瑚粉</td>
+                    <td>温暖甜蜜</td>
+                    <td>⭐⭐⭐⭐⭐</td>
+                </tr>
+                <tr>
+                    <td>柠檬黄</td>
+                    <td>活泼开朗</td>
+                    <td>⭐⭐⭐⭐</td>
+                </tr>
+                <tr>
+                    <td>薄荷绿</td>
+                    <td>清新自然</td>
+                    <td>⭐⭐⭐⭐⭐</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- 分割线 -->
+    <div class="hr-container">
+        <span class="hr-text">✿ ❀ ✿ ❀ ✿</span>
+    </div>
+
+    <!-- 页脚 -->
+    <div class="footer">
+        <div class="footer-icon">✏️</div>
+        <p class="footer-text">
+            Hand-drawn with ❤️ by Creative Studio<br>
+            每一笔都是独特的创作
+        </p>
+    </div>
+
+</div>
+
+</body>
+</html>
