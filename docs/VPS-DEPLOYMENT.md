@@ -138,48 +138,50 @@ npm start
 
 ## 4. 部署代码到 VPS
 
-### 4.1 构建前端
+### 4.1 一键部署脚本（推荐）
 
-在本地运行：
+为了方便后续更新，已为您创建了 `deploy.sh` 脚本。您只需在本地终端运行：
 
 ```bash
+./deploy.sh
+```
+
+该脚本会自动执行以下操作：
+1.  运行 `npm run build` 构建最新前端代码。
+2.  使用 `rsync` 将必要文件（`dist`, `server`, `ecosystem.config.js`, `.env`）同步到服务器 `/www/wwwroot/boluopets.com/wpdesign/`。
+
+### 4.2 手动部署命令
+
+如果您想手动执行，可以使用以下命令：
+
+```bash
+# 1. 构建
 npm run build
-```
 
-这会生成 `dist/` 目录。
-
-### 4.2 准备文件结构
-
-在 VPS 上，建议保持以下目录结构（假设部署在 `/home/deploy/wpdesign`）：
-
-```
-/home/deploy/wpdesign/
-├── dist/                # 前端构建产物 (由 npm run build 生成)
-├── server/              # 后端服务代码
-│   ├── index.js
-│   └── package.json
-├── .env                 # 环境变量文件 (包含 VITE_MOONSHOT_API_KEY)
-└── ecosystem.config.js  # PM2 配置文件
-```
-
-### 4.3 同步代码到服务器
-
-**方法 A: 使用 rsync（推荐）**
-
-```bash
+# 2. 同步
 rsync -avz --exclude 'node_modules' --exclude '.git' \
   ./dist ./server ./ecosystem.config.js ./.env \
-  deploy@你的服务器IP:/home/deploy/wpdesign/
+  root@159.75.139.106:/www/wwwroot/boluopets.com/wpdesign/
 ```
 
-> 注意：如果您的本地 .env 包含敏感信息，请确保它是安全的，或者在服务器上单独创建 .env 文件。
+### 4.3 首次部署后的操作
 
-**方法 B: 使用 Git**
-
-在服务器上：
+如果是**第一次**部署，或者更新了 `server/package.json` 中的依赖，您需要登录服务器执行一次安装和启动：
 
 ```bash
-cd /home/deploy
+ssh root@159.75.139.106
+
+# 在服务器上执行
+cd /www/wwwroot/boluopets.com/wpdesign/server
+npm install
+
+cd ..
+pm2 start ecosystem.config.js
+pm2 save
+pm2 startup
+```
+
+后续如果只更新前端页面，运行 `./deploy.sh` 后即可，通常无需重启服务。如果更新了后端逻辑，建议在服务器上执行 `pm2 restart wpdesign-app`。
 git clone https://github.com/你的用户名/wpdesign.git
 cd wpdesign
 npm install
@@ -250,7 +252,9 @@ pm2 save
 
 ---
 
-## 6. 配置 Nginx 反向代理
+## 6. 配置域名与 Nginx 反向代理
+
+您已经完成了 DNS 解析（wpdesign.boluopets.com -> 159.75.139.106），现在需要在服务器上配置 Nginx 来接收流量并转发给我们的 Node.js 服务。
 
 ### 6.1 安装 Nginx
 
@@ -259,66 +263,63 @@ sudo apt update
 sudo apt install nginx -y
 ```
 
-### 6.2 创建 Nginx 配置
+### 6.2 配置站点
+
+项目中已为您准备好了配置文件模板 `nginx/wpdesign.boluopets.com.conf`。
+
+1. **创建配置文件**：
+
+在服务器上创建并编辑文件：
 
 ```bash
-sudo nano /etc/nginx/sites-available/wpdesign
+sudo nano /etc/nginx/sites-available/wpdesign.boluopets.com.conf
 ```
 
-内容如下：
+将以下内容粘贴进去（或者复制项目中 `nginx/wpdesign.boluopets.com.conf` 的内容）：
 
 ```nginx
 server {
     listen 80;
-    server_name 你的域名或IP;
+    server_name wpdesign.boluopets.com;
 
-    # 日志
-    access_log /var/log/nginx/wpdesign-access.log;
-    error_log /var/log/nginx/wpdesign-error.log;
+    access_log /var/log/nginx/wpdesign.access.log;
+    error_log /var/log/nginx/wpdesign.error.log;
 
-    # 反向代理到 Node.js 服务器
     location / {
-        proxy_pass http://127.0.0.1:3001;
+        proxy_pass http://localhost:3001;
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection 'upgrade';
         proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+        
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto $scheme;
-        proxy_cache_bypass $http_upgrade;
-        
-        # 超时设置（AI API 可能需要较长时间）
-        proxy_connect_timeout 60s;
-        proxy_send_timeout 60s;
-        proxy_read_timeout 120s;
     }
 
-    # 静态资源缓存
-    location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2)$ {
-        proxy_pass http://127.0.0.1:3001;
-        expires 30d;
-        add_header Cache-Control "public, no-transform";
-    }
+    client_max_body_size 10M;
 }
 ```
 
-### 6.3 启用配置
+2. **启用配置**：
 
 ```bash
-# 创建软链接
-sudo ln -s /etc/nginx/sites-available/wpdesign /etc/nginx/sites-enabled/
-
-# 测试配置
-sudo nginx -t
-
-# 重启 Nginx
-sudo systemctl restart nginx
+sudo ln -s /etc/nginx/sites-available/wpdesign.boluopets.com.conf /etc/nginx/sites-enabled/
 ```
 
----
+3. **测试并重启 Nginx**：
 
-## 7. 配置 HTTPS（可选）
+```bash
+sudo nginx -t
+sudo systemctl reload nginx
+```
+
+此时，访问 `http://wpdesign.boluopets.com` 应该就能看到您的网站了。
+
+## 7. 配置 HTTPS (SSL 证书)
+
+为了安全起见，强烈建议开启 HTTPS。我们可以使用 Certbot 免费申请 Let's Encrypt 证书。
 
 ### 7.1 安装 Certbot
 
@@ -326,22 +327,15 @@ sudo systemctl restart nginx
 sudo apt install certbot python3-certbot-nginx -y
 ```
 
-### 7.2 获取证书
+### 7.2 申请证书
 
 ```bash
-sudo certbot --nginx -d 你的域名
+sudo certbot --nginx -d wpdesign.boluopets.com
 ```
 
-按提示完成配置，Certbot 会自动修改 Nginx 配置。
+按照提示输入邮箱并同意协议。Certbot 会自动修改您的 Nginx 配置，将 HTTP 重定向到 HTTPS。
 
-### 7.3 自动续期
-
-```bash
-# 测试续期
-sudo certbot renew --dry-run
-```
-
-Certbot 会自动添加定时任务进行续期。
+完成后，访问 `https://wpdesign.boluopets.com` 即可。
 
 ---
 
