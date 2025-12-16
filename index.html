@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>排版实验室 - 微信排版工具</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=ZCOOL+KuaiLe&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Space+Grotesk:wght@400;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=ZCOOL+KuaiLe&display=swap" rel="stylesheet">
     <script>
       tailwind.config = {
         theme: {
@@ -18,11 +18,19 @@
                 green: '#00E099',
                 red: '#FF4757',
                 purple: '#7058FF'
+              },
+              neo: {
+                cream: '#FFFDF5',
+                ink: '#000000',
+                red: '#FF6B6B',
+                yellow: '#FFD93D',
+                violet: '#C4B5FD'
               }
             },
             fontFamily: {
               pixel: ['"ZCOOL KuaiLe"', '"Press Start 2P"', 'cursive'],
               mono: ['"Space Mono"', 'monospace'],
+              sans: ['"Space Grotesk"', 'sans-serif'],
             }
           }
         }
@@ -30,8 +38,8 @@
     </script>
     <style>
       body {
-        background-color: #0d1117;
-        color: #e6edf3;
+        background-color: #FFFDF5;
+        color: #000000;
       }
       /* Custom scrollbar for the dark theme */
       ::-webkit-scrollbar {

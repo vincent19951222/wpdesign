@@ -116,12 +116,11 @@ const ThemeGallery = <T extends Template>({ templates, onSelect, currentId }: Th
                                 stiffness: 260,
                                 damping: 20
                             }}
-                            className="absolute w-[280px] md:w-[320px] aspect-[3/4] rounded-2xl p-1 cursor-pointer bg-gray-900/80 border border-gray-700 shadow-2xl backdrop-blur-md"
+                            className="absolute w-[280px] md:w-[320px] aspect-[3/4] p-0 cursor-pointer bg-white border-4 border-neo-ink shadow-[12px_12px_0px_0px_#000]"
                             onClick={() => {
                                 if (isActive) handleSelect();
                                 else if (isLeft) rotateLeft();
                                 else if (isRight) rotateRight();
-                                // If back, maybe do nothing or shortest path? Let's ignore clicks on back for now
                             }}
                             style={{
                                 perspective: 1000,
@@ -129,17 +128,18 @@ const ThemeGallery = <T extends Template>({ templates, onSelect, currentId }: Th
                             }}
                         >
                             {/* Card Content */}
-                            <div className="w-full h-full rounded-xl overflow-hidden relative group">
+                            <div className="w-full h-full overflow-hidden relative group flex flex-col">
                                 {/* Color Header */}
                                 <div
-                                    className="h-32 w-full transition-colors duration-500"
+                                    className="h-32 w-full transition-colors duration-500 border-b-4 border-neo-ink"
                                     style={{ backgroundColor: item.thumbnailColor }}
                                 />
 
                                 {/* Content Body */}
-                                <div className="p-6 bg-gray-900 h-full">
-                                    <h3 className="text-2xl font-bold font-pixel text-white mb-2">{item.name}</h3>
-                                    <p className="text-gray-400 text-sm font-mono leading-relaxed line-clamp-4">
+                                <div className="p-6 bg-white flex-1 flex flex-col">
+                                    <h3 className="text-2xl font-bold font-sans uppercase text-neo-ink mb-2 tracking-tight">{item.name}</h3>
+                                    <div className="bg-neo-ink h-1 w-12 mb-4"></div>
+                                    <p className="text-neo-ink/70 text-sm font-sans font-medium leading-relaxed line-clamp-4">
                                         {item.description}
                                     </p>
                                 </div>
@@ -148,12 +148,12 @@ const ThemeGallery = <T extends Template>({ templates, onSelect, currentId }: Th
                                 <AnimatePresence>
                                     {isActive && (
                                         <motion.div
-                                            initial={{ opacity: 0 }}
-                                            animate={{ opacity: 1 }}
+                                            initial={{ opacity: 0, scale: 0.5 }}
+                                            animate={{ opacity: 1, scale: 1 }}
                                             exit={{ opacity: 0 }}
-                                            className="absolute top-4 right-4 bg-white text-black p-2 rounded-full shadow-lg"
+                                            className="absolute top-4 right-4 bg-neo-yellow text-black p-2 border-2 border-neo-ink shadow-[4px_4px_0px_0px_#000]"
                                         >
-                                            <Check size={20} strokeWidth={3} />
+                                            <Check size={24} strokeWidth={4} />
                                         </motion.div>
                                     )}
                                 </AnimatePresence>

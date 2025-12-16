@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Terminal, FileText, Smartphone, ArrowRight, Copy, Check, ChevronLeft, Sun, Upload, Palette, Wand2 } from 'lucide-react';
+import { Terminal, FileText, ArrowRight, Copy, Check, ChevronLeft, Upload, Palette, Wand2, Sparkles, Layout } from 'lucide-react';
 import ThemeGallery from './components/ThemeGallery';
 import WeChatRenderer from './components/WeChatRenderer';
 import ThemeExtractorUI from './components/ThemeExtractorUI';
-import { PixelButton, TemplateCard, LogoIcon } from './components/UI';
+import { NeoButton, NeoCard, NeoBadge, NeoSwitch } from './components/NeoUI';
+import { InfiniteMarquee, DraggableSticker, NeoGridBackground, StickersPack } from './components/NeoEffects';
 import { Template } from './types';
 import { ITheme } from './types/ITheme';
 import pixelThemeDefault from './themes/pixel-theme.json';
@@ -11,7 +12,7 @@ import classicThemeDefault from './themes/classic-theme.json';
 import defaultThemeDefault from './themes/default-theme.json';
 import handDrawnThemeDefault from './themes/hand-drawn-theme.json';
 
-// Default Markdown Template
+// Default Markdown Template (Keep existing)
 const DEFAULT_MD = `# 排版实验室 DEMO
 
 ## 1. 基础排版元素
@@ -69,11 +70,11 @@ function pixelArt() {
 (上方是分割线 HR)
 `;
 
-const TEMPLATES: (Template & { theme: ITheme })[] = [
+const INITIAL_TEMPLATES: (Template & { theme: ITheme })[] = [
   {
     id: 'pixel-classic',
     name: '经典像素',
-    description: '复古赛博朋克风格，灵感来自 8-bit 游戏。特色是亮黄色点缀和控制台风格标题。',
+    description: '复古赛博朋克风格，灵感来自 8-bit 游戏。',
     thumbnailColor: '#FFD700',
     theme: pixelThemeDefault as unknown as ITheme
   },
@@ -107,20 +108,17 @@ const App: React.FC = () => {
   const [currentTheme, setCurrentTheme] = useState<ITheme>(pixelThemeDefault as unknown as ITheme);
   const [showExtractor, setShowExtractor] = useState(false);
 
-  // Auto-load theme from public folder if exists (VPS/Deployment support)
+  // Data Source Simulation
+  const [templates, setTemplates] = useState<(Template & { theme: ITheme })[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
   useEffect(() => {
-    fetch('/theme.json')
-      .then(res => {
-        if (res.ok) return res.json();
-        throw new Error('No custom theme found');
-      })
-      .then(data => {
-        console.log('Custom theme loaded from /theme.json');
-        setCurrentTheme(data as ITheme);
-      })
-      .catch(() => {
-        // console.log('Using default theme');
-      });
+    // Simulate Network Request
+    const timer = setTimeout(() => {
+      setTemplates(INITIAL_TEMPLATES);
+      setIsLoading(false);
+    }, 1000);
+    return () => clearTimeout(timer);
   }, []);
 
   // Theme Upload Logic
@@ -155,7 +153,6 @@ const App: React.FC = () => {
       }
     };
     reader.readAsText(file);
-    // Reset input so same file can be uploaded again if needed
     event.target.value = '';
   };
 
@@ -166,200 +163,186 @@ const App: React.FC = () => {
 
     const selection = window.getSelection();
     const range = document.createRange();
-
-    // Select the node specifically
     range.selectNode(node);
 
     if (selection) {
       selection.removeAllRanges();
       selection.addRange(range);
-
       try {
         const success = document.execCommand('copy');
         if (success) {
           setCopied(true);
           setTimeout(() => setCopied(false), 2000);
-        } else {
-          throw new Error('execCommand returned false');
         }
       } catch (err) {
-        console.error('Copy failed', err);
-        alert('复制失败。请尝试手动全选预览内容 (Ctrl+A) 并复制。');
+        alert('复制失败，请手动复制。');
       }
-
       selection.removeAllRanges();
     }
   };
 
   const renderStep1 = () => (
-    <div className="h-[calc(100vh-140px)] flex flex-col justify-center animate-fade-in relative">
-      <div className="absolute top-0 w-full text-center py-4 z-10">
-        <h1 className="font-pixel text-3xl md:text-5xl text-white mb-2 tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-pixel-yellow to-pixel-green">
-          THEME SELECTOR
-        </h1>
-        <p className="font-mono text-gray-500 text-sm tracking-widest uppercase">Select your operational aesthetic</p>
-      </div>
+    <NeoGridBackground>
+      <div className="flex flex-col min-h-screen relative">
 
-      <div className="flex-1 flex items-center justify-center">
-        <ThemeGallery
-          templates={TEMPLATES}
-          onSelect={(t) => setCurrentTheme(t.theme)}
-          currentId={TEMPLATES.find(t => JSON.stringify(t.theme) === JSON.stringify(currentTheme))?.id || 'pixel-classic'}
-        />
-      </div>
+        {/* Navbar */}
+        <nav className="flex justify-between items-center p-6 border-b-4 border-neo-ink bg-white z-50 relative">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-neo-ink text-white flex items-center justify-center font-black text-xl">
+              PL
+            </div>
+            <span className="font-sans font-bold text-xl uppercase tracking-wider hidden sm:block">Pixel Lab</span>
+          </div>
+          <div className="flex gap-4">
+            <NeoButton size="sm" variant="secondary" onClick={() => setShowExtractor(true)}>
+              <Wand2 size={16} /> EXTRACT
+            </NeoButton>
+            <NeoButton size="sm" onClick={() => window.open('https://github.com', '_blank')}>
+              GITHUB
+            </NeoButton>
+          </div>
+        </nav>
 
-      <div className="absolute bottom-8 w-full text-center">
-        <button
-          onClick={() => setStep(2)}
-          className="bg-white text-black font-pixel py-3 px-8 rounded-full text-lg hover:scale-105 transition-transform shadow-[0_0_20px_rgba(255,255,255,0.3)] mb-4"
-        >
-          ENTER STUDIO
-        </button>
+        {/* Hero Section */}
+        <header className="relative py-20 px-4 text-center overflow-hidden">
+          <StickersPack />
 
-        <div className="flex justify-center mt-4">
-          <button
-            onClick={() => setShowExtractor(true)}
-            className="flex items-center gap-2 text-gray-500 hover:text-pixel-green transition-colors text-sm font-mono border border-gray-800 px-4 py-2 rounded-lg hover:border-pixel-green"
+          <h1 className="text-7xl md:text-9xl font-black uppercase text-neo-ink mb-6 relative z-10"
+            style={{ WebkitTextStroke: '2px black', color: 'transparent' }}
           >
-            <Wand2 size={16} />
-            <span>EXTRACT FROM HTML</span>
-          </button>
-        </div>
+            Digital<br />
+            <span className="text-neo-ink" style={{ WebkitTextStroke: '0' }}>Punk</span>
+          </h1>
+
+          <p className="font-mono text-lg md:text-xl font-bold bg-white inline-block px-4 py-2 border-2 border-neo-ink shadow-[4px_4px_0px_0px_#000] rotate-2">
+            RAW AESTHETICS FOR WECHAT
+          </p>
+        </header>
+
+        {/* Marquee */}
+        <InfiniteMarquee text="NEO-BRUTALISM • HIGH CONTRAST • RAW • BOLD •" />
+
+        {/* Main Content - Gallery */}
+        <main className="flex-1 flex flex-col items-center justify-center py-12 relative z-10">
+          {isLoading ? (
+            <div className="text-2xl font-black animate-pulse">LOADING RESOURCES...</div>
+          ) : (
+            <div className="w-full max-w-6xl">
+              <ThemeGallery
+                templates={templates}
+                onSelect={(t) => setCurrentTheme(t.theme)}
+                currentId={templates.find(t => JSON.stringify(t.theme) === JSON.stringify(currentTheme))?.id || 'pixel-classic'}
+              />
+
+              <div className="flex justify-center mt-12">
+                <NeoButton size="lg" onClick={() => setStep(2)}>
+                  ENTER STUDIO <ArrowRight strokeWidth={3} />
+                </NeoButton>
+              </div>
+            </div>
+          )}
+        </main>
+
+        {/* Footer */}
+        <footer className="border-t-4 border-neo-ink p-6 bg-neo-yellow text-center font-mono text-sm font-bold">
+          © 2025 PIXEL LAB. NO COPYRIGHTS RESERVED.
+        </footer>
+
       </div>
-    </div>
+    </NeoGridBackground>
   );
 
   const renderStep2 = () => (
-    <div className="h-[calc(100vh-140px)] flex flex-col">
+    <div className="h-[calc(100vh-140px)] flex flex-col bg-neo-cream p-6">
       <div className="flex justify-between items-center mb-6">
         <div className="flex items-center gap-4">
-          <button onClick={() => setStep(1)} className="text-gray-400 hover:text-white transition-colors">
-            <ChevronLeft />
+          <button onClick={() => setStep(1)} className="hover:-translate-x-1 transition-transform">
+            <div className="bg-neo-ink text-white p-2 border-2 border-black shadow-[4px_4px_0px_0px_#000]">
+              <ChevronLeft strokeWidth={3} />
+            </div>
           </button>
-          <h2 className="font-pixel text-xl text-white">编辑器 V1.0</h2>
+          <NeoBadge>EDITOR V2.0</NeoBadge>
         </div>
 
         <div className="flex gap-3">
-          {/* Theme Upload */}
-          <input
-            type="file"
-            id="theme-upload"
-            accept=".json"
-            className="hidden"
-            onChange={handleThemeUpload}
-          />
-          <PixelButton onClick={() => document.getElementById('theme-upload')?.click()} icon={Palette}>
-            导入主题
-          </PixelButton>
+          <input type="file" id="theme-upload" accept=".json" className="hidden" onChange={handleThemeUpload} />
+          <NeoButton size="sm" variant="secondary" onClick={() => document.getElementById('theme-upload')?.click()}>
+            <Palette size={16} /> THEME
+          </NeoButton>
 
-          <input
-            type="file"
-            id="md-upload"
-            accept=".md"
-            className="hidden"
-            onChange={handleFileUpload}
-          />
-          <PixelButton onClick={() => document.getElementById('md-upload')?.click()} icon={Upload}>
-            上传 MD
-          </PixelButton>
-          <PixelButton primary onClick={() => setStep(3)} icon={ArrowRight}>
-            生成预览
-          </PixelButton>
+          <input type="file" id="md-upload" accept=".md" className="hidden" onChange={handleFileUpload} />
+          <NeoButton size="sm" variant="secondary" onClick={() => document.getElementById('md-upload')?.click()}>
+            <Upload size={16} /> UPLOAD
+          </NeoButton>
+
+          <NeoButton onClick={() => setStep(3)}>
+            PREVIEW <ArrowRight size={16} />
+          </NeoButton>
         </div>
       </div>
 
-      <div className="flex-1 bg-pixel-darker border-2 border-gray-700 p-4 relative shadow-[4px_4px_0px_0px_#333]">
-        <div className="absolute top-0 left-0 bg-pixel-yellow text-pixel-dark font-pixel text-[10px] px-2 py-1">
-          MARKDOWN 输入
+      <NeoCard className="flex-1 p-0 overflow-hidden relative">
+        <div className="absolute top-0 left-0 bg-neo-ink text-white font-mono text-xs px-2 py-1 border-b-4 border-r-4 border-black z-10">
+          MARKDOWN INPUT
         </div>
         <textarea
-          className="w-full h-full bg-transparent text-gray-300 font-mono resize-none focus:outline-none pt-6 p-2"
+          className="w-full h-full bg-white text-neo-ink font-mono resize-none focus:outline-none p-8 pt-10 text-lg"
           value={markdown}
           onChange={(e) => setMarkdown(e.target.value)}
           spellCheck={false}
-          placeholder="# 开始输入或上传 Markdown 文件..."
+          placeholder="# START TYPING..."
         />
-      </div>
+      </NeoCard>
     </div>
   );
 
   const renderStep3 = () => (
-    <div className="h-full flex flex-col items-center justify-center">
-      <div className="w-full max-w-4xl flex justify-between items-center mb-6 px-4">
+    <div className="h-full flex flex-col items-center justify-center bg-neo-cream p-4">
+      <div className="w-full max-w-4xl flex justify-between items-center mb-6">
         <div className="flex items-center gap-4">
-          <button onClick={() => setStep(2)} className="text-gray-400 hover:text-white transition-colors">
-            <ChevronLeft />
+          <button onClick={() => setStep(2)} className="hover:-translate-x-1 transition-transform">
+            <div className="bg-neo-ink text-white p-2 border-2 border-black shadow-[4px_4px_0px_0px_#000]">
+              <ChevronLeft strokeWidth={3} />
+            </div>
           </button>
-          <h2 className="font-pixel text-xl text-white">预览效果</h2>
+          <NeoBadge color="bg-neo-green">PREVIEW MODE</NeoBadge>
         </div>
 
         <div className="hidden md:block">
-          <PixelButton primary={!copied} onClick={handleCopy} icon={copied ? Check : Copy}>
-            {copied ? '已复制！' : '复制 HTML'}
-          </PixelButton>
+          <NeoButton onClick={handleCopy}>
+            {copied ? <><Check strokeWidth={3} /> COPIED!</> : <><Copy strokeWidth={3} /> COPY HTML</>}
+          </NeoButton>
         </div>
       </div>
 
-      {/* Mobile Simulator Container */}
-      <div className="relative w-full max-w-[400px] h-[75vh] md:h-[80vh] border-[10px] border-gray-800 rounded-[30px] bg-white overflow-hidden shadow-2xl">
-        {/* Notch */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-6 bg-gray-800 rounded-b-xl z-20"></div>
+      {/* Mobile Simulator */}
+      <div className="relative w-full max-w-[400px] h-[75vh] border-8 border-neo-ink bg-white shadow-[16px_16px_0px_0px_#000] overflow-hidden">
+        {/* Fake Notch */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-6 bg-neo-ink rounded-b-md z-20"></div>
 
-        {/* Floating Copy Button for Mobile UX */}
-        <div className="absolute bottom-6 right-6 z-50 md:hidden">
-          <button
-            onClick={handleCopy}
-            className={`
-                        w-14 h-14 rounded-full flex items-center justify-center shadow-lg transition-all
-                        ${copied ? 'bg-pixel-green text-black' : 'bg-pixel-yellow text-black'}
-                    `}
-          >
-            {copied ? <Check /> : <Copy />}
-          </button>
-        </div>
-
-        {/* Scrollable Content */}
-        <div className="w-full h-full overflow-y-auto bg-[#f7f9fa] custom-scrollbar">
+        <div className="w-full h-full overflow-y-auto bg-white custom-scrollbar">
           <WeChatRenderer content={markdown} theme={currentTheme} />
         </div>
       </div>
 
-      <p className="mt-4 font-mono text-gray-500 text-xs text-center max-w-lg">
-        * 预览模式。点击“复制 HTML”获取带格式文本。
-        <br />如果微信中格式丢失，请尝试手动全选预览内容 (Ctrl+A) 并复制。
-      </p>
+      {/* Mobile Floating Button */}
+      <div className="fixed bottom-6 right-6 md:hidden z-50">
+        <button
+          onClick={handleCopy}
+          className="w-16 h-16 bg-neo-yellow border-4 border-neo-ink shadow-[4px_4px_0px_0px_#000] flex items-center justify-center active:translate-y-1 active:shadow-none transition-all"
+        >
+          {copied ? <Check strokeWidth={3} /> : <Copy strokeWidth={3} />}
+        </button>
+      </div>
     </div>
   );
 
   return (
-    <div className="min-h-screen bg-pixel-dark flex flex-col">
-      {/* Top Navbar */}
-      <nav className="h-16 border-b border-gray-800 flex items-center justify-between px-6 bg-pixel-darker z-10">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 bg-pixel-yellow flex items-center justify-center border-2 border-white">
-            <LogoIcon size={20} className="text-black" />
-          </div>
-          <span className="font-pixel text-white text-xl font-bold tracking-wide hidden sm:block ml-3">排版实验室</span>
-        </div>
+    <div className="min-h-screen bg-neo-cream font-sans text-neo-ink selection:bg-neo-yellow selection:text-black">
+      {step === 1 && renderStep1()}
+      {step === 2 && renderStep2()}
+      {step === 3 && renderStep3()}
 
-        <div className="flex gap-2">
-          {[1, 2, 3].map(i => (
-            <div
-              key={i}
-              className={`w-3 h-3 rounded-sm ${step >= i ? 'bg-pixel-green' : 'bg-gray-700'}`}
-            />
-          ))}
-        </div>
-      </nav>
-
-      {/* Main Content Area */}
-      <main className="flex-1 p-4 md:p-8 overflow-hidden">
-        {step === 1 && renderStep1()}
-        {step === 2 && renderStep2()}
-        {step === 3 && renderStep3()}
-      </main>
-
-      {/* Theme Extractor Modal */}
       {showExtractor && (
         <ThemeExtractorUI
           onThemeExtracted={(theme) => {
