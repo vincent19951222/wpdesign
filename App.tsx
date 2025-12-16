@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { LandingPage } from './components/LandingPage';
 import { Editor } from './components/Editor';
 import { Preview } from './components/Preview';
+import { Help } from './components/Help';
 import ThemeExtractorUI from './components/ThemeExtractorUI';
 import { Template } from './types';
 import { ITheme } from './types/ITheme';
@@ -99,7 +100,7 @@ const INITIAL_TEMPLATES: (Template & { theme: ITheme })[] = [
 ];
 
 const App: React.FC = () => {
-  const [step, setStep] = useState<1 | 2 | 3>(1);
+  const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
   const [markdown, setMarkdown] = useState(DEFAULT_MD);
   const [copied, setCopied] = useState(false);
   const [currentTheme, setCurrentTheme] = useState<ITheme>(pixelThemeDefault as unknown as ITheme);
@@ -185,6 +186,7 @@ const App: React.FC = () => {
           isLoading={isLoading}
           onEnterStudio={() => setStep(2)}
           onOpenExtractor={() => setShowExtractor(true)}
+          onOpenDocs={() => setStep(4)}
           onSelectTheme={setCurrentTheme}
           currentThemeId={templates.find(t => JSON.stringify(t.theme) === JSON.stringify(currentTheme))?.id || 'pixel-classic'}
           currentTheme={currentTheme}
@@ -210,6 +212,10 @@ const App: React.FC = () => {
           onBack={() => setStep(2)}
           onCopy={handleCopy}
         />
+      )}
+
+      {step === 4 && (
+        <Help onBack={() => setStep(1)} />
       )}
 
       {showExtractor && (

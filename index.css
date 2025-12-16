@@ -8,7 +8,15 @@
   --color-neo-ink: #000000;
   --color-neo-accent: #FF6B6B;
   --color-neo-secondary: #FFD93D;
-  --color-neo-muted: #C4B5FD;
+  --color-neo-yellow: #FFD93D;
+  /* Alias for compatibility with existing code */
+  --color-neo-raspberry: #FF3366;
+  /* New Raspberry Color */
+  --color-neo-purple: #C4B5FD;
+  /* Existing muted purple, renamed/aliased if needed */
+  --color-neo-green: #4ADE80;
+  /* For success states */
+  --color-neo-muted: #E2E8F0;
   --color-neo-white: #FFFFFF;
 
   --font-sans: "Space Grotesk", sans-serif;

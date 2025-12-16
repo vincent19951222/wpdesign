@@ -146,3 +146,5 @@ const ThemeGallery = <T extends Template>({ templates, onSelect, currentId }: Th
 };
 
 
+
+export default ThemeGallery;

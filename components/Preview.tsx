@@ -40,7 +40,7 @@ export const Preview: React.FC<PreviewProps> = ({
             </div>
 
             {/* Mobile Simulator */}
-            <div className="relative w-full max-w-[400px] h-[75vh] border-8 border-neo-ink bg-white shadow-neo-xl overflow-hidden">
+            <div className="relative w-full max-w-[400px] h-[85vh] border-8 border-neo-ink bg-white shadow-neo-xl overflow-hidden">
                 {/* Fake Notch */}
                 <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-6 bg-neo-ink rounded-b-md z-20"></div>
 
