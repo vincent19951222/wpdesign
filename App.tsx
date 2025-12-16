@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Terminal, FileText, Smartphone, ArrowRight, Copy, Check, ChevronLeft, Sun, Upload, Palette, Wand2 } from 'lucide-react';
 import WeChatRenderer from './components/WeChatRenderer';
 import ThemeExtractorUI from './components/ThemeExtractorUI';
-import { PixelButton, TemplateCard } from './components/UI';
+import { PixelButton, TemplateCard, LogoIcon } from './components/UI';
 import { Template } from './types';
 import { ITheme } from './types/ITheme';
 import pixelThemeDefault from './themes/pixel-theme.json';
@@ -11,14 +11,14 @@ import defaultThemeDefault from './themes/default-theme.json';
 import handDrawnThemeDefault from './themes/hand-drawn-theme.json';
 
 // Default Markdown Template
-const DEFAULT_MD = `# 像素实验室 DEMO
+const DEFAULT_MD = `# 排版实验室 DEMO
 
 ## 1. 基础排版元素
 
 这是普通段落 (p)，通过简单的 Markdown 转换，我们生成符合主题风格的微信排版。
 这里展示了 **加粗文字 (strong)** 和 *斜体文字 (em)* 以及 \`行内代码 (code)\` 的混合排版效果。
 
-你可以访问 [像素实验室 (Link)](https://github.com) 了解更多详情。
+你可以访问 [排版实验室 (Link)](https://github.com) 了解更多详情。
 
 ### 2. 列表与引用 (H3)
 
@@ -71,29 +71,29 @@ function pixelArt() {
 const TEMPLATES: (Template & { theme: ITheme })[] = [
   {
     id: 'pixel-classic',
-    name: 'Pixel Classic',
-    description: 'A retro cyberpunk style inspired by 8-bit games. Features bright yellow accents and console-style headers.',
+    name: '经典像素',
+    description: '复古赛博朋克风格，灵感来自 8-bit 游戏。特色是亮黄色点缀和控制台风格标题。',
     thumbnailColor: '#FFD700',
     theme: pixelThemeDefault as unknown as ITheme
   },
   {
     id: 'classic-theme',
-    name: 'Classic Corporate',
-    description: 'A clean, professional style suitable for official documents and newsletters.',
+    name: '商务经典',
+    description: '简洁专业的风格，适合正式文档和通讯。',
     thumbnailColor: '#0056b3',
     theme: classicThemeDefault as unknown as ITheme
   },
   {
     id: 'default-theme',
-    name: 'Default Minimal',
-    description: 'A clean, minimal default theme for WeChat articles.',
+    name: '极简默认',
+    description: '干净简约的默认主题，适合微信文章。',
     thumbnailColor: '#ffffff',
     theme: defaultThemeDefault as unknown as ITheme
   },
   {
     id: 'hand-drawn-theme',
-    name: 'Hand Drawn',
-    description: 'A playful hand-drawn style with comic fonts and dashed borders.',
+    name: '手绘风格',
+    description: '俏皮的手绘风格，带有漫画字体和虚线边框。',
     thumbnailColor: '#ffb347',
     theme: handDrawnThemeDefault as unknown as ITheme
   }
@@ -132,9 +132,9 @@ const App: React.FC = () => {
       try {
         const json = JSON.parse(e.target?.result as string);
         setCurrentTheme(json as ITheme);
-        alert('Theme loaded successfully!');
+        alert('主题加载成功！');
       } catch (err) {
-        alert('Invalid JSON file');
+        alert('无效的 JSON 文件');
       }
     };
     reader.readAsText(file);
@@ -183,7 +183,7 @@ const App: React.FC = () => {
         }
       } catch (err) {
         console.error('Copy failed', err);
-        alert('Copy failed. Please manually select the content (Ctrl+A) inside the preview and copy.');
+        alert('复制失败。请尝试手动全选预览内容 (Ctrl+A) 并复制。');
       }
 
       selection.removeAllRanges();
@@ -193,9 +193,9 @@ const App: React.FC = () => {
   const renderStep1 = () => (
     <div className="max-w-4xl mx-auto animate-fade-in">
       <h1 className="font-pixel text-2xl md:text-4xl text-white mb-4 text-center">
-        <span className="text-pixel-yellow">SELECT</span> THEME
+        <span className="text-pixel-yellow">选择</span> 主题
       </h1>
-      <p className="font-mono text-gray-400 text-center mb-12">Choose a visual cartridge for your content.</p>
+      <p className="font-mono text-gray-400 text-center mb-12">为你的内容选择一个视觉卡带。</p>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {TEMPLATES.map(t => (
@@ -215,12 +215,12 @@ const App: React.FC = () => {
 
       {/* Theme Extractor Entry */}
       <div className="mt-8 text-center">
-        <p className="text-gray-500 text-sm mb-4">— or —</p>
+        <p className="text-gray-500 text-sm mb-4">— 或 —</p>
         <PixelButton icon={Wand2} onClick={() => setShowExtractor(true)}>
-          EXTRACT FROM HTML
+          从 HTML 提取
         </PixelButton>
         <p className="text-gray-600 text-xs mt-2">
-          Upload any HTML file to auto-extract its styles as a theme
+          上传 HTML 文件以自动提取主题样式
         </p>
       </div>
     </div>
@@ -233,7 +233,7 @@ const App: React.FC = () => {
           <button onClick={() => setStep(1)} className="text-gray-400 hover:text-white transition-colors">
             <ChevronLeft />
           </button>
-          <h2 className="font-pixel text-xl text-white">EDITOR_V1.0</h2>
+          <h2 className="font-pixel text-xl text-white">编辑器 V1.0</h2>
         </div>
 
         <div className="flex gap-3">
@@ -246,7 +246,7 @@ const App: React.FC = () => {
             onChange={handleThemeUpload}
           />
           <PixelButton onClick={() => document.getElementById('theme-upload')?.click()} icon={Palette}>
-            THEME
+            导入主题
           </PixelButton>
 
           <input
@@ -257,24 +257,24 @@ const App: React.FC = () => {
             onChange={handleFileUpload}
           />
           <PixelButton onClick={() => document.getElementById('md-upload')?.click()} icon={Upload}>
-            UPLOAD MD
+            上传 MD
           </PixelButton>
           <PixelButton primary onClick={() => setStep(3)} icon={ArrowRight}>
-            GENERATE
+            生成预览
           </PixelButton>
         </div>
       </div>
 
       <div className="flex-1 bg-pixel-darker border-2 border-gray-700 p-4 relative shadow-[4px_4px_0px_0px_#333]">
         <div className="absolute top-0 left-0 bg-pixel-yellow text-pixel-dark font-pixel text-[10px] px-2 py-1">
-          MARKDOWN INPUT
+          MARKDOWN 输入
         </div>
         <textarea
           className="w-full h-full bg-transparent text-gray-300 font-mono resize-none focus:outline-none pt-6 p-2"
           value={markdown}
           onChange={(e) => setMarkdown(e.target.value)}
           spellCheck={false}
-          placeholder="# Start typing or upload a markdown file..."
+          placeholder="# 开始输入或上传 Markdown 文件..."
         />
       </div>
     </div>
@@ -287,12 +287,12 @@ const App: React.FC = () => {
           <button onClick={() => setStep(2)} className="text-gray-400 hover:text-white transition-colors">
             <ChevronLeft />
           </button>
-          <h2 className="font-pixel text-xl text-white">PREVIEW</h2>
+          <h2 className="font-pixel text-xl text-white">预览效果</h2>
         </div>
 
         <div className="hidden md:block">
           <PixelButton primary={!copied} onClick={handleCopy} icon={copied ? Check : Copy}>
-            {copied ? 'COPIED!' : 'COPY HTML'}
+            {copied ? '已复制！' : '复制 HTML'}
           </PixelButton>
         </div>
       </div>
@@ -322,8 +322,8 @@ const App: React.FC = () => {
       </div>
 
       <p className="mt-4 font-mono text-gray-500 text-xs text-center max-w-lg">
-        * Preview mode. Click "Copy HTML" to copy rich text.
-        <br />If formatting is lost in WeChat, try selecting the text in the preview manually (Ctrl+A) and copying.
+        * 预览模式。点击“复制 HTML”获取带格式文本。
+        <br />如果微信中格式丢失，请尝试手动全选预览内容 (Ctrl+A) 并复制。
       </p>
     </div>
   );
@@ -334,9 +334,9 @@ const App: React.FC = () => {
       <nav className="h-16 border-b border-gray-800 flex items-center justify-between px-6 bg-pixel-darker z-10">
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 bg-pixel-yellow flex items-center justify-center border-2 border-white">
-            <Terminal size={18} className="text-black" />
+            <LogoIcon size={20} className="text-black" />
           </div>
-          <span className="font-pixel text-white text-sm hidden sm:block">NOODLE LAB</span>
+          <span className="font-pixel text-white text-xl font-bold tracking-wide hidden sm:block ml-3">排版实验室</span>
         </div>
 
         <div className="flex gap-2">

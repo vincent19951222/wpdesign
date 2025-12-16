@@ -19,11 +19,11 @@ const WeChatRenderer: React.FC<Props> = ({ content, theme }) => {
       {headerType === 'pixel' && (
         <section style={styles.headerBar}>
           <div style={styles.headerBarLeft}>
-            <span style={styles.headerMood}>👾 MOOD: CODING</span>
-            <span style={styles.headerWifi}>📡 AI: 99%</span>
+            <span style={styles.headerMood}>👾 心情：编码中</span>
+            <span style={styles.headerWifi}>📡 AI：99%</span>
           </div>
           <div style={styles.headerBarRight}>
-            <span style={styles.headerPower}>PWR</span>
+            <span style={styles.headerPower}>电源</span>
             <div style={styles.headerBatteryBody}>
               <div style={styles.headerBatteryLevel}></div>
             </div>
@@ -41,7 +41,7 @@ const WeChatRenderer: React.FC<Props> = ({ content, theme }) => {
               <section style={styles.h1Container}>
                 <h1 style={styles.h1} {...props} />
                 <p style={styles.h1Subtitle}>
-                  {theme.meta?.description || 'DEMO VERSION 3.3 | BY PIXEL LAB'}
+                  {theme.meta?.description || '演示版本 3.3 | 排版实验室'}
                 </p>
               </section>
             ),
@@ -82,7 +82,7 @@ const WeChatRenderer: React.FC<Props> = ({ content, theme }) => {
                     <section style={{ ...styles.preDot, backgroundColor: '#FF4757' }} />
                     <section style={{ ...styles.preDot, backgroundColor: '#FFD700' }} />
                     <section style={{ ...styles.preDot, backgroundColor: '#00E099' }} />
-                    <span style={{ marginLeft: 'auto', color: '#00E099', fontFamily: "'Courier New'", fontSize: '12px' }}>code.block</span>
+                    <span style={{ marginLeft: 'auto', color: '#00E099', fontFamily: "'Courier New'", fontSize: '12px' }}>代码片段</span>
                   </section>
                   <section style={styles.preBody}>
                     <code {...props}>{children}</code>
@@ -94,7 +94,7 @@ const WeChatRenderer: React.FC<Props> = ({ content, theme }) => {
             a: ({ node, ...props }) => <a style={styles.a} {...props} />,
             blockquote: ({ node, ...props }) => (
               <blockquote style={styles.blockquote}>
-                <section style={styles.blockquoteBadge}>NOTE</section>
+                <section style={styles.blockquoteBadge}>提示</section>
                 <section style={styles.blockquoteContent} {...props} />
               </blockquote>
             ),
@@ -211,12 +211,12 @@ const WeChatRenderer: React.FC<Props> = ({ content, theme }) => {
               <section style={styles.footerIcon}>🎮</section>
               <h4 style={{ margin: '0', fontSize: '16px', color: '#1a1a1a' }}>李面条的实验室</h4>
               <p style={{ fontSize: '12px', color: '#999', margin: '5px 0 20px 0', fontFamily: "'Courier New', monospace" }}>
-                BUILDING WITH AI & CATS
+                由 AI 和猫猫共同构建
               </p>
 
               <section style={{ textAlign: 'center' }}>
                 <h2 style={styles.h2}>
-                  <a href="#" style={{ color: '#ffffff', textDecoration: 'none', borderBottom: 'none' }}>INSERT COIN TO FOLLOW</a>
+                  <a href="#" style={{ color: '#ffffff', textDecoration: 'none', borderBottom: 'none' }}>投币关注</a>
                 </h2>
               </section>
             </>
@@ -225,7 +225,7 @@ const WeChatRenderer: React.FC<Props> = ({ content, theme }) => {
           {footerType === 'classic' && (
             <>
               <p style={styles.footerText}>
-                © {new Date().getFullYear()} {theme.meta?.author || 'Pixel Lab'}. All Rights Reserved.
+                © {new Date().getFullYear()} {theme.meta?.author || '排版实验室'}. 版权所有.
               </p>
             </>
           )}
@@ -234,7 +234,7 @@ const WeChatRenderer: React.FC<Props> = ({ content, theme }) => {
       </section>
 
       <section style={{ textAlign: 'center', paddingBottom: '20px', fontSize: '12px', color: '#ccc', fontFamily: 'monospace' }}>
-        © {new Date().getFullYear()} {theme.meta?.author || 'Pixel Lab'}. ALL RIGHTS RESERVED.
+        © {new Date().getFullYear()} {theme.meta?.author || '排版实验室'}. 版权所有.
       </section>
     </section>
   );

@@ -31,114 +31,7 @@ export interface ExtractionProgress {
  * Standard Skeleton HTML for AI to fill with styles
  * This is the "answer sheet" - AI maps user styles onto these fixed IDs
  */
-export const STANDARD_SKELETON_HTML = `<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-    <meta charset="UTF-8">
-    <title>Standard Theme Skeleton</title>
-</head>
-<body>
-
-    <section id="pattern-wrapper">
-        
-        <!-- H1 标题区域 -->
-        <section id="pattern-h1-container">
-            <h1 id="pattern-h1">Sample Title</h1>
-            <p id="pattern-h1-subtitle">Subtitle Demo</p>
-        </section>
-
-        <!-- H2 二级标题 -->
-        <section id="pattern-h2-container">
-            <h2 id="pattern-h2">Section Level 2</h2>
-        </section>
-
-        <!-- H3 三级标题（带徽章） -->
-        <section id="pattern-h3-container">
-            <span id="pattern-h3-badge">H3</span>
-            <h3 id="pattern-h3">Section Level 3</h3>
-        </section>
-
-        <!-- H4 四级标题 -->
-        <h4 id="pattern-h4">Section Level 4</h4>
-
-        <!-- H5 五级标题 -->
-        <h5 id="pattern-h5">Section Level 5</h5>
-
-        <!-- 段落文本 -->
-        <p id="pattern-p">This is a standard paragraph text.</p>
-        <p><strong id="pattern-strong">Bold Text</strong></p>
-        <p><em id="pattern-em">Italic Text</em></p>
-        <p><code id="pattern-code">inline code</code></p>
-        <p><a id="pattern-link" href="#">Hyperlink Style</a></p>
-        
-        <!-- 引用块 -->
-        <blockquote id="pattern-blockquote">
-            <section id="pattern-blockquote-badge">NOTE</section>
-            <section id="pattern-blockquote-content">
-                Reference text content.
-            </section>
-        </blockquote>
-
-        <!-- 无序列表 -->
-        <ul id="pattern-ul">
-            <li id="pattern-li-ul">
-                <span id="pattern-ul-marker"></span>
-                <span>List Item Text</span>
-            </li>
-        </ul>
-
-        <!-- 有序列表 -->
-        <ol id="pattern-ol">
-            <li id="pattern-li-ol">
-                <span id="pattern-ol-marker">1</span>
-                <span>Ordered Item Text</span>
-            </li>
-        </ol>
-
-        <!-- 代码块 -->
-        <section id="pattern-pre">
-            <section id="pattern-pre-header">
-                <section id="pattern-pre-dot" style="background:#FF4757"></section>
-                <section id="pattern-pre-dot" style="background:#FFD700"></section>
-                <section id="pattern-pre-dot" style="background:#00E099"></section>
-                <span id="pattern-pre-label">code.block</span>
-            </section>
-            <section id="pattern-pre-body">
-                <code>console.log('Hello World');</code>
-            </section>
-        </section>
-
-        <!-- 表格 -->
-        <section id="pattern-table-container">
-            <table id="pattern-table">
-                <thead id="pattern-thead">
-                    <tr>
-                        <th id="pattern-th">Header</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td id="pattern-td">Cell Data</td>
-                    </tr>
-                </tbody>
-            </table>
-        </section>
-
-        <!-- 分割线 -->
-        <section id="pattern-hr-container">
-            <span id="pattern-hr-text">•••••</span>
-        </section>
-        
-        <!-- 页脚 -->
-        <section id="pattern-footer">
-            <section id="pattern-footer-icon">🎮</section>
-            <p id="pattern-footer-text">Footer Text</p>
-        </section>
-
-    </section>
-
-</body>
-</html>`;
+export const STANDARD_SKELETON_HTML = `<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><title>Standard Theme Skeleton</title></head><body><section id="pattern-wrapper"><section id="pattern-h1-container"><h1 id="pattern-h1">Sample Title</h1><p id="pattern-h1-subtitle">Subtitle Demo</p></section><section id="pattern-h2-container"><h2 id="pattern-h2">Section Level 2</h2></section><section id="pattern-h3-container"><span id="pattern-h3-badge">H3</span><h3 id="pattern-h3">Section Level 3</h3></section><h4 id="pattern-h4">Section Level 4</h4><h5 id="pattern-h5">Section Level 5</h5><p id="pattern-p">This is a standard paragraph text.</p><p><strong id="pattern-strong">Bold Text</strong></p><p><em id="pattern-em">Italic Text</em></p><p><code id="pattern-code">inline code</code></p><p><a id="pattern-link" href="#">Hyperlink Style</a></p><blockquote id="pattern-blockquote"><section id="pattern-blockquote-badge">NOTE</section><section id="pattern-blockquote-content">Reference text content.</section></blockquote><ul id="pattern-ul"><li id="pattern-li-ul"><span id="pattern-ul-marker"></span><span>List Item Text</span></li></ul><ol id="pattern-ol"><li id="pattern-li-ol"><span id="pattern-ol-marker">1</span><span>Ordered Item Text</span></li></ol><section id="pattern-pre"><section id="pattern-pre-header"><section id="pattern-pre-dot" style="background:#FF4757"></section><section id="pattern-pre-dot" style="background:#FFD700"></section><section id="pattern-pre-dot" style="background:#00E099"></section><span id="pattern-pre-label">code.block</span></section><section id="pattern-pre-body"><code>console.log('Hello World');</code></section></section><section id="pattern-table-container"><table id="pattern-table"><thead id="pattern-thead"><tr><th id="pattern-th">Header</th></tr></thead><tbody><tr><td id="pattern-td">Cell Data</td></tr></tbody></table></section><section id="pattern-hr-container"><span id="pattern-hr-text">•••••</span></section><section id="pattern-footer"><section id="pattern-footer-icon">🎮</section><p id="pattern-footer-text">Footer Text</p></section></section></body></html>`;
 
 /**
  * System prompt for AI style extraction
@@ -183,6 +76,33 @@ When the user uploads an HTML file without any instructions:
 - Return ONLY valid HTML code
 - No explanations, no markdown code fences
 - The output should start with \`<!DOCTYPE html>\` and end with \`</html>\`
+
+### 6. Few-Shot Examples (Mental Model)
+
+#### Example 1: Pixel Art H1 (Inline Styles Source)
+**User Source:**
+\`\`\`html
+<h1 style="display: inline-block; background-color: #FFD700; color: #1a1a1a; border: 3px solid #1a1a1a; box-shadow: 5px 5px 0px #1a1a1a;">
+    Pixel Title
+</h1>
+\`\`\`
+**Your Output (Target):**
+\`\`\`html
+<h1 id="pattern-h1" style="display:inline-block;background-color:#FFD700;color:#1a1a1a;border:3px solid #1a1a1a;box-shadow:5px 5px 0px #1a1a1a;">Sample Title</h1>
+\`\`\`
+
+#### Example 2: Hand-Drawn Badge (Class Extraction)
+**User Source:**
+\`\`\`html
+<style>
+  .badge { background: #4fc3f7; border: 2px solid #2d2d2d; border-radius: 20px; color: #fff; }
+</style>
+<span class="badge">TIP</span>
+\`\`\`
+**Your Output (Target):**
+\`\`\`html
+<span id="pattern-h3-badge" style="background:#4fc3f7;border:2px solid #2d2d2d;border-radius:20px;color:#fff;">H3</span>
+\`\`\`
 
 ## Target Skeleton HTML
 

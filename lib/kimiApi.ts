@@ -94,12 +94,18 @@ export async function callKimiK2(sourceHtml: string): Promise<string> {
 
         const content = data.choices[0].message.content;
 
+        // Clean up markdown code fences if present
+        const cleanedContent = content
+            .replace(/^```html\s*/i, '')  // Remove leading ```html
+            .replace(/^```\s*/, '')       // Remove leading ```
+            .replace(/\s*```$/, '');      // Remove trailing ```
+
         // Validate that the response looks like HTML
-        if (!content.includes('<!DOCTYPE') && !content.includes('<html')) {
-            console.warn('Response may not be valid HTML:', content.substring(0, 200));
+        if (!cleanedContent.includes('<!DOCTYPE') && !cleanedContent.includes('<html')) {
+            console.warn('Response may not be valid HTML:', cleanedContent.substring(0, 200));
         }
 
-        return content;
+        return cleanedContent;
     } catch (error) {
         if (error instanceof TypeError && error.message.includes('fetch')) {
             throw new Error('网络连接失败。请检查网络连接。');

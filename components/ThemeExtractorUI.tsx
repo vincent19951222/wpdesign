@@ -19,42 +19,42 @@ interface ThemeExtractorUIProps {
 
 type ExtractionStep = 'idle' | 'uploading' | 'sanitizing' | 'extracting' | 'parsing' | 'complete' | 'error';
 
-const PREVIEW_MARKDOWN = `# H1 Main Title
-## H1 Subtitle Text
+const PREVIEW_MARKDOWN = `# H1 主标题
+## H1 副标题文本
 
-### H2 Section Title
+### H2 章节标题
 
-#### H3 Badge Title
+#### H3 徽章标题
 
-##### H4 Subsection Title
+##### H4 子章节标题
 
-###### H5 Detail Title
+###### H5 详情标题
 
-This is a normal paragraph with **bold text**, *italic text*, and \`inline code\`.
-Here is a [link example](#).
+这是普通段落，包含 **加粗文字**、*斜体文字* 和 \`行内代码\`。
+这里是一个 [链接示例](#)。
 
-> **NOTE**
-> This is a blockquote area for important notices or summaries.
+> **注意**
+> 这是一个引用块区域，用于显示重要通知或摘要。
 
-*   List item one
-*   List item two
-*   List item three
+*   列表项一
+*   列表项二
+*   列表项三
 
-1.  Ordered item one
-2.  Ordered item two
-3.  Ordered item three
+1.  有序列表一
+2.  有序列表二
+3.  有序列表三
 
 \`\`\`javascript
-// Code block example
+// 代码块示例
 function hello() {
   console.log("Hello World");
 }
 \`\`\`
 
-| Header 1 | Header 2 |
+| 表头 1 | 表头 2 |
 | :--- | :--- |
-| Cell 1 | Cell 2 |
-| Cell 3 | Cell 4 |
+| 单元格 1 | 单元格 2 |
+| 单元格 3 | 单元格 4 |
 
 ---
 `;
@@ -88,33 +88,33 @@ const ThemeExtractorUI: React.FC<ThemeExtractorUIProps> = ({ onThemeExtracted, o
 
             // Step 1: Sanitize
             setStep('sanitizing');
-            setProgress({ step: 'sanitizing', message: 'Cleaning HTML...', progress: 20 });
+            setProgress({ step: 'sanitizing', message: '正在清理 HTML...', progress: 20 });
 
             const { sanitized, isValid, validationIssues } = prepareForAI(content);
 
             if (!isValid) {
-                throw new Error(`Invalid HTML structure: ${validationIssues.join(', ')}`);
+                throw new Error(`HTML 结构无效: ${validationIssues.join(', ')}`);
             }
 
             // Step 2: Call AI API
             setStep('extracting');
-            setProgress({ step: 'calling-ai', message: 'Calling Kimi K2 for style extraction...', progress: 40 });
+            setProgress({ step: 'calling-ai', message: '正在调用 Kimi K2 提取样式...', progress: 40 });
 
             const styledHtml = await callKimiK2(sanitized.html);
 
             // Step 3: Parse result
             setStep('parsing');
-            setProgress({ step: 'parsing', message: 'Parsing extracted styles...', progress: 80 });
+            setProgress({ step: 'parsing', message: '正在解析提取的样式...', progress: 80 });
 
             const extractionResult = parseAIResponse(styledHtml);
 
             if (!extractionResult.success || !extractionResult.theme) {
-                throw new Error(extractionResult.errors.join(', ') || 'Failed to extract theme');
+                throw new Error(extractionResult.errors.join(', ') || '无法提取主题');
             }
 
             // Step 4: Complete
             setStep('complete');
-            setProgress({ step: 'complete', message: 'Theme extracted successfully!', progress: 100 });
+            setProgress({ step: 'complete', message: '主题提取成功！', progress: 100 });
             setResult(extractionResult);
 
             // Add sanitization warnings to result
@@ -124,8 +124,8 @@ const ThemeExtractorUI: React.FC<ThemeExtractorUIProps> = ({ onThemeExtracted, o
 
         } catch (err) {
             setStep('error');
-            setError(err instanceof Error ? err.message : 'Unknown error occurred');
-            setProgress({ step: 'error', message: 'Extraction failed', progress: 0 });
+            setError(err instanceof Error ? err.message : '发生未知错误');
+            setProgress({ step: 'error', message: '提取失败', progress: 0 });
         }
 
         // Reset file input
@@ -173,11 +173,11 @@ const ThemeExtractorUI: React.FC<ThemeExtractorUIProps> = ({ onThemeExtracted, o
             
             const data = await response.json();
             
-            if (!response.ok) throw new Error(data.error || 'Failed to save');
+            if (!response.ok) throw new Error(data.error || '保存失败');
             
-            alert(`Theme saved successfully to ${data.path}`);
+            alert(`主题已成功保存到 ${data.path}`);
         } catch (err) {
-            alert('Error saving theme: ' + (err instanceof Error ? err.message : String(err)));
+            alert('保存主题出错：' + (err instanceof Error ? err.message : String(err)));
         } finally {
             setIsSaving(false);
         }
@@ -188,7 +188,7 @@ const ThemeExtractorUI: React.FC<ThemeExtractorUIProps> = ({ onThemeExtracted, o
             <div className={`bg-pixel-darker border-2 border-pixel-yellow rounded-lg w-full max-w-6xl max-h-[95vh] overflow-hidden shadow-[8px_8px_0px_0px_#1a1a1a] flex flex-col ${step === 'complete' ? 'h-[90vh]' : ''}`}>
                 {/* Header */}
                 <div className="bg-pixel-yellow px-6 py-4 flex justify-between items-center shrink-0">
-                    <h2 className="font-pixel text-pixel-dark text-lg">THEME EXTRACTOR</h2>
+                    <h2 className="font-pixel text-pixel-dark text-lg">主题提取器</h2>
                     <button onClick={onClose} className="text-pixel-dark hover:opacity-70">
                         <X size={24} />
                     </button>
@@ -203,7 +203,7 @@ const ThemeExtractorUI: React.FC<ThemeExtractorUIProps> = ({ onThemeExtracted, o
                             <div className="text-center">
                                 <div className="border-2 border-dashed border-gray-600 rounded-lg p-12 hover:border-pixel-yellow transition-colors">
                                     <FileCode size={48} className="mx-auto mb-4 text-gray-400" />
-                                    <p className="text-gray-300 mb-4">Upload an HTML file to extract its styles</p>
+                                    <p className="text-gray-300 mb-4">上传 HTML 文件以提取样式</p>
                                     <input
                                         type="file"
                                         id="html-upload"
@@ -216,17 +216,17 @@ const ThemeExtractorUI: React.FC<ThemeExtractorUIProps> = ({ onThemeExtracted, o
                                         icon={Upload}
                                         onClick={() => document.getElementById('html-upload')?.click()}
                                     >
-                                        SELECT HTML FILE
+                                        选择 HTML 文件
                                     </PixelButton>
                                 </div>
 
                                 <div className="mt-6 text-left bg-gray-800/50 p-4 rounded-lg">
-                                    <h3 className="text-pixel-yellow font-bold mb-2">📋 Instructions:</h3>
+                                    <h3 className="text-pixel-yellow font-bold mb-2">📋 使用说明：</h3>
                                     <ul className="text-gray-400 text-sm space-y-2">
-                                        <li>• Upload any HTML file with inline or &lt;style&gt; CSS</li>
-                                        <li>• AI will analyze and extract visual styles</li>
-                                        <li>• External CSS links are not supported</li>
-                                        <li>• Works best with content-focused pages</li>
+                                        <li>• 上传带有内联样式或 &lt;style&gt; 标签的 HTML 文件</li>
+                                        <li>• AI 将分析并提取视觉样式</li>
+                                        <li>• 暂不支持外部 CSS 链接</li>
+                                        <li>• 适用于内容型网页</li>
                                     </ul>
                                 </div>
                             </div>
@@ -237,7 +237,7 @@ const ThemeExtractorUI: React.FC<ThemeExtractorUIProps> = ({ onThemeExtracted, o
                             <div className="text-center py-12">
                                 <Loader size={48} className="mx-auto mb-4 text-pixel-yellow animate-spin" />
                                 <p className="text-white font-bold mb-2">{uploadedFileName}</p>
-                                <p className="text-gray-400">{progress?.message || 'Processing...'}</p>
+                                <p className="text-gray-400">{progress?.message || '处理中...'}</p>
 
                                 {/* Progress bar */}
                                 <div className="mt-6 max-w-md mx-auto">
@@ -256,7 +256,7 @@ const ThemeExtractorUI: React.FC<ThemeExtractorUIProps> = ({ onThemeExtracted, o
                         {step === 'error' && (
                             <div className="text-center py-8">
                                 <AlertCircle size={48} className="mx-auto mb-4 text-red-500" />
-                                <h3 className="text-red-400 font-bold mb-2">Extraction Failed</h3>
+                                <h3 className="text-red-400 font-bold mb-2">提取失败</h3>
                                 <p className="text-gray-400 mb-6">{error}</p>
                                 <PixelButton
                                     icon={Upload}
@@ -265,7 +265,7 @@ const ThemeExtractorUI: React.FC<ThemeExtractorUIProps> = ({ onThemeExtracted, o
                                         setError(null);
                                     }}
                                 >
-                                    TRY AGAIN
+                                    重试
                                 </PixelButton>
                             </div>
                         )}
@@ -274,17 +274,17 @@ const ThemeExtractorUI: React.FC<ThemeExtractorUIProps> = ({ onThemeExtracted, o
                         {step === 'complete' && result?.theme && (
                             <div className="text-center py-4">
                                 <CheckCircle size={48} className="mx-auto mb-4 text-pixel-green" />
-                                <h3 className="text-pixel-green font-bold mb-2">Theme Extracted!</h3>
+                                <h3 className="text-pixel-green font-bold mb-2">主题提取成功！</h3>
 
                                 {/* Coverage info */}
                                 <p className="text-gray-400 mb-4">
-                                    Style coverage: {Math.round((result.coverage || 0) * 100)}%
+                                    样式覆盖率：{Math.round((result.coverage || 0) * 100)}%
                                 </p>
 
                                 {/* Warnings */}
                                 {result.warnings.length > 0 && (
                                     <div className="bg-yellow-900/30 border border-yellow-600 rounded p-4 mb-6 text-left max-h-40 overflow-y-auto">
-                                        <p className="text-yellow-500 font-bold text-sm mb-2">⚠️ Warnings:</p>
+                                        <p className="text-yellow-500 font-bold text-sm mb-2">⚠️ 警告：</p>
                                         <ul className="text-yellow-400 text-sm space-y-1">
                                             {result.warnings.map((w, i) => (
                                                 <li key={i}>• {w}</li>
@@ -295,7 +295,7 @@ const ThemeExtractorUI: React.FC<ThemeExtractorUIProps> = ({ onThemeExtracted, o
 
                                 {/* Save Controls */}
                                 <div className="bg-gray-800/50 p-4 rounded-lg mb-6">
-                                    <p className="text-left text-gray-300 text-sm mb-2">Save to Project:</p>
+                                    <p className="text-left text-gray-300 text-sm mb-2">保存到项目：</p>
                                     <div className="flex gap-2 mb-2">
                                         <input 
                                             type="text" 
@@ -310,19 +310,19 @@ const ThemeExtractorUI: React.FC<ThemeExtractorUIProps> = ({ onThemeExtracted, o
                                             className="bg-pixel-yellow text-black px-3 py-2 rounded flex items-center gap-2 hover:bg-yellow-400 disabled:opacity-50 disabled:cursor-not-allowed"
                                         >
                                             {isSaving ? <Loader size={16} className="animate-spin" /> : <Save size={16} />}
-                                            SAVE
+                                            保存
                                         </button>
                                     </div>
-                                    <p className="text-xs text-gray-500 text-left">Saves to local /themes folder for development</p>
+                                    <p className="text-xs text-gray-500 text-left">保存到本地 /themes 文件夹（用于开发）</p>
                                 </div>
 
                                 {/* Main Actions */}
                                 <div className="flex flex-col gap-3">
                                     <PixelButton primary onClick={handleApplyTheme}>
-                                        APPLY THEME NOW
+                                        立即应用主题
                                     </PixelButton>
                                     <PixelButton icon={Download} onClick={handleDownload}>
-                                        DOWNLOAD JSON
+                                        下载 JSON
                                     </PixelButton>
                                 </div>
 
@@ -330,7 +330,7 @@ const ThemeExtractorUI: React.FC<ThemeExtractorUIProps> = ({ onThemeExtracted, o
                                     className="mt-6 text-gray-500 hover:text-gray-300 text-sm"
                                     onClick={() => setStep('idle')}
                                 >
-                                    Extract another theme
+                                    提取另一个主题
                                 </button>
                             </div>
                         )}
@@ -341,7 +341,7 @@ const ThemeExtractorUI: React.FC<ThemeExtractorUIProps> = ({ onThemeExtracted, o
                         <div className="flex-1 bg-[#f7f9fa] overflow-y-auto p-4 md:p-8 custom-scrollbar">
                             <div className="max-w-[400px] mx-auto bg-white min-h-[600px] shadow-xl rounded-xl overflow-hidden border border-gray-200">
                                 <div className="bg-gray-100 p-2 border-b border-gray-200 text-center text-xs text-gray-500 font-mono">
-                                    PREVIEW MODE
+                                    预览模式
                                 </div>
                                 <WeChatRenderer 
                                     content={PREVIEW_MARKDOWN} 

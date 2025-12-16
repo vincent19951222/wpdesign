@@ -74,99 +74,65 @@ npm install -g pm2
 
 ---
 
-## 3. 创建后端代理服务器
+## 3. 准备后端代理服务器
 
-在本地项目中创建后端代理服务器代码。
+为了解决静态部署中 API Key 暴露和文件保存失效的问题，项目中已经预置了 `server` 目录，包含了一个基于 Express 的轻量级后端服务。
 
-### 3.1 创建 server 目录
+该服务 (`server/index.js`) 实现了以下功能：
+1.  **静态托管**：托管 `dist/` 目录下的前端构建产物。
+2.  **API 代理**：转发 `/api/moonshot` 请求并安全注入 API Key。
+3.  **主题保存**：处理 `/api/save-theme` 请求，将主题保存到服务器文件系统。
 
-```bash
-mkdir -p server
+### 3.1 目录结构
+
+```
+server/
+├── index.js        # 后端入口文件
+├── package.json    # 后端依赖
+└── themes/         # (可选) 如果项目根目录不可写，将使用此目录保存主题
 ```
 
-### 3.2 创建 `server/index.js`
+### 3.2 关键代码说明 (已存在)
+
+您无需手动创建文件，以下代码已在 `server/index.js` 中：
 
 ```javascript
-/**
- * Backend Proxy Server for Kimi K2 API
- * 
- * This server runs alongside the static frontend and proxies
- * API requests to Moonshot, adding the API key securely.
- */
-
-const express = require('express');
-const { createProxyMiddleware } = require('http-proxy-middleware');
-const path = require('path');
-
+// server/index.js 摘要
 const app = express();
-const PORT = process.env.PORT || 3001;
 
-// Load API key from environment variable
-const MOONSHOT_API_KEY = process.env.MOONSHOT_API_KEY;
-
-if (!MOONSHOT_API_KEY) {
-  console.error('❌ ERROR: MOONSHOT_API_KEY environment variable is not set');
-  console.error('   Please set it in your environment or .env file');
-  process.exit(1);
-}
-
-// Proxy middleware for Kimi K2 API
+// 1. API 代理配置
 app.use('/api/moonshot', createProxyMiddleware({
   target: 'https://api.moonshot.cn',
-  changeOrigin: true,
-  pathRewrite: {
-    '^/api/moonshot': '', // Remove /api/moonshot prefix
-  },
-  onProxyReq: (proxyReq, req, res) => {
-    // Add Authorization header
-    proxyReq.setHeader('Authorization', `Bearer ${MOONSHOT_API_KEY}`);
-  },
-  onError: (err, req, res) => {
-    console.error('Proxy error:', err.message);
-    res.status(500).json({ error: 'Proxy error', message: err.message });
-  },
+  // ... 自动注入 Authorization header
 }));
 
-// Serve static files from dist folder
-app.use(express.static(path.join(__dirname, '../dist')));
-
-// SPA fallback - serve index.html for all other routes
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../dist/index.html'));
+// 2. 主题保存 API
+app.post('/api/save-theme', (req, res) => {
+  // ... 将 JSON 保存到 themes 目录
 });
 
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
-  console.log(`📁 Serving static files from ./dist`);
-  console.log(`🔗 API proxy: /api/moonshot -> https://api.moonshot.cn`);
-});
+// 3. 静态文件托管
+app.use(express.static(path.resolve(__dirname, '../dist')));
 ```
 
-### 3.3 创建 `server/package.json`
+### 3.3 本地测试后端 (可选)
 
-```json
-{
-  "name": "wpdesign-server",
-  "version": "1.0.0",
-  "description": "Backend proxy server for wpdesign",
-  "main": "index.js",
-  "scripts": {
-    "start": "node index.js"
-  },
-  "dependencies": {
-    "express": "^4.18.2",
-    "http-proxy-middleware": "^2.0.6"
-  }
-}
-```
-
-### 3.4 本地测试后端
+在部署前，您可以在本地验证这个后端服务：
 
 ```bash
+# 1. 构建前端
+npm run build
+
+# 2. 安装后端依赖
 cd server
 npm install
-MOONSHOT_API_KEY=sk-xxx npm start
+
+# 3. 启动后端服务
+# 确保项目根目录有 .env 文件且包含 VITE_MOONSHOT_API_KEY
+npm start
 ```
+
+访问 `http://localhost:3001` 即可查看运行效果。
 
 ---
 
@@ -182,14 +148,31 @@ npm run build
 
 这会生成 `dist/` 目录。
 
-### 4.2 同步代码到服务器
+### 4.2 准备文件结构
+
+在 VPS 上，建议保持以下目录结构（假设部署在 `/home/deploy/wpdesign`）：
+
+```
+/home/deploy/wpdesign/
+├── dist/                # 前端构建产物 (由 npm run build 生成)
+├── server/              # 后端服务代码
+│   ├── index.js
+│   └── package.json
+├── .env                 # 环境变量文件 (包含 VITE_MOONSHOT_API_KEY)
+└── ecosystem.config.js  # PM2 配置文件
+```
+
+### 4.3 同步代码到服务器
 
 **方法 A: 使用 rsync（推荐）**
 
 ```bash
-rsync -avz --exclude 'node_modules' \
-  ./ deploy@你的服务器IP:/home/deploy/wpdesign/
+rsync -avz --exclude 'node_modules' --exclude '.git' \
+  ./dist ./server ./ecosystem.config.js ./.env \
+  deploy@你的服务器IP:/home/deploy/wpdesign/
 ```
+
+> 注意：如果您的本地 .env 包含敏感信息，请确保它是安全的，或者在服务器上单独创建 .env 文件。
 
 **方法 B: 使用 Git**
 
@@ -219,59 +202,50 @@ chmod 600 /home/deploy/wpdesign/.env
 
 ## 5. 配置 PM2 进程管理
 
-### 5.1 创建 PM2 配置文件
+PM2 是一个守护进程管理器，可以帮助您管理和保持应用程序在线。
 
-在项目根目录创建 `ecosystem.config.js`：
+### 5.1 安装后端依赖
 
-```javascript
-module.exports = {
-  apps: [{
-    name: 'wpdesign',
-    script: 'server/index.js',
-    cwd: '/home/deploy/wpdesign',
-    env: {
-      NODE_ENV: 'production',
-      PORT: 3001,
-    },
-    env_file: '.env',
-    instances: 1,
-    autorestart: true,
-    watch: false,
-    max_memory_restart: '500M',
-    error_file: '/home/deploy/logs/wpdesign-error.log',
-    out_file: '/home/deploy/logs/wpdesign-out.log',
-    log_date_format: 'YYYY-MM-DD HH:mm:ss',
-  }]
-};
-```
-
-### 5.2 创建日志目录
+在启动之前，需要在服务器上安装后端依赖：
 
 ```bash
-mkdir -p /home/deploy/logs
+cd /home/deploy/wpdesign/server
+npm install
 ```
 
-### 5.3 启动应用
+### 5.2 启动服务
+
+回到项目根目录，使用 `ecosystem.config.js` 启动：
 
 ```bash
 cd /home/deploy/wpdesign
-
-# 加载环境变量并启动
-export $(cat .env | xargs) && pm2 start ecosystem.config.js
-
-# 保存进程列表（开机自启动）
-pm2 save
-pm2 startup
+pm2 start ecosystem.config.js
 ```
 
-### 5.4 常用 PM2 命令
+### 5.3 常用 PM2 命令
 
 ```bash
-pm2 status          # 查看状态
-pm2 logs wpdesign   # 查看日志
-pm2 restart wpdesign # 重启
-pm2 stop wpdesign   # 停止
-pm2 delete wpdesign # 删除
+# 查看服务状态
+pm2 status
+
+# 查看日志
+pm2 logs wpdesign-app
+
+# 重启服务
+pm2 restart wpdesign-app
+
+# 停止服务
+pm2 stop wpdesign-app
+```
+
+### 5.4 设置开机自启
+
+```bash
+pm2 startup
+# 运行上一条命令输出的指令，例如：
+# sudo env PATH=$PATH:/usr/bin /usr/lib/node_modules/pm2/bin/pm2 startup systemd -u deploy --hp /home/deploy
+
+pm2 save
 ```
 
 ---
