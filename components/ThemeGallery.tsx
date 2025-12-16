@@ -1,7 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronLeft, ChevronRight, Check } from 'lucide-react';
+import React from 'react';
+import { motion } from 'framer-motion';
+import { Check, MousePointerClick } from 'lucide-react';
 import { Template } from '../types';
+import { cn } from '../lib/utils';
+import { Badge } from './ui/badge';
 
 interface ThemeGalleryProps<T extends Template> {
     templates: T[];
@@ -10,187 +12,137 @@ interface ThemeGalleryProps<T extends Template> {
 }
 
 const ThemeGallery = <T extends Template>({ templates, onSelect, currentId }: ThemeGalleryProps<T>) => {
-    // Find index of current theme to start with
-    const initialIndex = templates.findIndex(t => t.id === currentId);
-    const [activeIndex, setActiveIndex] = useState(initialIndex >= 0 ? initialIndex : 0);
+    const [currentPage, setCurrentPage] = React.useState(1);
+    const itemsPerPage = 8; // 2 Rows on Desktop
+    const totalPages = Math.ceil(templates.length / itemsPerPage);
 
-    // Handle circular navigation
-    const rotateLeft = () => {
-        setActiveIndex((prev) => (prev === 0 ? templates.length - 1 : prev - 1));
+    const paginate = (pageNumber: number) => {
+        if (pageNumber < 1 || pageNumber > totalPages) return;
+        setCurrentPage(pageNumber);
     };
 
-    const rotateRight = () => {
-        setActiveIndex((prev) => (prev === templates.length - 1 ? 0 : prev + 1));
-    };
-
-    // Select the current active item
-    const handleSelect = () => {
-        onSelect(templates[activeIndex]);
-    };
-
-    // Keyboard navigation
-    useEffect(() => {
-        const handleKeyDown = (e: KeyboardEvent) => {
-            if (e.key === 'ArrowLeft') rotateLeft();
-            if (e.key === 'ArrowRight') rotateRight();
-            if (e.key === 'Enter') handleSelect();
-        };
-        window.addEventListener('keydown', handleKeyDown);
-        return () => window.removeEventListener('keydown', handleKeyDown);
-    }, [activeIndex, templates]);
-
-    // Update selection when active index changes (optional - creates "live preview" feel)
-    useEffect(() => {
-        const timer = setTimeout(() => {
-            onSelect(templates[activeIndex]);
-        }, 300); // Small delay to prevent flashing while scrolling fast
-        return () => clearTimeout(timer);
-    }, [activeIndex]);
-
-    const getCircularIndex = (index: number, length: number) => {
-        const offset = (index - activeIndex + length) % length;
-        // For length 4: 0->0, 1->1, 2->2, 3->3.
-        // We want centered relative indices:
-        // If length is small, we adjust.
-        // For 4 items: Active=0. 1->Right, 3->Left(-1). 2->Back.
-        if (offset > length / 2) return offset - length;
-        return offset;
-    };
+    const currentTemplates = templates.slice(
+        (currentPage - 1) * itemsPerPage,
+        currentPage * itemsPerPage
+    );
 
     return (
-        <div className="relative w-full h-[500px] flex items-center justify-center perspective-1000 overflow-hidden">
+        <div className="w-full flex flex-col gap-8">
+            {/* Grid Container */}
+            <div className="min-h-[600px]"> {/* Fixed height container to prevent layout shift */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 px-4">
+                    {currentTemplates.map((item) => {
+                        const isActive = item.id === currentId;
 
-            {/* Background Glow based on active theme color */}
-            <motion.div
-                className="absolute inset-0 z-0 opacity-20 blur-[100px] transition-colors duration-700"
-                style={{ backgroundColor: templates[activeIndex].thumbnailColor }}
-            />
-
-            <div className="relative z-10 w-full max-w-5xl h-full flex items-center justify-center">
-                {templates.map((item, index) => {
-                    const offset = getCircularIndex(index, templates.length);
-                    const isActive = offset === 0;
-                    const isRight = offset === 1;
-                    const isLeft = offset === -1;
-                    const isBack = Math.abs(offset) >= 2; // For 4 items, 2 is back. 
-
-                    // Determine X position
-                    let x = 0;
-                    if (isRight) x = 320;
-                    if (isLeft) x = -320;
-                    if (isBack) x = 0; // Behind center
-
-                    // Determine Scale
-                    let scale = 0.7;
-                    if (isActive) scale = 1.0;
-                    if (isBack) scale = 0.5;
-
-                    // Determine Z-Index
-                    let zIndex = 10;
-                    if (isActive) zIndex = 30;
-                    if (isRight || isLeft) zIndex = 20;
-                    if (isBack) zIndex = 5;
-
-                    // Opacity
-                    let opacity = 0.5;
-                    if (isActive) opacity = 1;
-                    if (isBack) opacity = 0; // Hide back item to prevent visual clutter or let it fade
-
-                    // Rotation
-                    let rotateY = 0;
-                    if (isLeft) rotateY = 25;
-                    if (isRight) rotateY = -25;
-
-                    return (
-                        <motion.div
-                            key={item.id} // Stable key!
-                            animate={{
-                                x,
-                                scale,
-                                opacity,
-                                rotateY,
-                                zIndex,
-                            }}
-                            transition={{
-                                type: "spring",
-                                stiffness: 260,
-                                damping: 20
-                            }}
-                            className="absolute w-[280px] md:w-[320px] aspect-[3/4] p-0 cursor-pointer bg-white border-4 border-neo-ink shadow-[12px_12px_0px_0px_#000]"
-                            onClick={() => {
-                                if (isActive) handleSelect();
-                                else if (isLeft) rotateLeft();
-                                else if (isRight) rotateRight();
-                            }}
-                            style={{
-                                perspective: 1000,
-                                transformStyle: 'preserve-3d'
-                            }}
-                        >
-                            {/* Card Content */}
-                            <div className="w-full h-full overflow-hidden relative group flex flex-col">
-                                {/* Color Header */}
+                        return (
+                            <motion.div
+                                layoutId={item.id}
+                                key={item.id}
+                                initial={{ opacity: 0, scale: 0.9 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                transition={{ duration: 0.2 }}
+                                onClick={() => onSelect(item)}
+                                className={cn(
+                                    "group relative flex flex-col cursor-pointer transition-all duration-200 border-4 border-neo-ink bg-white overflow-hidden h-[380px]",
+                                    // Active State: "Pressed" down, yellow bg, no shadow
+                                    isActive
+                                        ? "transform translate-x-[8px] translate-y-[8px] shadow-none ring-4 ring-neo-yellow/50"
+                                        : "shadow-neo-lg hover:-translate-y-2 hover:shadow-neo-xl"
+                                )}
+                            >
+                                {/* Header / Color Block */}
                                 <div
-                                    className="h-32 w-full transition-colors duration-500 border-b-4 border-neo-ink"
+                                    className="h-32 w-full border-b-4 border-neo-ink relative overflow-hidden shrink-0"
                                     style={{ backgroundColor: item.thumbnailColor }}
-                                />
+                                >
+                                    {/* Pattern Overlay for texture */}
+                                    <div className="absolute inset-0 opacity-20 bg-[radial-gradient(#000_2px,transparent_2px)] [background-size:16px_16px]"></div>
 
-                                {/* Content Body */}
-                                <div className="p-6 bg-white flex-1 flex flex-col">
-                                    <h3 className="text-2xl font-bold font-sans uppercase text-neo-ink mb-2 tracking-tight">{item.name}</h3>
-                                    <div className="bg-neo-ink h-1 w-12 mb-4"></div>
-                                    <p className="text-neo-ink/70 text-sm font-sans font-medium leading-relaxed line-clamp-4">
-                                        {item.description}
-                                    </p>
+                                    {/* Active Badge */}
+                                    {isActive && (
+                                        <div className="absolute top-2 right-2">
+                                            <Badge className="bg-neo-ink text-white border-white shadow-none animate-in zoom-in duration-200">
+                                                <Check size={12} className="mr-1" strokeWidth={4} /> SELECTED
+                                            </Badge>
+                                        </div>
+                                    )}
                                 </div>
 
-                                {/* Active Indicator Overlay */}
-                                <AnimatePresence>
-                                    {isActive && (
-                                        <motion.div
-                                            initial={{ opacity: 0, scale: 0.5 }}
-                                            animate={{ opacity: 1, scale: 1 }}
-                                            exit={{ opacity: 0 }}
-                                            className="absolute top-4 right-4 bg-neo-yellow text-black p-2 border-2 border-neo-ink shadow-[4px_4px_0px_0px_#000]"
-                                        >
-                                            <Check size={24} strokeWidth={4} />
-                                        </motion.div>
-                                    )}
-                                </AnimatePresence>
-                            </div>
-                        </motion.div>
-                    );
-                })}
-            </div>
+                                {/* Content Body */}
+                                <div className={cn(
+                                    "p-6 flex-1 flex flex-col transition-colors duration-200",
+                                    isActive ? "bg-neo-yellow/10" : "bg-white"
+                                )}>
+                                    <h3 className="text-xl font-black font-sans uppercase text-neo-ink mb-3 leading-none tracking-tighter truncate">
+                                        {item.name}
+                                    </h3>
 
-            {/* Navigation Controls */}
-            <div className="absolute bottom-4 left-0 right-0 z-50 flex justify-center items-center gap-8">
-                <button
-                    onClick={rotateLeft}
-                    className="w-14 h-14 rounded-full bg-gray-800/80 hover:bg-white hover:text-black transition-all border border-gray-600 flex items-center justify-center backdrop-blur-sm"
-                >
-                    <ChevronLeft size={24} />
-                </button>
+                                    {/* Decorative Separator */}
+                                    <div className="flex gap-1 mb-4">
+                                        <div className="w-2 h-2 bg-neo-ink"></div>
+                                        <div className="w-2 h-2 bg-neo-accent"></div>
+                                        <div className="w-2 h-2 bg-neo-ink"></div>
+                                        <div className="w-full h-2 bg-neo-ink/10"></div>
+                                    </div>
 
-                <div className="flex gap-2">
-                    {templates.map((t, idx) => (
-                        <div
-                            key={t.id}
-                            className={`h-2 rounded-full transition-all duration-300 ${idx === activeIndex ? 'w-8 bg-white' : 'w-2 bg-gray-600'}`}
-                        />
-                    ))}
+                                    <p className="text-sm font-bold font-mono text-neo-ink/70 leading-relaxed line-clamp-3">
+                                        {item.description}
+                                    </p>
+
+                                    <div className="mt-auto pt-4 border-t-2 border-dashed border-neo-ink/20 flex justify-between items-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                        <span className="text-xs font-black uppercase text-neo-accent flex items-center gap-1">
+                                            <MousePointerClick size={14} /> SELECT
+                                        </span>
+                                        <div className="w-4 h-4 rounded-full border-2 border-neo-ink"></div>
+                                    </div>
+                                </div>
+
+                                {/* Sticker Effect Details (Optional decorations) */}
+                                {isActive && (
+                                    <>
+                                        <div className="absolute -bottom-8 -right-8 w-24 h-24 bg-neo-yellow rounded-full blur-2xl opacity-20 pointer-events-none"></div>
+                                    </>
+                                )}
+                            </motion.div>
+                        );
+                    })}
                 </div>
-
-                <button
-                    onClick={rotateRight}
-                    className="w-14 h-14 rounded-full bg-gray-800/80 hover:bg-white hover:text-black transition-all border border-gray-600 flex items-center justify-center backdrop-blur-sm"
-                >
-                    <ChevronRight size={24} />
-                </button>
             </div>
 
+            {/* Pagination Controls */}
+            {totalPages > 1 && (
+                <div className="flex justify-center items-center gap-4 mt-4">
+                    <button
+                        onClick={() => paginate(currentPage - 1)}
+                        disabled={currentPage === 1}
+                        className="w-12 h-12 flex items-center justify-center bg-white border-4 border-neo-ink shadow-neo-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-neo-yellow active:translate-y-1 active:shadow-none transition-all"
+                    >
+                        &lt;
+                    </button>
+
+                    <div className="flex gap-2 font-mono font-bold text-xl items-center bg-white px-4 py-2 border-4 border-neo-ink shadow-neo-sm">
+                        <span>PAGE</span>
+                        <span className="text-neo-accent">{currentPage}</span>
+                        <span>/</span>
+                        <span>{totalPages}</span>
+                    </div>
+
+                    <button
+                        onClick={() => paginate(currentPage + 1)}
+                        disabled={currentPage === totalPages}
+                        className="w-12 h-12 flex items-center justify-center bg-white border-4 border-neo-ink shadow-neo-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-neo-yellow active:translate-y-1 active:shadow-none transition-all"
+                    >
+                        &gt;
+                    </button>
+                </div>
+            )}
+
+            {/* Context Helper Text */}
+            <div className="text-center font-mono text-xs font-bold text-neo-ink/40 uppercase tracking-widest">
+                [ SHOWING {Math.min(currentPage * itemsPerPage, templates.length)} / {templates.length} CARTRIDGES ]
+            </div>
         </div>
     );
 };
 
-export default ThemeGallery;
+

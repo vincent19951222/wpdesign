@@ -1,0 +1,32 @@
+@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;900&display=swap');
+
+@plugin "tailwindcss-animate";
+
+@theme {
+  --color-neo-bg: #FFFDF5;
+  --color-neo-ink: #000000;
+  --color-neo-accent: #FF6B6B;
+  --color-neo-secondary: #FFD93D;
+  --color-neo-muted: #C4B5FD;
+  --color-neo-white: #FFFFFF;
+
+  --font-sans: "Space Grotesk", sans-serif;
+
+  --shadow-neo-sm: 4px 4px 0px 0px #000;
+  --shadow-neo-md: 8px 8px 0px 0px #000;
+  --shadow-neo-lg: 12px 12px 0px 0px #000;
+  --shadow-neo-xl: 16px 16px 0px 0px #000;
+}
+
+@layer base {
+  body {
+    @apply bg-neo-bg text-neo-ink font-sans antialiased;
+  }
+
+  *,
+  ::before,
+  ::after {
+    @apply border-neo-ink;
+  }
+}

@@ -1,7 +1,6 @@
 import React, { useRef } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
-import { cn } from './NeoUI'; // Assuming basic cn utility is exported or I'll recreate it here if needed. 
-// Actually I need to export cn from NeoUI or dup it. I'll duplicate for simplicity or check NeoUI.
+import { cn } from '../lib/utils';
 import { Star, Hexagon, Zap } from 'lucide-react';
 
 // ---------------------------

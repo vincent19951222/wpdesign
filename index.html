@@ -1,66 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>排版实验室 - 微信排版工具</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Space+Grotesk:wght@400;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=ZCOOL+KuaiLe&display=swap" rel="stylesheet">
-    <script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            colors: {
-              pixel: {
-                dark: '#0d1117',
-                darker: '#090c10',
-                yellow: '#FFD700',
-                green: '#00E099',
-                red: '#FF4757',
-                purple: '#7058FF'
-              },
-              neo: {
-                cream: '#FFFDF5',
-                ink: '#000000',
-                red: '#FF6B6B',
-                yellow: '#FFD93D',
-                violet: '#C4B5FD'
-              }
-            },
-            fontFamily: {
-              pixel: ['"ZCOOL KuaiLe"', '"Press Start 2P"', 'cursive'],
-              mono: ['"Space Mono"', 'monospace'],
-              sans: ['"Space Grotesk"', 'sans-serif'],
-            }
-          }
-        }
-      }
-    </script>
-    <style>
-      body {
-        background-color: #FFFDF5;
-        color: #000000;
-      }
-      /* Custom scrollbar for the dark theme */
-      ::-webkit-scrollbar {
-        width: 10px;
-        height: 10px;
-      }
-      ::-webkit-scrollbar-track {
-        background: #0d1117; 
-      }
-      ::-webkit-scrollbar-thumb {
-        background: #333; 
-        border: 2px solid #0d1117;
-      }
-      ::-webkit-scrollbar-thumb:hover {
-        background: #555; 
-      }
-    </style>
 
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>排版实验室 - 微信排版工具</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Space+Grotesk:wght@400;700;900&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=ZCOOL+KuaiLe&display=swap"
+    rel="stylesheet">
 </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/index.tsx"></script>
-  </body>
+
+<body>
+  <div id="root"></div>
+  <script type="module" src="/index.tsx"></script>
+</body>
+
 </html>
