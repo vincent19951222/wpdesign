@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Terminal, FileText, Smartphone, ArrowRight, Copy, Check, ChevronLeft, Sun, Upload, Palette, Wand2 } from 'lucide-react';
+import ThemeGallery from './components/ThemeGallery';
 import WeChatRenderer from './components/WeChatRenderer';
 import ThemeExtractorUI from './components/ThemeExtractorUI';
 import { PixelButton, TemplateCard, LogoIcon } from './components/UI';
@@ -191,37 +192,39 @@ const App: React.FC = () => {
   };
 
   const renderStep1 = () => (
-    <div className="max-w-4xl mx-auto animate-fade-in">
-      <h1 className="font-pixel text-2xl md:text-4xl text-white mb-4 text-center">
-        <span className="text-pixel-yellow">选择</span> 主题
-      </h1>
-      <p className="font-mono text-gray-400 text-center mb-12">为你的内容选择一个视觉卡带。</p>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {TEMPLATES.map(t => (
-          <TemplateCard
-            key={t.id}
-            title={t.name}
-            description={t.description}
-            color={t.thumbnailColor}
-            active={false}
-            onClick={() => {
-              setCurrentTheme(t.theme);
-              setStep(2);
-            }}
-          />
-        ))}
+    <div className="h-[calc(100vh-140px)] flex flex-col justify-center animate-fade-in relative">
+      <div className="absolute top-0 w-full text-center py-4 z-10">
+        <h1 className="font-pixel text-3xl md:text-5xl text-white mb-2 tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-pixel-yellow to-pixel-green">
+          THEME SELECTOR
+        </h1>
+        <p className="font-mono text-gray-500 text-sm tracking-widest uppercase">Select your operational aesthetic</p>
       </div>
 
-      {/* Theme Extractor Entry */}
-      <div className="mt-8 text-center">
-        <p className="text-gray-500 text-sm mb-4">— 或 —</p>
-        <PixelButton icon={Wand2} onClick={() => setShowExtractor(true)}>
-          从 HTML 提取
-        </PixelButton>
-        <p className="text-gray-600 text-xs mt-2">
-          上传 HTML 文件以自动提取主题样式
-        </p>
+      <div className="flex-1 flex items-center justify-center">
+        <ThemeGallery
+          templates={TEMPLATES}
+          onSelect={(t) => setCurrentTheme(t.theme)}
+          currentId={TEMPLATES.find(t => JSON.stringify(t.theme) === JSON.stringify(currentTheme))?.id || 'pixel-classic'}
+        />
+      </div>
+
+      <div className="absolute bottom-8 w-full text-center">
+        <button
+          onClick={() => setStep(2)}
+          className="bg-white text-black font-pixel py-3 px-8 rounded-full text-lg hover:scale-105 transition-transform shadow-[0_0_20px_rgba(255,255,255,0.3)] mb-4"
+        >
+          ENTER STUDIO
+        </button>
+
+        <div className="flex justify-center mt-4">
+          <button
+            onClick={() => setShowExtractor(true)}
+            className="flex items-center gap-2 text-gray-500 hover:text-pixel-green transition-colors text-sm font-mono border border-gray-800 px-4 py-2 rounded-lg hover:border-pixel-green"
+          >
+            <Wand2 size={16} />
+            <span>EXTRACT FROM HTML</span>
+          </button>
+        </div>
       </div>
     </div>
   );
