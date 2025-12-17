@@ -79,7 +79,7 @@ const INITIAL_TEMPLATES: (Template & { theme: ITheme })[] = [
     name: '经典像素',
     description: '复古赛博朋克风格，灵感来自 8-bit 游戏。',
     thumbnailColor: '#FFD700',
-    thumbnailUrl: '/thumbnails/pixel-classic.png',
+    thumbnailUrl: '/thumbnails/pixel-classic.jpg',
     theme: pixelThemeDefault as unknown as ITheme
   },
   {
@@ -87,7 +87,7 @@ const INITIAL_TEMPLATES: (Template & { theme: ITheme })[] = [
     name: '科技极简',
     description: '深色背景与霓虹光效，未来感十足。',
     thumbnailColor: '#0a0a0a',
-    thumbnailUrl: '/thumbnails/tech-minimalist.png',
+    thumbnailUrl: '/thumbnails/tech-minimalist.jpg',
     theme: techMinimalistThemeDefault as unknown as ITheme
   },
   {
@@ -95,7 +95,7 @@ const INITIAL_TEMPLATES: (Template & { theme: ITheme })[] = [
     name: '时尚杂志',
     description: '高端黑白金配色，大气的衬线字体排版。',
     thumbnailColor: '#ffffff',
-    thumbnailUrl: '/thumbnails/magazine-fashion.png',
+    thumbnailUrl: '/thumbnails/magazine-fashion.jpg',
     theme: magazineFashionThemeDefault as unknown as ITheme
   },
   {
@@ -103,7 +103,7 @@ const INITIAL_TEMPLATES: (Template & { theme: ITheme })[] = [
     name: '新拟态',
     description: '柔和的阴影与圆角设计，极具质感的 Soft UI 风格。',
     thumbnailColor: '#e0e5ec',
-    thumbnailUrl: '/thumbnails/neumorphism.png',
+    thumbnailUrl: '/thumbnails/neumorphism.jpg',
     theme: neumorphismThemeDefault as unknown as ITheme
   },
   {
@@ -111,7 +111,7 @@ const INITIAL_TEMPLATES: (Template & { theme: ITheme })[] = [
     name: '复古报纸',
     description: '泛黄的旧报纸风格，Typewriter 字体与衬线体。',
     thumbnailColor: '#f4f1ea',
-    thumbnailUrl: '/thumbnails/retro-newspaper.png',
+    thumbnailUrl: '/thumbnails/retro-newspaper.jpg',
     theme: retroNewspaperThemeDefault as unknown as ITheme
   },
   {
@@ -119,7 +119,7 @@ const INITIAL_TEMPLATES: (Template & { theme: ITheme })[] = [
     name: '商务经典',
     description: '简洁专业的风格，适合正式文档和通讯。',
     thumbnailColor: '#0056b3',
-    thumbnailUrl: '/thumbnails/classic-theme.png',
+    thumbnailUrl: '/thumbnails/classic-theme.jpg',
     theme: classicThemeDefault as unknown as ITheme
   },
   {
@@ -127,7 +127,7 @@ const INITIAL_TEMPLATES: (Template & { theme: ITheme })[] = [
     name: '极简默认',
     description: '干净简约的默认主题，适合微信文章。',
     thumbnailColor: '#f2f2f2',
-    thumbnailUrl: '/thumbnails/default-theme.png',
+    thumbnailUrl: '/thumbnails/default-theme.jpg',
     theme: defaultThemeDefault as unknown as ITheme
   },
   {
@@ -135,7 +135,7 @@ const INITIAL_TEMPLATES: (Template & { theme: ITheme })[] = [
     name: '手绘风格',
     description: '俏皮的手绘风格，带有漫画字体和虚线边框。',
     thumbnailColor: '#ffb347',
-    thumbnailUrl: '/thumbnails/hand-drawn.png',
+    thumbnailUrl: '/thumbnails/hand-drawn.jpg',
     theme: handDrawnThemeDefault as unknown as ITheme
   }
 ];
