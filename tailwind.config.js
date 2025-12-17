@@ -21,6 +21,7 @@ export default {
             },
             fontFamily: {
                 sans: ['"Space Grotesk"', 'sans-serif'],
+                cnhy: ['"ZCOOL QingKe HuangYou"', 'sans-serif'], // Chinese Digital Punk
             },
             boxShadow: {
                 'neo-sm': '4px 4px 0px 0px #000',
