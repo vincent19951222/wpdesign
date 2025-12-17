@@ -40,9 +40,9 @@ export const Preview: React.FC<PreviewProps> = ({
             </div>
 
             {/* Mobile Simulator */}
-            <div className="relative w-full max-w-[400px] h-[85vh] border-8 border-neo-ink bg-white shadow-neo-xl overflow-hidden">
+            <div className="relative w-full md:max-w-[400px] h-full md:h-[85vh] border-0 md:border-8 border-neo-ink bg-white md:shadow-neo-xl overflow-hidden rounded-none md:rounded-3xl">
                 {/* Fake Notch */}
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-6 bg-neo-ink rounded-b-md z-20"></div>
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-6 bg-neo-ink rounded-b-md z-20 hidden md:block"></div>
 
                 <div className="w-full h-full overflow-y-auto bg-white custom-scrollbar">
                     <WeChatRenderer content={markdown} theme={theme} />
