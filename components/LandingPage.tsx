@@ -34,41 +34,41 @@ export const LandingPage: React.FC<{
         <NeoGridBackground>
             <div className="flex flex-col min-h-screen relative">
                 {/* Navbar - Yellow Stripe */}
-                <nav className="flex justify-between items-center p-6 border-b-4 border-neo-ink bg-neo-yellow z-50 relative sticky top-0">
+                <nav className="flex justify-between items-center p-4 md:p-6 border-b-4 border-neo-ink bg-neo-yellow z-50 relative sticky top-0">
                     <div className="flex items-center gap-3">
                         <div className="w-10 h-10 bg-neo-ink text-neo-yellow flex items-center justify-center font-black text-xl border-2 border-white">
                             PL
                         </div>
                         <span className="font-sans font-black text-xl uppercase tracking-wider hidden sm:block">Wp Design</span>
                     </div>
-                    <div className="flex gap-4">
+                    <div className="flex gap-2 md:gap-4">
                         <Button size="sm" className="bg-white hover:bg-neo-raspberry hover:text-white border-neo-ink text-neo-ink font-bold" onClick={onOpenExtractor}>
-                            <Wand2 size={16} className="mr-2" /> EXTRACT
+                            <Wand2 size={16} className="mr-0 md:mr-2" /> <span className="hidden md:inline">EXTRACT</span>
                         </Button>
                         <Button size="sm" variant="ghost" className="hover:bg-neo-ink hover:text-white" onClick={onOpenDocs}>
                             DOCS
                         </Button>
-                        <Button size="sm" variant="ghost" className="hover:bg-neo-ink hover:text-white" onClick={() => window.open('https://github.com', '_blank')}>
+                        <Button size="sm" variant="ghost" className="hover:bg-neo-ink hover:text-white hidden sm:flex" onClick={() => window.open('https://github.com', '_blank')}>
                             GITHUB
                         </Button>
                     </div>
                 </nav>
 
                 {/* Hero Section */}
-                <header className="relative pt-20 pb-12 px-4 text-center overflow-hidden bg-neo-bg">
+                <header className="relative pt-12 md:pt-20 pb-8 md:pb-12 px-4 text-center overflow-hidden bg-neo-bg">
                     <StickersPack />
 
                     {/* Announcement Badge */}
-                    <div className="mb-8 inline-block animate-bounce-slow">
-                        <div className="bg-neo-raspberry text-white px-6 py-2 border-4 border-neo-ink shadow-neo-sm font-bold font-mono text-sm uppercase transform -rotate-2">
+                    <div className="mb-6 md:mb-8 inline-block animate-bounce-slow">
+                        <div className="bg-neo-raspberry text-white px-4 md:px-6 py-2 border-4 border-neo-ink shadow-neo-sm font-bold font-mono text-xs md:text-sm uppercase transform -rotate-2">
                             ★ The Way Your Team Works ★
                         </div>
                     </div>
 
-                    <h1 className="text-7xl md:text-9xl font-black uppercase text-neo-ink mb-6 relative z-10 font-sans leading-[0.9]">
-                        <span className="text-white relative inline-block px-4 font-cnhy tracking-widest" style={{ WebkitTextStroke: '4px black', textShadow: '8px 8px 0px #000' }}>微信公众号</span>
+                    <h1 className="text-5xl md:text-9xl font-black uppercase text-neo-ink mb-6 relative z-10 font-sans leading-[0.9]">
+                        <span className="text-white relative inline-block px-2 md:px-4 font-cnhy tracking-widest" style={{ WebkitTextStroke: '4px black', textShadow: '4px 4px 0px #000' }}>微信公众号</span>
                         <br />
-                        <span className="bg-neo-yellow px-4 border-4 border-neo-ink inline-block transform rotate-1 mt-2 font-cnhy">排版</span>
+                        <span className="bg-neo-yellow px-2 md:px-4 border-4 border-neo-ink inline-block transform rotate-1 mt-2 font-cnhy">排版</span>
                     </h1>
 
                     <p className="font-mono text-lg md:text-xl font-bold bg-white inline-block px-6 py-3 border-4 border-neo-ink shadow-neo-sm -rotate-1 mt-8 max-w-2xl leading-normal">
