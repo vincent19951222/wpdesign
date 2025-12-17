@@ -5,6 +5,7 @@ import { InfiniteMarquee, StickersPack, NeoGridBackground } from './NeoEffects';
 import ThemeGallery from './ThemeGallery';
 import type { ITheme } from '../types/ITheme';
 import type { Template } from '../types';
+import TypewriterLogo from './Logo';
 
 interface LandingPageProps {
     templates: (Template & { theme: ITheme })[];
@@ -36,9 +37,7 @@ export const LandingPage: React.FC<{
                 {/* Navbar - Yellow Stripe */}
                 <nav className="flex justify-between items-center p-4 md:p-6 border-b-4 border-neo-ink bg-neo-yellow z-50 relative sticky top-0">
                     <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-neo-ink text-neo-yellow flex items-center justify-center font-black text-xl border-2 border-white">
-                            PL
-                        </div>
+                        <TypewriterLogo size={44} />
                         <span className="font-sans font-black text-xl uppercase tracking-wider hidden sm:block">Wp Design</span>
                     </div>
                     <div className="flex gap-2 md:gap-4">
@@ -61,7 +60,7 @@ export const LandingPage: React.FC<{
                     {/* Announcement Badge */}
                     <div className="mb-6 md:mb-8 inline-block animate-bounce-slow">
                         <div className="bg-neo-raspberry text-white px-4 md:px-6 py-2 border-4 border-neo-ink shadow-neo-sm font-bold font-mono text-xs md:text-sm uppercase transform -rotate-2">
-                            ★ The Way Your Team Works ★
+                            ★ The Way You Design Your Articles ★
                         </div>
                     </div>
 
@@ -72,7 +71,7 @@ export const LandingPage: React.FC<{
                     </h1>
 
                     <p className="font-mono text-lg md:text-xl font-bold bg-white inline-block px-6 py-3 border-4 border-neo-ink shadow-neo-sm -rotate-1 mt-8 max-w-2xl leading-normal">
-                        Make your WeChat articles <span className="text-neo-raspberry font-black bg-neo-yellow px-2">POP</span> with raw aesthetics and high contrast themes.
+                        Make your WeChat articles <span className="text-neo-raspberry font-black bg-neo-yellow px-2">POP</span> with raw aesthetics and <span className="text-neo-raspberry font-black bg-neo-yellow px-2">NIUBI</span> themes.
                     </p>
                 </header>
 
