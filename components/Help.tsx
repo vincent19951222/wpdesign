@@ -343,9 +343,6 @@ function hello() {
 
 ---
 
-<p align="center">
-  <strong>Wp Design</strong> - 让公众号排版更简单
-</p>
 `;
 
 const CopyButton = ({ text }: { text: string }) => {
@@ -509,6 +506,13 @@ export const Help: React.FC<HelpProps> = ({ onBack }) => {
                             >
                                 {HELP_CONTENT}
                             </ReactMarkdown>
+
+                            {/* Manual Footer */}
+                            <div className="text-center mt-12 pb-4">
+                                <p className="text-lg text-neo-ink">
+                                    <strong className="font-black">Wp Design</strong> - 让公众号排版更简单
+                                </p>
+                            </div>
                         </div>
                     </div>
                 </main>

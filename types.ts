@@ -3,6 +3,7 @@ export interface Template {
   name: string;
   description: string;
   thumbnailColor: string;
+  thumbnailUrl?: string;
 }
 
 export interface AppState {

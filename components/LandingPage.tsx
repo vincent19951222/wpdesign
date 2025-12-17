@@ -67,7 +67,7 @@ export const LandingPage: React.FC<{
                     <h1 className="text-5xl md:text-9xl font-black uppercase text-neo-ink mb-6 relative z-10 font-sans leading-[0.9]">
                         <span className="text-white relative inline-block px-2 md:px-4 font-cnhy tracking-widest" style={{ WebkitTextStroke: '4px black', textShadow: '4px 4px 0px #000' }}>微信公众号</span>
                         <br />
-                        <span className="bg-neo-yellow px-2 md:px-4 border-4 border-neo-ink inline-block transform rotate-1 mt-2 font-cnhy">排版</span>
+                        <span className="bg-neo-yellow px-2 md:px-4 border-4 border-neo-ink inline-block transform rotate-1 mt-2 font-cnhy text-4xl md:text-8xl">排版</span>
                     </h1>
 
                     <p className="font-mono text-lg md:text-xl font-bold bg-white inline-block px-6 py-3 border-4 border-neo-ink shadow-neo-sm -rotate-1 mt-8 max-w-2xl leading-normal">

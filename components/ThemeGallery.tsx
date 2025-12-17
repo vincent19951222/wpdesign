@@ -53,10 +53,17 @@ const ThemeGallery = <T extends Template>({ templates, onSelect, currentId }: Th
                                 {/* Header / Color Block */}
                                 <div
                                     className="h-32 w-full border-b-4 border-neo-ink relative overflow-hidden shrink-0"
-                                    style={{ backgroundColor: item.thumbnailColor }}
+                                    style={{
+                                        backgroundColor: item.thumbnailColor,
+                                        backgroundImage: item.thumbnailUrl ? `url(${item.thumbnailUrl})` : undefined,
+                                        backgroundSize: 'cover',
+                                        backgroundPosition: 'center'
+                                    }}
                                 >
-                                    {/* Pattern Overlay for texture */}
-                                    <div className="absolute inset-0 opacity-20 bg-[radial-gradient(#000_2px,transparent_2px)] [background-size:16px_16px]"></div>
+                                    {/* Pattern Overlay for texture - only if no image */}
+                                    {!item.thumbnailUrl && (
+                                        <div className="absolute inset-0 opacity-20 bg-[radial-gradient(#000_2px,transparent_2px)] [background-size:16px_16px]"></div>
+                                    )}
 
                                     {/* Active Badge */}
                                     {isActive && (

@@ -11,6 +11,11 @@ import classicThemeDefault from './themes/classic-theme.json';
 import defaultThemeDefault from './themes/default-theme.json';
 import handDrawnThemeDefault from './themes/hand-drawn-theme.json';
 
+import techMinimalistThemeDefault from './themes/tech-minimalist-theme.json';
+import magazineFashionThemeDefault from './themes/magazine-fashion-theme.json';
+import neumorphismThemeDefault from './themes/neumorphism-theme.json';
+import retroNewspaperThemeDefault from './themes/retro-newspaper-theme.json';
+
 const DEFAULT_MD = `# 排版实验室 DEMO
 
 ## 1. 基础排版元素
@@ -74,20 +79,55 @@ const INITIAL_TEMPLATES: (Template & { theme: ITheme })[] = [
     name: '经典像素',
     description: '复古赛博朋克风格，灵感来自 8-bit 游戏。',
     thumbnailColor: '#FFD700',
+    thumbnailUrl: '/thumbnails/pixel-classic.png',
     theme: pixelThemeDefault as unknown as ITheme
+  },
+  {
+    id: 'tech-minimalist',
+    name: '科技极简',
+    description: '深色背景与霓虹光效，未来感十足。',
+    thumbnailColor: '#0a0a0a',
+    thumbnailUrl: '/thumbnails/tech-minimalist.png',
+    theme: techMinimalistThemeDefault as unknown as ITheme
+  },
+  {
+    id: 'magazine-fashion',
+    name: '时尚杂志',
+    description: '高端黑白金配色，大气的衬线字体排版。',
+    thumbnailColor: '#ffffff',
+    thumbnailUrl: '/thumbnails/magazine-fashion.png',
+    theme: magazineFashionThemeDefault as unknown as ITheme
+  },
+  {
+    id: 'neumorphism',
+    name: '新拟态',
+    description: '柔和的阴影与圆角设计，极具质感的 Soft UI 风格。',
+    thumbnailColor: '#e0e5ec',
+    thumbnailUrl: '/thumbnails/neumorphism.png',
+    theme: neumorphismThemeDefault as unknown as ITheme
+  },
+  {
+    id: 'retro-newspaper',
+    name: '复古报纸',
+    description: '泛黄的旧报纸风格，Typewriter 字体与衬线体。',
+    thumbnailColor: '#f4f1ea',
+    thumbnailUrl: '/thumbnails/retro-newspaper.png',
+    theme: retroNewspaperThemeDefault as unknown as ITheme
   },
   {
     id: 'classic-theme',
     name: '商务经典',
     description: '简洁专业的风格，适合正式文档和通讯。',
     thumbnailColor: '#0056b3',
+    thumbnailUrl: '/thumbnails/classic-theme.png',
     theme: classicThemeDefault as unknown as ITheme
   },
   {
     id: 'default-theme',
     name: '极简默认',
     description: '干净简约的默认主题，适合微信文章。',
-    thumbnailColor: '#ffffff',
+    thumbnailColor: '#f2f2f2',
+    thumbnailUrl: '/thumbnails/default-theme.png',
     theme: defaultThemeDefault as unknown as ITheme
   },
   {
@@ -95,6 +135,7 @@ const INITIAL_TEMPLATES: (Template & { theme: ITheme })[] = [
     name: '手绘风格',
     description: '俏皮的手绘风格，带有漫画字体和虚线边框。',
     thumbnailColor: '#ffb347',
+    thumbnailUrl: '/thumbnails/hand-drawn.png',
     theme: handDrawnThemeDefault as unknown as ITheme
   }
 ];
@@ -110,11 +151,18 @@ const App: React.FC = () => {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      // Duplicating templates to demonstrate pagination
+      // Ensure we have exactly 8 presets for the grid
+      const targetCount = 8;
+      const currentCount = INITIAL_TEMPLATES.length;
+      const needed = Math.max(0, targetCount - currentCount);
+
       const demoTemplates = [
         ...INITIAL_TEMPLATES,
-        ...INITIAL_TEMPLATES.map(t => ({ ...t, id: t.id + '_2', name: t.name + ' II' })),
-        ...INITIAL_TEMPLATES.map(t => ({ ...t, id: t.id + '_3', name: t.name + ' III' }))
+        ...INITIAL_TEMPLATES.slice(0, needed).map(t => ({
+          ...t,
+          id: t.id + '_copy',
+          name: t.name + ' 2.0'
+        }))
       ];
       setTemplates(demoTemplates);
       setIsLoading(false);

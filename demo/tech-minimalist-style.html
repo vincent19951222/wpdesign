@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tech Minimalist Style</title>
+    <style>
+        /* 
+Style Description:
+Tech Minimalist style, dark background (#0a0a0a), neon accents (cyan, purple),
+thin borders, monospace font, glowing effects
+*/
+
+        /* Base */
+        body {
+            background-color: #0a0a0a;
+            color: #e0e0e0;
+            font-family: 'Courier New', Courier, monospace;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+        }
+
+        /* Heading System */
+        section {
+            background: #0a0a0a;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 24px;
+            font-weight: bold;
+            color: #00ffff;
+            text-shadow: 0 0 5px rgba(0, 255, 255, 0.5);
+            border-bottom: 1px solid #00ffff;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* Subtitle for H1 */
+        .h1-subtitle {
+            font-size: 14px;
+            color: #b0b0b0;
+            margin-top: -15px;
+            margin-bottom: 30px;
+            display: block;
+            font-weight: normal;
+        }
+
+        h2 {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 20px;
+            font-weight: bold;
+            color: #d8b4fe;
+            border-left: 2px solid #d8b4fe;
+            padding-left: 10px;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+        }
+
+        h3 {
+            display: inline-flex;
+            align-items: center;
+            font-size: 18px;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            color: #e0e0e0;
+        }
+
+        /* Badge for H3 */
+        .h3-badge {
+            background-color: rgba(0, 255, 255, 0.1);
+            color: #00ffff;
+            border: 1px solid #00ffff;
+            font-size: 12px;
+            padding: 2px 8px;
+            margin-right: 10px;
+            border-radius: 2px;
+        }
+
+        h4 {
+            font-size: 16px;
+            color: #ffffff;
+            background: linear-gradient(90deg, rgba(216, 180, 254, 0.1) 0%, transparent 100%);
+            padding: 5px 10px;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            border-left: 2px solid #d8b4fe;
+        }
+
+        h5 {
+            font-size: 14px;
+            font-weight: bold;
+            color: #b0b0b0;
+            margin-top: 15px;
+            margin-bottom: 5px;
+            text-decoration: underline;
+            text-decoration-color: #555;
+            text-underline-offset: 4px;
+        }
+
+        /* Typography */
+        p {
+            margin-bottom: 20px;
+            text-align: justify;
+            color: #cccccc;
+        }
+
+        strong {
+            color: #00ffff;
+            font-weight: bold;
+            background: rgba(0, 255, 255, 0.1);
+            padding: 0 4px;
+        }
+
+        em {
+            font-style: italic;
+            color: #d8b4fe;
+        }
+
+        code {
+            font-family: 'Menlo', 'Monaco', monospace;
+            background-color: #1a1a1a;
+            color: #00ff00;
+            padding: 2px 6px;
+            border-radius: 2px;
+            border: 1px solid #333;
+            font-size: 0.9em;
+        }
+
+        a {
+            color: #d8b4fe;
+            text-decoration: none;
+            border-bottom: 1px dashed #d8b4fe;
+            transition: all 0.3s ease;
+        }
+
+        /* Blocks */
+        blockquote {
+            margin: 20px 0;
+            padding: 0;
+            background-color: #111;
+            border: 1px solid #333;
+            position: relative;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .blockquote-badge {
+            display: inline-block;
+            background-color: #333;
+            color: #fff;
+            font-size: 12px;
+            padding: 4px 8px;
+            font-weight: bold;
+            text-transform: uppercase;
+            border-bottom: 1px solid #333;
+            border-right: 1px solid #333;
+        }
+
+        .blockquote-content {
+            padding: 15px;
+            font-style: italic;
+            color: #bbb;
+        }
+
+        /* Lists */
+        ul {
+            list-style: none;
+            padding: 0;
+            margin-bottom: 20px;
+        }
+
+        ul li {
+            position: relative;
+            padding-left: 20px;
+            margin-bottom: 10px;
+        }
+
+        ul li::before {
+            content: '>';
+            position: absolute;
+            left: 0;
+            color: #00ffff;
+            font-weight: bold;
+        }
+
+        ol {
+            list-style: none;
+            padding: 0;
+            margin-bottom: 20px;
+            counter-reset: tech-counter;
+        }
+
+        ol li {
+            position: relative;
+            padding-left: 30px;
+            margin-bottom: 10px;
+        }
+
+        ol li::before {
+            counter-increment: tech-counter;
+            content: counter(tech-counter, decimal-leading-zero);
+            position: absolute;
+            left: 0;
+            color: #d8b4fe;
+            font-size: 12px;
+            font-weight: bold;
+            border: 1px solid #d8b4fe;
+            padding: 0 2px;
+            line-height: normal;
+        }
+
+        /* Code Block */
+        pre {
+            background-color: #0f0f0f;
+            border: 1px solid #333;
+            border-radius: 4px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+
+        .pre-header {
+            background-color: #1a1a1a;
+            padding: 8px 12px;
+            border-bottom: 1px solid #333;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .pre-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: #555;
+        }
+
+        .pre-dot:nth-child(1) {
+            background-color: #ff5f56;
+        }
+
+        .pre-dot:nth-child(2) {
+            background-color: #ffbd2e;
+        }
+
+        .pre-dot:nth-child(3) {
+            background-color: #27c93f;
+        }
+
+        .pre-body {
+            padding: 15px;
+            overflow-x: auto;
+            color: #e0e0e0;
+            font-family: 'Menlo', 'Monaco', monospace;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        /* Table */
+        .table-container {
+            overflow-x: auto;
+            margin: 20px 0;
+            border: 1px solid #333;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #0a0a0a;
+        }
+
+        th {
+            background-color: #1a1a1a;
+            color: #00ffff;
+            font-weight: bold;
+            text-transform: uppercase;
+            padding: 12px;
+            border-bottom: 1px solid #333;
+            text-align: left;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #222;
+            color: #ccc;
+        }
+
+        /* Divider */
+        hr {
+            border: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #333, transparent);
+            margin: 40px 0;
+            position: relative;
+        }
+
+        hr::after {
+            content: '[ ///// ]';
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #0a0a0a;
+            padding: 0 10px;
+            color: #333;
+            font-size: 12px;
+            letter-spacing: 2px;
+        }
+
+        /* Footer */
+        footer {
+            margin-top: 60px;
+            padding-top: 40px;
+            border-top: 1px solid #333;
+            text-align: center;
+        }
+
+        .footer-icon {
+            font-size: 24px;
+            color: #00ffff;
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+        }
+
+        .footer-text {
+            font-size: 12px;
+            color: #777;
+            letter-spacing: 1px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <section>
+        <h1>The Future of AI</h1>
+        <span class="h1-subtitle">Exploring the boundaries of technology and minimalist design</span>
+
+        <p>Welcome to the <strong>Tech Minimalist</strong> theme. This design focuses on clarity, contrast, and a
+            futuristic aesthetic. It's built for content that needs to feel <em>cutting-edge</em> and precise.</p>
+
+        <h2>01. Core Concepts</h2>
+
+        <p>In this section, we explore the fundamental building blocks of our new digital reality. The system is
+            designed to be efficient and scalable.</p>
+
+        <h3><span class="h3-badge">KEY</span>Modular Architecture</h3>
+
+        <p>Everything is a component. Isolation is key to stability.</p>
+
+        <blockquote>
+            <span class="blockquote-badge">NOTE</span>
+            <div class="blockquote-content">
+                System integrity must be maintained at all costs. Do not bypass security protocols.
+            </div>
+        </blockquote>
+
+        <h4>System Requirements</h4>
+        <ul>
+            <li>Quantum Processor Unit (QPU)</li>
+            <li>Neural Link Interface</li>
+            <li>Zero-latency Network</li>
+        </ul>
+
+        <h4>Initialization Sequence</h4>
+        <ol>
+            <li>Boot kernel</li>
+            <li>Load drivers</li>
+            <li>Establish uplink</li>
+        </ol>
+
+        <h2>02. Data Structures</h2>
+
+        <pre>
+        <div class="pre-header">
+            <div class="pre-dot"></div>
+            <div class="pre-dot"></div>
+            <div class="pre-dot"></div>
+        </div>
+        <div class="pre-body">
+const initSystem = async () => {
+    console.log('System initializing...');
+    await connectToMatrix();
+    return true;
+}
+        </div>
+    </pre>
+
+        <h5>Performance Metrics</h5>
+        <p>The following table illustrates the performance gains over previous generations.</p>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Module</th>
+                        <th>Status</th>
+                        <th>Latency</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Core</td>
+                        <td><span style="color:#00ff00">ONLINE</span></td>
+                        <td>1ms</td>
+                    </tr>
+                    <tr>
+                        <td>Visual</td>
+                        <td><span style="color:#ffbd2e">LOADING</span></td>
+                        <td>24ms</td>
+                    </tr>
+                    <tr>
+                        <td>Audio</td>
+                        <td><span style="color:#ff5f56">ERROR</span></td>
+                        <td>--</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <p>For more documentation, visit the <a href="#">Neural Network Hub</a>.</p>
+
+        <hr>
+
+        <footer>
+            <div class="footer-icon">❖</div>
+            <div class="footer-text">DESIGNED BY ANTIGRAVITY</div>
+        </footer>
+    </section>
+
+</body>
+
+</html>

@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Magazine Fashion Style</title>
+    <style>
+        /* 
+Style Description:
+High-end fashion magazine style, Black/White/Gold color scheme,
+Bold sans-serif large headings, ample whitespace, golden decorative lines, geometric accents.
+*/
+
+        /* Base */
+        body {
+            background-color: #ffffff;
+            color: #000000;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            line-height: 1.8;
+            margin: 0;
+            padding: 40px;
+        }
+
+        /* Heading System */
+        section {
+            background: #ffffff;
+            padding: 40px;
+            box-sizing: border-box;
+            max-width: 680px;
+            margin: 0 auto;
+            border: 1px solid #f0f0f0;
+        }
+
+        h1 {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 36px;
+            font-weight: 900;
+            color: #000000;
+            text-transform: uppercase;
+            text-align: center;
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+            position: relative;
+            padding-bottom: 20px;
+        }
+
+        h1::after {
+            content: '';
+            display: block;
+            width: 60px;
+            height: 4px;
+            background-color: #D4AF37;
+            /* Gold */
+            margin: 20px auto 0;
+        }
+
+        h1 .h1-subtitle {
+            display: block;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            font-size: 12px;
+            font-weight: bold;
+            color: #999;
+            letter-spacing: 4px;
+            margin-top: 10px;
+            text-transform: uppercase;
+        }
+
+        h2 {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            font-size: 24px;
+            font-weight: 900;
+            color: #000000;
+            text-transform: uppercase;
+            border-bottom: 2px solid #000;
+            padding-bottom: 10px;
+            margin-top: 50px;
+            margin-bottom: 30px;
+            letter-spacing: 1px;
+        }
+
+        h3 {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 20px;
+            font-weight: bold;
+            color: #000000;
+            font-style: italic;
+            margin-top: 30px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+        }
+
+        .h3-badge {
+            background-color: #000;
+            color: #fff;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            font-size: 10px;
+            font-weight: bold;
+            text-transform: uppercase;
+            padding: 4px 8px;
+            margin-right: 15px;
+            letter-spacing: 1px;
+            font-style: normal;
+        }
+
+        h4 {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            font-size: 16px;
+            font-weight: bold;
+            color: #D4AF37;
+            /* Gold */
+            text-transform: uppercase;
+            margin-top: 25px;
+            margin-bottom: 15px;
+            letter-spacing: 1px;
+            position: relative;
+            padding-left: 20px;
+        }
+
+        h4::before {
+            content: '■';
+            position: absolute;
+            left: 0;
+            color: #000;
+            font-size: 10px;
+            top: 3px;
+        }
+
+        h5 {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            font-size: 14px;
+            font-weight: bold;
+            color: #666;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+        }
+
+        /* Typography */
+        p {
+            font-family: 'Georgia', serif;
+            font-size: 17px;
+            color: #333;
+            margin-bottom: 25px;
+            text-align: justify;
+        }
+
+        strong {
+            font-weight: bold;
+            color: #000;
+            background: linear-gradient(120deg, transparent 60%, rgba(212, 175, 55, 0.3) 60%);
+            padding: 0 4px;
+        }
+
+        em {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-style: italic;
+            color: #D4AF37;
+            font-size: 1.1em;
+        }
+
+        code {
+            font-family: Consolas, monospace;
+            background-color: #f5f5f5;
+            color: #000;
+            padding: 2px 6px;
+            border: 1px solid #ddd;
+            font-size: 14px;
+        }
+
+        a {
+            color: #000;
+            text-decoration: none;
+            border-bottom: 1px solid #D4AF37;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+
+        /* Blocks */
+        blockquote {
+            border-left: 4px solid #D4AF37;
+            background-color: #fffcf5;
+            margin: 30px 0;
+            padding: 0;
+            box-shadow: 10px 10px 0 #f0f0f0;
+        }
+
+        .blockquote-badge {
+            display: inline-block;
+            background-color: #D4AF37;
+            color: #fff;
+            padding: 5px 15px;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        }
+
+        .blockquote-content {
+            padding: 20px 20px 20px 30px;
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 18px;
+            font-style: italic;
+            color: #000;
+            line-height: 1.6;
+        }
+
+        /* Lists */
+        ul {
+            list-style: none;
+            padding: 0;
+            margin-bottom: 30px;
+        }
+
+        ul li {
+            position: relative;
+            padding-left: 25px;
+            margin-bottom: 15px;
+            font-family: 'Georgia', serif;
+            color: #333;
+        }
+
+        ul li::before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: #D4AF37;
+            font-size: 24px;
+            line-height: 20px;
+        }
+
+        ol {
+            list-style: none;
+            padding: 0;
+            margin-bottom: 30px;
+            counter-reset: fashion-counter;
+        }
+
+        ol li {
+            position: relative;
+            padding-left: 40px;
+            margin-bottom: 15px;
+            font-family: 'Georgia', serif;
+            color: #333;
+        }
+
+        ol li::before {
+            counter-increment: fashion-counter;
+            content: counter(fashion-counter);
+            position: absolute;
+            left: 0;
+            top: 2px;
+            width: 24px;
+            height: 24px;
+            background-color: #000;
+            color: #fff;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 24px;
+            font-size: 12px;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            font-weight: bold;
+        }
+
+        /* Code Block */
+        pre {
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            margin: 30px 0;
+            position: relative;
+        }
+
+        .pre-header {
+            background-color: #fff;
+            padding: 10px 20px;
+            border-bottom: 1px solid #ddd;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .pre-lang {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            font-size: 12px;
+            font-weight: bold;
+            color: #999;
+            text-transform: uppercase;
+        }
+
+        .pre-body {
+            padding: 20px;
+            overflow-x: auto;
+            font-family: Consolas, monospace;
+            font-size: 13px;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        /* Table */
+        .table-container {
+            margin: 30px 0;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        }
+
+        th {
+            background-color: #000;
+            color: #fff;
+            font-weight: bold;
+            text-transform: uppercase;
+            padding: 15px;
+            text-align: center;
+            font-size: 12px;
+            letter-spacing: 1px;
+        }
+
+        td {
+            border-bottom: 1px solid #ddd;
+            padding: 15px;
+            color: #333;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        tr:last-child td {
+            border-bottom: 2px solid #000;
+        }
+
+        /* Divider */
+        hr {
+            border: 0;
+            height: 1px;
+            background: #000;
+            margin: 60px 0;
+            position: relative;
+            overflow: visible;
+        }
+
+        hr::before {
+            content: '◇';
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #fff;
+            padding: 0 15px;
+            color: #D4AF37;
+            font-size: 18px;
+        }
+
+        /* Footer */
+        footer {
+            margin-top: 80px;
+            padding-top: 30px;
+            text-align: center;
+            border-top: 4px solid #D4AF37;
+        }
+
+        .footer-icon {
+            font-size: 30px;
+            color: #000;
+            margin-bottom: 15px;
+        }
+
+        .footer-text {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-style: italic;
+            font-size: 14px;
+            color: #666;
+        }
+    </style>
+</head>
+
+<body>
+
+    <section>
+
+        <h1>
+            VOGUE STYLE
+            <span class="h1-subtitle">The Collection Autumn / Winter 2025</span>
+        </h1>
+
+        <p>Welcome to the <strong>Magazine Fashion</strong> theme. This layout is inspired by high-end editorial design,
+            focusing on <em>elegance</em>, readability, and a sophisticated color palette of black, white, and gold.</p>
+
+        <h2>01. The Concept</h2>
+
+        <p>In the world of fashion, less is often more. This theme utilizes ample whitespace to let the content breathe,
+            creating a luxurious reading experience.</p>
+
+        <h3><span class="h3-badge">TREND</span>Minimalist Luxury</h3>
+
+        <p>Using serif fonts for headings adds a touch of classic style, while sans-serif body text ensures modern
+            readability.</p>
+
+        <blockquote>
+            <span class="blockquote-badge">INSIGHT</span>
+            <div class="blockquote-content">
+                "Fashion is not something that exists in dresses only. Fashion is in the sky, in the street, fashion has
+                to do with ideas, the way we live, what is happening."
+            </div>
+        </blockquote>
+
+        <h4>Key Elements</h4>
+        <ul>
+            <li>Bold typographic hierarchy</li>
+            <li>Geometric accents and dividers</li>
+            <li>High contrast color scheme</li>
+        </ul>
+
+        <h4>Steps to Chic</h4>
+        <ol>
+            <li>Choose a bold headline</li>
+            <li>Use high-quality images</li>
+            <li>Keep the layout clean</li>
+        </ol>
+
+        <h2>02. Specifications</h2>
+
+        <pre>
+        <div class="pre-header">
+            <span class="pre-lang">CSS</span>
+        </div>
+        <div class="pre-body">
+.elegance {
+    display: flex;
+    justify-content: perfection;
+    color: #D4AF37; /* Gold */
+}
+        </div>
+    </pre>
+
+        <h5>Fabric Details</h5>
+        <p>A comparison of materials used in this season's collection.</p>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Material</th>
+                        <th>Texture</th>
+                        <th>Grade</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Silk</td>
+                        <td>Smooth</td>
+                        <td>AAA</td>
+                    </tr>
+                    <tr>
+                        <td>Velvet</td>
+                        <td>Soft</td>
+                        <td>Premium</td>
+                    </tr>
+                    <tr>
+                        <td>Leather</td>
+                        <td>Grain</td>
+                        <td>Italian</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <p>Review the full catalog at <a href="#">The Fashion Hub</a>.</p>
+
+        <hr>
+
+        <footer>
+            <div class="footer-icon">❖</div>
+            <div class="footer-text">Curated by Antigravity Digital</div>
+        </footer>
+    </section>
+
+</body>
+
+</html>
