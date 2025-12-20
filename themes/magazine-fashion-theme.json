@@ -237,7 +237,7 @@
         "lineHeight": "1.6",
         "whiteSpace": "pre"
     },
-    "tableContainer": {
+    "tableContainer": { "display": "block", "boxSizing": "border-box",
         "margin": "30px 0",
         "overflowX": "auto"
     },

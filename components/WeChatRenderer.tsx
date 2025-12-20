@@ -52,7 +52,7 @@ const WeChatRenderer: React.FC<Props> = ({ content, theme }) => {
             ),
             h3: ({ node, ...props }) => (
               <section style={styles.h3Container}>
-                <span style={styles.h3Badge}>H3</span>
+                <span style={styles.h3Badge}></span>
                 <h3 style={styles.h3} {...props} />
               </section>
             ),
@@ -153,15 +153,17 @@ const WeChatRenderer: React.FC<Props> = ({ content, theme }) => {
 
             // Handling tables for the "Data Table" look
             table: ({ node, ...props }) => (
-              <section style={styles.tableContainer || {
+              <div style={styles.tableContainer || {
                 margin: '20px 0',
                 border: '2px solid #1a1a1a',
                 overflowX: 'auto',
                 width: '100%',
+                display: 'block',
+                boxSizing: 'border-box',
                 boxShadow: '4px 4px 0 #ccc'
               }}>
                 <table style={styles.table || { width: '100%', borderCollapse: 'collapse', fontSize: '14px', textAlign: 'center', minWidth: '300px' }} {...props} />
-              </section>
+              </div>
             ),
             thead: ({ node, ...props }) => (
               <thead style={styles.thead || { backgroundColor: '#1a1a1a', color: '#00E099' }} {...props} />
@@ -170,7 +172,7 @@ const WeChatRenderer: React.FC<Props> = ({ content, theme }) => {
               const thStyle = styles.th || { padding: '10px', border: '1px solid #333', fontFamily: "'Courier New', monospace" };
               // Ensure header text is visible
               if (!thStyle.color && styles.thead?.color) {
-                 thStyle.color = styles.thead.color;
+                thStyle.color = styles.thead.color;
               }
               return <th style={thStyle} {...props} />;
             },
@@ -178,7 +180,7 @@ const WeChatRenderer: React.FC<Props> = ({ content, theme }) => {
               // Destructure style from props to prevent it from overriding our styles
               const pColor = styles.p?.color;
               const sectionBg = styles.section?.backgroundColor;
-              
+
               // Construct base style with fallbacks
               const baseStyle = {
                 color: pColor || '#333',

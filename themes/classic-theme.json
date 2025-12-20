@@ -289,7 +289,7 @@
     "borderLeft": "4px solid #0056b3",
     "lineHeight": "1.4"
   },
-  "tableContainer": {
+  "tableContainer": { "display": "block", "boxSizing": "border-box",
     "margin": "20px 0",
     "border": "1px solid #ddd",
     "overflowX": "auto",

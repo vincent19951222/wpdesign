@@ -289,7 +289,7 @@
         "margin": "5px 0",
         "letterSpacing": "1px"
     },
-    "tableContainer": {
+    "tableContainer": { "display": "block", "boxSizing": "border-box",
         "margin": "20px 0",
         "borderRadius": "15px",
         "background": "#e0e5ec",

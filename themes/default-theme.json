@@ -244,7 +244,7 @@
         "color": "#abb2bf",
         "whiteSpace": "pre"
     },
-    "tableContainer": {
+    "tableContainer": { "display": "block", "boxSizing": "border-box",
         "margin": "20px 0",
         "border": "1px solid #e1e1e1",
         "overflowX": "auto",
