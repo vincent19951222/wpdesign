@@ -169,12 +169,18 @@ const WeChatRenderer: React.FC<Props> = ({ content, theme }) => {
               <thead style={styles.thead || { backgroundColor: '#1a1a1a', color: '#00E099' }} {...props} />
             ),
             th: ({ node, ...props }) => {
-              const thStyle = styles.th || { padding: '10px', border: '1px solid #333', fontFamily: "'Courier New', monospace" };
-              // Ensure header text is visible
-              if (!thStyle.color && styles.thead?.color) {
-                thStyle.color = styles.thead.color;
-              }
-              return <th style={thStyle} {...props} />;
+              // WeChat strips styles from thead, so we must apply all styles directly to th
+              const theadStyle = styles.thead || { backgroundColor: '#1a1a1a', color: '#00E099' };
+              const baseThStyle = styles.th || { padding: '10px', border: '1px solid #333', fontFamily: "'Courier New', monospace" };
+
+              const finalThStyle = {
+                ...baseThStyle,
+                backgroundColor: theadStyle.backgroundColor || '#1a1a1a',
+                color: baseThStyle.color || theadStyle.color || '#00E099',
+                textAlign: 'center' as const,
+              };
+
+              return <th style={finalThStyle} {...props} />;
             },
             td: ({ node, style, ...props }) => {
               // Destructure style from props to prevent it from overriding our styles
