@@ -37,6 +37,7 @@ export interface ITheme {
   strong: CSSProperties;
   em?: CSSProperties;
   code: CSSProperties;
+  img?: CSSProperties;
   a: CSSProperties;
   blockquote: CSSProperties;
   blockquoteBadge: CSSProperties;

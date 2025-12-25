@@ -62,6 +62,18 @@ const WeChatRenderer: React.FC<Props> = ({ content, theme }) => {
             h5: ({ node, ...props }) => (
               <h5 style={styles.h5 || { ...styles.h4, borderLeftColor: '#00E099' }} {...props} />
             ),
+            img: ({ node, ...props }) => (
+              <img
+                style={{
+                  maxWidth: '100%',
+                  height: 'auto',
+                  display: 'block',
+                  margin: '16px auto',
+                  ...styles.img
+                }}
+                {...props}
+              />
+            ),
             p: ({ node, ...props }) => <p style={styles.p} {...props} />,
             strong: ({ node, ...props }) => <strong style={styles.strong} {...props} />,
             em: ({ node, ...props }) => <em style={styles.em || { fontStyle: 'italic', color: '#888' }} {...props} />,

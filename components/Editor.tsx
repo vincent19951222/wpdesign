@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { ChevronLeft, Palette, Upload, ArrowRight } from 'lucide-react';
 import { Button } from './ui/button';
 import { Card } from './ui/card';
@@ -13,6 +13,16 @@ interface EditorProps {
     onFileUpload: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
+// 将 Blob 转换为 base64 字符串
+const blobToBase64 = (blob: Blob): Promise<string> => {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result as string);
+        reader.onerror = reject;
+        reader.readAsDataURL(blob);
+    });
+};
+
 export const Editor: React.FC<EditorProps> = ({
     markdown,
     setMarkdown,
@@ -21,6 +31,40 @@ export const Editor: React.FC<EditorProps> = ({
     onThemeUpload,
     onFileUpload
 }) => {
+    const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+    // 处理粘贴事件，支持图片粘贴
+    const handlePaste = async (e: React.ClipboardEvent<HTMLTextAreaElement>) => {
+        const items = e.clipboardData.items;
+
+        for (const item of Array.from(items)) {
+            if (item.type.startsWith('image/')) {
+                e.preventDefault();
+                const blob = item.getAsFile();
+                if (blob) {
+                    try {
+                        const base64 = await blobToBase64(blob);
+                        const textarea = textareaRef.current;
+                        if (textarea) {
+                            const start = textarea.selectionStart;
+                            const end = textarea.selectionEnd;
+                            const imageMarkdown = `![image](${base64})`;
+                            const newMarkdown = markdown.slice(0, start) + imageMarkdown + markdown.slice(end);
+                            setMarkdown(newMarkdown);
+                            // 将光标移动到插入内容之后
+                            setTimeout(() => {
+                                textarea.selectionStart = textarea.selectionEnd = start + imageMarkdown.length;
+                                textarea.focus();
+                            }, 0);
+                        }
+                    } catch (err) {
+                        console.error('图片粘贴失败:', err);
+                    }
+                }
+                break;
+            }
+        }
+    };
     return (
         <div className="h-[calc(100dvh-140px)] flex flex-col bg-neo-cream p-4 md:p-6 min-h-screen">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 md:mb-6 gap-4 md:gap-0">
@@ -55,9 +99,11 @@ export const Editor: React.FC<EditorProps> = ({
                     MARKDOWN INPUT
                 </div>
                 <textarea
+                    ref={textareaRef}
                     className="w-full h-full bg-white text-neo-ink font-mono resize-none focus:outline-none p-4 md:p-8 pt-10 text-base md:text-lg"
                     value={markdown}
                     onChange={(e) => setMarkdown(e.target.value)}
+                    onPaste={handlePaste}
                     spellCheck={false}
                     placeholder="# START TYPING..."
                 />
