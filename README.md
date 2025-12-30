@@ -1,6 +1,6 @@
 <div align="center">
-  <img width="1200" height="400" alt="Pixel Lab Banner" src="docs/assets/banner.png" />
-  <h1>Pixel Lab - WeChat Formatter</h1>
+  <img width="1200" height="400" alt="Wpdesign Banner" src="docs/assets/banner.png" />
+  <h1>Wpdesign - WeChat Formatter</h1>
   <p><strong>一款由 AI 驱动的微信公众号 Markdown 格式化排版神器</strong></p>
   <p>
     <img src="https://img.shields.io/badge/React-19-blue.svg" alt="React 19" />
@@ -14,7 +14,7 @@
 
 ## 🌟 项目简介
 
-**Pixel Lab** 是一款专为微信公众号创作者打造的 Markdown 编辑器。它不仅能将 Markdown 转换为符合微信公众号渲染规则的 HTML（包含安全的内联样式），还引入了创新的 **AI 主题提取** 功能。
+**Wpdesign** 是一款专为微信公众号创作者打造的 Markdown 编辑器。它不仅能将 Markdown 转换为符合微信公众号渲染规则的 HTML（包含安全的内联样式），还引入了创新的 **AI 主题提取** 功能。
 
 你可以从任何精美的网页中“克隆”其视觉风格，让 AI 自动分析、提取并生成一套完整的微信排版主题。
 
@@ -33,16 +33,16 @@
 ## 📸 界面预览
 
 ### 1. 编辑与预览主界面
-> 这里需要一张展示左侧编辑器和右侧实时预览（手机模型）的完整截图。
-![Editor Interface](docs/assets/screenshots/main-editor.png)
+![alt text](docs/assets/image.png)
 
 ### 2. AI 主题提取工作流
 > 这里需要一张展示用户上传 HTML 并由 AI 提取、生成样式的动画或截图。
-![AI Theme Extraction](docs/assets/screenshots/ai-extraction.png)
+![AI Theme Extraction](docs/assets/extract.png)
 
 ### 3. 多端预览模式
 > 这里展示手机视角与 PC 视角切换的效果。
-![Multi-view Preview](docs/assets/screenshots/preview-modes.png)
+![Multi-view Preview](docs/assets/preview.png)
+
 
 ---
 
@@ -106,6 +106,6 @@ npm run dev
 ---
 
 <div align="center">
-  <p>Made with ❤️ by Pixel Lab Team</p>
+  <p>Made with ❤️ by Limiantiao</p>
 </div>
 
