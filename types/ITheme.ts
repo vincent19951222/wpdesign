@@ -1,5 +1,7 @@
 import { CSSProperties } from 'react';
 
+export type RenderMode = 'design-preview' | 'wechat-safe';
+
 export interface ITheme {
   meta?: {
     headerType: 'pixel' | 'classic' | 'none';
@@ -68,4 +70,3 @@ export interface ITheme {
   footerIcon: CSSProperties;
   footerText?: CSSProperties;
 }
-

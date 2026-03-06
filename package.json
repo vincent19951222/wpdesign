@@ -6,7 +6,9 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "wechat:check": "node scripts/check-wechat-browser.mjs",
+    "wechat:browser": "node scripts/post-to-wechat-browser.mjs"
   },
   "dependencies": {
     "class-variance-authority": "^0.7.1",
@@ -24,6 +26,7 @@
     "@types/node": "^22.14.0",
     "@vitejs/plugin-react": "^5.0.0",
     "autoprefixer": "^10.4.23",
+    "playwright-core": "^1.58.2",
     "postcss": "^8.5.6",
     "tailwindcss": "^4.1.18",
     "tailwindcss-animate": "^1.0.7",

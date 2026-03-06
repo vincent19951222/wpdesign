@@ -5,7 +5,7 @@ import { Preview } from './components/Preview';
 import { Help } from './components/Help';
 import ThemeExtractorUI from './components/ThemeExtractorUI';
 import { Template } from './types';
-import { ITheme } from './types/ITheme';
+import { ITheme, RenderMode } from './types/ITheme';
 import pixelThemeDefault from './themes/pixel-theme.json';
 import classicThemeDefault from './themes/classic-theme.json';
 import defaultThemeDefault from './themes/default-theme.json';
@@ -15,6 +15,10 @@ import techMinimalistThemeDefault from './themes/tech-minimalist-theme.json';
 import magazineFashionThemeDefault from './themes/magazine-fashion-theme.json';
 import neumorphismThemeDefault from './themes/neumorphism-theme.json';
 import retroNewspaperThemeDefault from './themes/retro-newspaper-theme.json';
+
+const SKILL_PREVIEW_QUERY_KEY = 'skill-preview';
+const SKILL_PREVIEW_STORAGE_KEY = 'pixel-post-to-wechat:payload:v1';
+const WECHAT_NEW_ARTICLE_URL = 'https://mp.weixin.qq.com/cgi-bin/appmsg?t=media/appmsg_edit_v2&action=edit&isNew=1&type=77&createType=0&lang=zh_CN';
 
 const DEFAULT_MD = `# 排版实验室 DEMO
 
@@ -140,14 +144,85 @@ const INITIAL_TEMPLATES: (Template & { theme: ITheme })[] = [
   }
 ];
 
+interface SkillPreviewBootstrap {
+  enabled: boolean;
+  payloadUrl: string;
+  markdown: string;
+  title: string;
+  theme?: ITheme;
+  renderMode: RenderMode;
+}
+
+function isRenderMode(value: string | null | undefined): value is RenderMode {
+  return value === 'design-preview' || value === 'wechat-safe';
+}
+
+function readSkillPreviewBootstrap(): SkillPreviewBootstrap {
+  if (typeof window === 'undefined') {
+    return { enabled: false, payloadUrl: '', markdown: '', title: '', renderMode: 'design-preview' };
+  }
+
+  const url = new URL(window.location.href);
+  if (url.searchParams.get(SKILL_PREVIEW_QUERY_KEY) !== '1') {
+    return { enabled: false, payloadUrl: '', markdown: '', title: '', renderMode: 'design-preview' };
+  }
+
+  let markdown = '';
+  let title = '';
+  let theme: ITheme | undefined;
+  let renderMode: RenderMode = isRenderMode(url.searchParams.get('renderMode'))
+    ? url.searchParams.get('renderMode') as RenderMode
+    : 'design-preview';
+
+  try {
+    const stored = window.localStorage.getItem(SKILL_PREVIEW_STORAGE_KEY);
+    if (stored) {
+      const payload = JSON.parse(stored) as { markdown?: string; title?: string; theme?: ITheme; renderMode?: RenderMode };
+      markdown = typeof payload.markdown === 'string' ? payload.markdown : '';
+      title = typeof payload.title === 'string' ? payload.title : '';
+      theme = payload.theme;
+      if (isRenderMode(payload.renderMode)) {
+        renderMode = payload.renderMode;
+      }
+    }
+  } catch (error) {
+    console.warn('[pixel-post] Failed to read skill preview payload from localStorage.', error);
+  }
+
+  return {
+    enabled: true,
+    payloadUrl: url.searchParams.get('payload') || '',
+    markdown,
+    title,
+    theme,
+    renderMode,
+  };
+}
+
+function deriveTitleFromMarkdown(markdown: string) {
+  const match = markdown.match(/^\s*#\s+(.+)$/m);
+  return match?.[1]?.trim() || '像素风排版草稿';
+}
+
 const App: React.FC = () => {
-  const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
-  const [markdown, setMarkdown] = useState(DEFAULT_MD);
+  const skillPreviewBootstrap = readSkillPreviewBootstrap();
+  const [step, setStep] = useState<1 | 2 | 3 | 4>(skillPreviewBootstrap.enabled ? 3 : 1);
+  const [markdown, setMarkdown] = useState(skillPreviewBootstrap.markdown || DEFAULT_MD);
   const [copied, setCopied] = useState(false);
-  const [currentTheme, setCurrentTheme] = useState<ITheme>(pixelThemeDefault as unknown as ITheme);
+  const [currentTheme, setCurrentTheme] = useState<ITheme>(skillPreviewBootstrap.theme || (pixelThemeDefault as unknown as ITheme));
+  const [renderMode, setRenderMode] = useState<RenderMode>(skillPreviewBootstrap.renderMode || 'design-preview');
   const [showExtractor, setShowExtractor] = useState(false);
   const [templates, setTemplates] = useState<(Template & { theme: ITheme })[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isPublishing, setIsPublishing] = useState(false);
+  const [skillPreviewLoading, setSkillPreviewLoading] = useState(
+    skillPreviewBootstrap.enabled && !skillPreviewBootstrap.markdown && Boolean(skillPreviewBootstrap.payloadUrl)
+  );
+  const [skillPreviewError, setSkillPreviewError] = useState(
+    skillPreviewBootstrap.enabled && !skillPreviewBootstrap.markdown && !skillPreviewBootstrap.payloadUrl
+      ? '缺少 skill 预览内容。'
+      : ''
+  );
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -169,6 +244,85 @@ const App: React.FC = () => {
     }, 1000);
     return () => clearTimeout(timer);
   }, []);
+
+  useEffect(() => {
+    if (!skillPreviewBootstrap.enabled) {
+      return;
+    }
+
+    setStep(3);
+    setCurrentTheme(skillPreviewBootstrap.theme || (pixelThemeDefault as unknown as ITheme));
+    setRenderMode(skillPreviewBootstrap.renderMode || 'design-preview');
+    setShowExtractor(false);
+
+    if (skillPreviewBootstrap.title) {
+      document.title = `${skillPreviewBootstrap.title} - Pixel Preview`;
+    }
+
+    if (skillPreviewBootstrap.markdown) {
+      return;
+    }
+
+    if (!skillPreviewBootstrap.payloadUrl) {
+      setSkillPreviewLoading(false);
+      setSkillPreviewError('缺少 skill 预览内容。');
+      return;
+    }
+
+    let cancelled = false;
+
+    fetch(skillPreviewBootstrap.payloadUrl)
+      .then(async (response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}`);
+        }
+
+        return response.json() as Promise<{ markdown?: string; title?: string; theme?: ITheme; renderMode?: RenderMode }>;
+      })
+      .then((payload) => {
+        if (cancelled) {
+          return;
+        }
+
+        if (typeof payload.markdown !== 'string' || !payload.markdown.trim()) {
+          throw new Error('Payload markdown is empty.');
+        }
+
+        setMarkdown(payload.markdown);
+        if (payload.theme) {
+          setCurrentTheme(payload.theme);
+        }
+
+        if (isRenderMode(payload.renderMode)) {
+          setRenderMode(payload.renderMode);
+        }
+
+        if (payload.title) {
+          document.title = `${payload.title} - Pixel Preview`;
+        }
+
+        window.localStorage.setItem(SKILL_PREVIEW_STORAGE_KEY, JSON.stringify({
+          markdown: payload.markdown,
+          title: payload.title || '',
+          theme: payload.theme,
+          renderMode: isRenderMode(payload.renderMode) ? payload.renderMode : renderMode,
+        }));
+
+        setSkillPreviewLoading(false);
+      })
+      .catch((error) => {
+        if (cancelled) {
+          return;
+        }
+
+        setSkillPreviewLoading(false);
+        setSkillPreviewError(error instanceof Error ? error.message : '加载 skill 预览内容失败。');
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [skillPreviewBootstrap.enabled, skillPreviewBootstrap.markdown, skillPreviewBootstrap.payloadUrl, skillPreviewBootstrap.title]);
 
   const handleThemeUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -217,11 +371,52 @@ const App: React.FC = () => {
         if (success) {
           setCopied(true);
           setTimeout(() => setCopied(false), 2000);
+
+          if (skillPreviewBootstrap.enabled) {
+            window.open(WECHAT_NEW_ARTICLE_URL, '_blank', 'noopener,noreferrer');
+          }
         }
       } catch (err) {
         alert('复制失败，请手动复制。');
       }
       selection.removeAllRanges();
+    }
+  };
+
+  const handlePublish = async () => {
+    if (isPublishing) {
+      return;
+    }
+
+    setIsPublishing(true);
+
+    try {
+      const response = await fetch('/api/wechat/browser-draft', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          markdown,
+          title: deriveTitleFromMarkdown(markdown),
+          author: currentTheme.meta?.author || 'wpdesign',
+          appUrl: `${window.location.origin}/`,
+          theme: currentTheme,
+          renderMode,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok || !result.success) {
+        throw new Error(result?.error?.message || result?.message || '一键发布失败。');
+      }
+
+      alert(`草稿已保存：${result.draft?.title || result.title}`);
+    } catch (error) {
+      alert(error instanceof Error ? error.message : '一键发布失败。');
+    } finally {
+      setIsPublishing(false);
     }
   };
 
@@ -253,13 +448,36 @@ const App: React.FC = () => {
       )}
 
       {step === 3 && (
-        <Preview
-          markdown={markdown}
-          theme={currentTheme}
-          copied={copied}
-          onBack={() => setStep(2)}
-          onCopy={handleCopy}
-        />
+        skillPreviewLoading ? (
+          <div className="min-h-screen flex items-center justify-center bg-neo-cream px-6">
+            <div className="bg-white border-4 border-neo-ink shadow-neo-lg p-8 max-w-xl w-full text-center">
+              <p className="text-sm font-bold uppercase tracking-[0.3em] text-neo-ink/50 mb-4">Skill Preview</p>
+              <h1 className="text-3xl font-black mb-3">正在加载经典像素预览</h1>
+              <p className="text-lg text-neo-ink/70">页面准备完成后，你可以直接点击复制并打开公众号新增文章页。</p>
+            </div>
+          </div>
+        ) : skillPreviewError ? (
+          <div className="min-h-screen flex items-center justify-center bg-neo-cream px-6">
+            <div className="bg-white border-4 border-neo-ink shadow-neo-lg p-8 max-w-xl w-full text-center">
+              <p className="text-sm font-bold uppercase tracking-[0.3em] text-neo-accent mb-4">Skill Preview Error</p>
+              <h1 className="text-3xl font-black mb-3">预览内容加载失败</h1>
+              <p className="text-lg text-neo-ink/70">{skillPreviewError}</p>
+            </div>
+          </div>
+        ) : (
+          <Preview
+            markdown={markdown}
+            theme={currentTheme}
+            copied={copied}
+            onBack={() => setStep(2)}
+            onCopy={handleCopy}
+            skillMode={skillPreviewBootstrap.enabled}
+            renderMode={renderMode}
+            onRenderModeChange={setRenderMode}
+            onPublish={handlePublish}
+            isPublishing={isPublishing}
+          />
+        )
       )}
 
       {step === 4 && (

@@ -21,64 +21,115 @@ Keep this managed block so 'openspec update' can refresh the instructions.
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## Project Overview
+## Project Snapshot
 
-Pixel Lab - WeChat Formatter is a React-based web application that converts Markdown content into stylized HTML specifically designed for WeChat Official Account articles. The app features a retro, pixel-art aesthetic inspired by 8-bit games and cyberpunk themes.
+`wpdesign` is a React 19 + Vite application for writing Markdown and exporting WeChat Official Account friendly HTML with inline styles. The current product scope is broader than the original pixel-only formatter:
+
+- Theme gallery with multiple built-in JSON themes
+- Markdown editor + preview flow
+- AI-based theme extraction from uploaded HTML
+- Local theme persistence in development and server-side persistence in production
+
+The main user flow in `App.tsx` is:
+
+1. Landing page / theme selection
+2. Markdown editor
+3. Preview + copy
+4. Help/docs view
 
 ## Development Commands
 
+### Frontend
+
 ```bash
-# Install dependencies
 npm install
-
-# Run development server (port 3000)
 npm run dev
-
-# Build for production
 npm run build
-
-# Preview production build
 npm run preview
+```
+
+- Vite dev server runs on `http://localhost:5173`
+- Host is bound to `0.0.0.0`
+
+### Backend Proxy (optional but required in production)
+
+```bash
+cd server
+npm install
+npm run dev
+# or
+npm start
+```
+
+- Express server defaults to `http://localhost:3001`
+- Serves `../dist`
+- Proxies `/api/moonshot/*`
+- Accepts `POST /api/save-theme`
+
+## Environment Variables
+
+The code currently reads:
+
+- `VITE_MOONSHOT_API_KEY` for the Vite dev proxy
+- `VITE_MOONSHOT_API_KEY` or `MOONSHOT_API_KEY` in `server/index.js`
+- `WECHAT_OFFICIAL_APP_ID` and `WECHAT_OFFICIAL_APP_SECRET` for WeChat draft publishing
+
+Recommended local setup:
+
+```bash
+# .env
+VITE_MOONSHOT_API_KEY=your_key_here
+MOONSHOT_API_KEY=your_key_here
 ```
 
 ## Architecture
 
-### Core Components
+### Frontend entry points
 
-- **App.tsx**: Main application component managing the 3-step workflow (theme selection → markdown editor → preview/copy)
-- **components/WeChatRenderer.tsx**: Converts Markdown to WeChat-compatible HTML with inline styles
-- **components/UI.tsx**: Reusable pixel-styled UI components (PixelButton, TemplateCard)
-- **utils/pixelStyles.ts**: Inline CSS styles for WeChat compatibility (WeChat ignores external CSS)
+- `App.tsx`: top-level state and step navigation
+- `index.tsx`: React mount
+- `index.css`: shared visual system and Tailwind-driven styling
 
-### Key Technical Decisions
+### UI surface
 
-1. **Inline Styles Only**: All WeChat output uses inline styles because WeChat's editor ignores external CSS classes and stylesheets
-2. **Copy Strategy**: Uses `document.execCommand('copy')` with manual selection fallback for reliable rich text copying to WeChat
-3. **Mobile Preview**: Simulated phone interface to preview mobile appearance
-4. **Markdown Processing**: Uses react-markdown with remark-gfm for GitHub Flavored Markdown support
+- `components/LandingPage.tsx`: theme browsing / entry flow
+- `components/Editor.tsx`: markdown authoring
+- `components/Preview.tsx`: rendered output and copy action
+- `components/ThemeExtractorUI.tsx`: AI extraction workflow
+- `components/WeChatRenderer.tsx`: markdown-to-HTML rendering using the active theme
 
-### WeChat Compatibility Requirements
+### Theme extraction pipeline
 
-- All styles must be inline (no classes or external CSS)
-- Uses specific color palette: `#FFD700` (yellow), `#00E099` (green), `#1a1a1a` (dark)
-- Font families: `"Courier New"`, monospace fonts for code blocks
-- Box shadows and borders for pixel-art aesthetic
+- `lib/htmlSanitizer.ts`: trims and normalizes uploaded HTML before sending it to AI
+- `lib/themeExtractor.ts`: extraction orchestration, prompt, skeleton HTML, parsing flow
+- `lib/kimiApi.ts`: Moonshot/Kimi API client
+- `lib/styleParser.ts`: converts AI-returned inline styles into the theme schema
+- `types/ITheme.ts`: canonical theme contract
+- `themes/*.json`: built-in and saved themes
 
-### State Management Pattern
+### Server responsibilities
 
-The app uses React useState for simple state management:
-- `step`: Current workflow step (1|2|3)
-- `markdown`: Markdown content string
-- `copied`: Copy success feedback state
+- `server/index.js`: production API proxy, theme save API, static hosting
+- `server/lib/draftPublisher.js`: WeChat draft publishing orchestration
+- `server/lib/wechatClient.js`: WeChat token / asset / draft API client
 
-### File Upload Handling
+## Working Rules For Agents
 
-File uploads are handled via FileReader API with `.md` file extension filtering. The uploaded content replaces the current markdown state.
+- Preserve the WeChat compatibility rule: generated article styles should remain inline and self-contained.
+- When changing theme extraction, keep `themeExtractor.ts`, `styleParser.ts`, and `types/ITheme.ts` in sync.
+- When changing theme save behavior, check both implementations:
+  - Vite middleware in `vite.config.ts`
+  - Express API in `server/index.js`
+- When changing WeChat draft publishing, keep the shared renderer and the server publishing pipeline aligned:
+  - `lib/renderers/`
+  - `server/lib/draftPublisher.js`
+  - `server/lib/wechatClient.js`
+- Prefer updating existing theme JSON files over inventing a parallel schema.
+- Use `docs/DEVELOPMENT.md` as the operator-facing runbook; keep this file focused on agent context.
 
-### Build Configuration
+## Known Codebase Nuances
 
-Vite configuration includes:
-- Development server on port 3000 with host binding
-- Environment variable support for `GEMINI_API_KEY`
-- Path alias `@` mapped to project root
-- React plugin for JSX transformation
+- `vite.config.ts` still contains legacy `GEMINI_API_KEY` defines even though the active AI integration is Moonshot/Kimi.
+- Development theme saving is handled by a custom Vite middleware, not the Express server.
+- `document.execCommand('copy')` is still used for rich-text copy compatibility with WeChat editor workflows.
+- WeChat draft publishing is server-only and uses a fixed classic pixel theme for the first iteration.

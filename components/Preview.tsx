@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { ChevronLeft, Check, Copy, Smartphone, Monitor, Layout, Maximize2, Minimize2 } from 'lucide-react';
+import { ChevronLeft, Check, Copy, Rocket, Smartphone, Monitor, Layout } from 'lucide-react';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
 import WeChatRenderer from './WeChatRenderer';
-import { ITheme } from '../types/ITheme';
+import { ITheme, RenderMode } from '../types/ITheme';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface PreviewProps {
@@ -12,6 +12,11 @@ interface PreviewProps {
     copied: boolean;
     onBack: () => void;
     onCopy: () => void;
+    onPublish?: () => void;
+    isPublishing?: boolean;
+    skillMode?: boolean;
+    renderMode?: RenderMode;
+    onRenderModeChange?: (mode: RenderMode) => void;
 }
 
 type ViewMode = 'mobile' | 'pc' | 'dual';
@@ -21,7 +26,12 @@ export const Preview: React.FC<PreviewProps> = ({
     theme,
     copied,
     onBack,
-    onCopy
+    onCopy,
+    onPublish,
+    isPublishing = false,
+    skillMode = false,
+    renderMode = 'design-preview',
+    onRenderModeChange
 }) => {
     const [viewMode, setViewMode] = useState<ViewMode>('dual');
 
@@ -38,35 +48,91 @@ export const Preview: React.FC<PreviewProps> = ({
         </button>
     );
 
+    const RenderModeButton = ({ mode, label }: { mode: RenderMode, label: string }) => (
+        <button
+            onClick={() => onRenderModeChange?.(mode)}
+            className={`px-4 py-2 border-2 border-neo-ink font-bold text-xs uppercase transition-all ${renderMode === mode
+                ? 'bg-neo-accent text-white translate-x-1 translate-y-1 shadow-none'
+                : 'bg-white text-neo-ink shadow-neo-sm hover:bg-neo-cream active:translate-x-0.5 active:translate-y-0.5 active:shadow-none'
+                }`}
+        >
+            {label}
+        </button>
+    );
+
     return (
         <div className="min-h-screen flex flex-col bg-neo-cream p-4 md:p-8 overflow-x-hidden">
             {/* Header Control Bar */}
             <div className="w-full max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4 mb-8">
                 <div className="flex items-center gap-4 w-full md:w-auto">
-                    <button onClick={onBack} className="hover:-translate-x-1 transition-transform shrink-0">
-                        <div className="bg-neo-ink text-white p-2 border-2 border-black shadow-neo-sm">
-                            <ChevronLeft strokeWidth={3} />
-                        </div>
-                    </button>
+                    {!skillMode && (
+                        <button onClick={onBack} className="hover:-translate-x-1 transition-transform shrink-0">
+                            <div className="bg-neo-ink text-white p-2 border-2 border-black shadow-neo-sm">
+                                <ChevronLeft strokeWidth={3} />
+                            </div>
+                        </button>
+                    )}
                     <div className="flex flex-col">
-                        <Badge variant="default" className="bg-neo-ink text-white w-fit mb-1">PREVIEW STUDIO</Badge>
-                        <span className="text-xs font-bold text-neo-ink/50 uppercase tracking-widest">Multi-Device Simulation</span>
+                        <Badge variant="default" className="bg-neo-ink text-white w-fit mb-1">
+                            {skillMode ? 'SKILL PREVIEW' : 'PREVIEW STUDIO'}
+                        </Badge>
+                        <span className="text-xs font-bold text-neo-ink/50 uppercase tracking-widest">
+                            {skillMode ? 'Copy Opens WeChat Composer' : 'Multi-Device Simulation'}
+                        </span>
                     </div>
                 </div>
 
-                {/* View Switcher */}
-                <div className="flex bg-neo-ink/5 p-1 border-2 border-neo-ink rounded-none gap-1">
-                    <SwitcherButton mode="mobile" icon={Smartphone} label="Mobile" />
-                    <SwitcherButton mode="pc" icon={Monitor} label="Desktop" />
-                    <SwitcherButton mode="dual" icon={Layout} label="Dual View" />
+                <div className="flex flex-col md:flex-row gap-3 items-center">
+                    {!skillMode && (
+                        <div className="flex bg-neo-ink/5 p-1 border-2 border-neo-ink rounded-none gap-1">
+                            <RenderModeButton mode="design-preview" label="设计预览" />
+                            <RenderModeButton mode="wechat-safe" label="微信安全预览" />
+                        </div>
+                    )}
+
+                    <div className="flex bg-neo-ink/5 p-1 border-2 border-neo-ink rounded-none gap-1">
+                        <SwitcherButton mode="mobile" icon={Smartphone} label="Mobile" />
+                        <SwitcherButton mode="pc" icon={Monitor} label="Desktop" />
+                        <SwitcherButton mode="dual" icon={Layout} label="Dual View" />
+                    </div>
                 </div>
 
                 <div className="hidden md:block">
-                    <Button onClick={onCopy} variant={copied ? "secondary" : "primary"} className="px-8 py-6 text-lg">
-                        {copied ? <><Check strokeWidth={3} className="mr-2" /> COPIED!</> : <><Copy strokeWidth={3} className="mr-2" /> COPY FOR WECHAT</>}
-                    </Button>
+                    <div className="flex items-center gap-3">
+                        {!skillMode && renderMode === 'wechat-safe' && onPublish && (
+                            <Button onClick={onPublish} variant="accent" className="px-8 py-6 text-lg" disabled={isPublishing}>
+                                {isPublishing
+                                    ? <>发布中...</>
+                                    : <><Rocket strokeWidth={3} className="mr-2" /> 一键发布草稿</>}
+                            </Button>
+                        )}
+                        <Button onClick={onCopy} variant={copied ? "secondary" : "primary"} className="px-8 py-6 text-lg">
+                            {copied
+                                ? <><Check strokeWidth={3} className="mr-2" /> {skillMode ? 'COPIED & OPENED!' : 'COPIED!'}</>
+                                : <><Copy strokeWidth={3} className="mr-2" /> {skillMode ? 'COPY & OPEN WECHAT' : 'COPY FOR WECHAT'}</>}
+                        </Button>
+                    </div>
                 </div>
             </div>
+
+            {skillMode && (
+                <div className="w-full max-w-7xl mx-auto mb-6">
+                    <div className="bg-white border-2 border-neo-ink shadow-neo-sm px-4 py-3 text-sm md:text-base font-bold">
+                        点击右上角按钮后，会复制当前预览内容并在新标签页打开公众号新增文章页。你只需要扫码登录后手动粘贴。
+                    </div>
+                </div>
+            )}
+
+            {!skillMode && (
+                <div className="w-full max-w-7xl mx-auto mb-6">
+                    <div className="bg-white border-2 border-neo-ink shadow-neo-sm px-4 py-3 text-sm md:text-base font-bold">
+                        当前模式：
+                        {renderMode === 'design-preview'
+                            ? ' 设计预览，优先保留像素风的理想浏览器效果。'
+                            : ' 微信安全预览，优先逼近公众号编辑器最终落地效果。'}
+                    </div>
+                </div>
+            )}
 
             {/* Preview Area */}
             <div className="flex-1 flex flex-col items-center justify-center">
@@ -85,7 +151,7 @@ export const Preview: React.FC<PreviewProps> = ({
                             </div>
 
                             <div className="w-full h-full overflow-y-auto bg-white pt-8 custom-scrollbar">
-                                <WeChatRenderer content={markdown} theme={theme} />
+                                <WeChatRenderer content={markdown} theme={theme} renderMode={renderMode} />
                             </div>
                         </motion.div>
                     )}
@@ -112,7 +178,7 @@ export const Preview: React.FC<PreviewProps> = ({
 
                             <div className="flex-1 overflow-y-auto bg-neo-cream/30 p-4 md:p-8 custom-scrollbar">
                                 <div className="max-w-[700px] mx-auto bg-white border-2 border-neo-ink/10 shadow-sm min-h-full">
-                                    <WeChatRenderer content={markdown} theme={theme} />
+                                    <WeChatRenderer content={markdown} theme={theme} renderMode={renderMode} />
                                 </div>
                             </div>
                         </motion.div>
@@ -130,7 +196,7 @@ export const Preview: React.FC<PreviewProps> = ({
                             <div className="relative w-full max-w-[320px] h-[640px] border-4 border-neo-ink bg-white shadow-neo-lg overflow-hidden rounded-[2.5rem] shrink-0 scale-90 md:scale-100 origin-top">
                                 <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-6 bg-neo-ink rounded-b-2xl z-20" />
                                 <div className="w-full h-full overflow-y-auto bg-white pt-6 custom-scrollbar">
-                                    <WeChatRenderer content={markdown} theme={theme} />
+                                    <WeChatRenderer content={markdown} theme={theme} renderMode={renderMode} />
                                 </div>
                             </div>
 
@@ -143,7 +209,7 @@ export const Preview: React.FC<PreviewProps> = ({
                                 </div>
                                 <div className="flex-1 overflow-y-auto bg-neo-cream/20 p-4 custom-scrollbar">
                                     <div className="max-w-[600px] mx-auto bg-white border border-neo-ink/5 shadow-sm min-h-full">
-                                        <WeChatRenderer content={markdown} theme={theme} />
+                                        <WeChatRenderer content={markdown} theme={theme} renderMode={renderMode} />
                                     </div>
                                 </div>
                             </div>

@@ -13,6 +13,10 @@ const path = require('path');
 const fs = require('fs');
 const cors = require('cors');
 require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
+const { parseMultipartForm } = require('./lib/multipart');
+const { publishDraftFromParsedMultipart } = require('./lib/draftPublisher');
+const { publishWechatBrowserDraft } = require('./lib/browserDraftPublisher');
+const { toErrorResponse } = require('./lib/errors');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -23,9 +27,15 @@ app.use(express.json({ limit: '10mb' })); // 增加限制以支持大文件
 
 // 加载 API Key
 const MOONSHOT_API_KEY = process.env.VITE_MOONSHOT_API_KEY || process.env.MOONSHOT_API_KEY;
+const WECHAT_OFFICIAL_APP_ID = process.env.WECHAT_OFFICIAL_APP_ID;
+const WECHAT_OFFICIAL_APP_SECRET = process.env.WECHAT_OFFICIAL_APP_SECRET;
 
 if (!MOONSHOT_API_KEY) {
   console.warn('⚠️ 警告: 未找到 VITE_MOONSHOT_API_KEY 或 MOONSHOT_API_KEY 环境变量。Kimi API 可能无法工作。');
+}
+
+if (!WECHAT_OFFICIAL_APP_ID || !WECHAT_OFFICIAL_APP_SECRET) {
+  console.warn('⚠️ 警告: 未找到 WECHAT_OFFICIAL_APP_ID 或 WECHAT_OFFICIAL_APP_SECRET。公众号草稿发布接口将不可用。');
 }
 
 // ----------------------------------------------------------------
@@ -88,6 +98,30 @@ app.post('/api/save-theme', (req, res) => {
   } catch (err) {
     console.error('[save-theme] Error saving theme:', err);
     res.status(500).json({ error: 'Failed to save theme' });
+  }
+});
+
+// ----------------------------------------------------------------
+// 2.5 公众号草稿发布 API
+// ----------------------------------------------------------------
+app.post('/api/wechat/draft', async (req, res) => {
+  try {
+    const parsed = await parseMultipartForm(req);
+    const result = await publishDraftFromParsedMultipart(parsed);
+    res.json(result);
+  } catch (error) {
+    const response = toErrorResponse(error);
+    res.status(response.statusCode).json(response.body);
+  }
+});
+
+app.post('/api/wechat/browser-draft', async (req, res) => {
+  try {
+    const result = await publishWechatBrowserDraft(req.body || {});
+    res.json(result);
+  } catch (error) {
+    const response = toErrorResponse(error);
+    res.status(response.statusCode).json(response.body);
   }
 });
 

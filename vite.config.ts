@@ -1,11 +1,15 @@
 import path from 'path';
 import fs from 'fs';
+import { createRequire } from 'module';
 import { fileURLToPath } from 'url';
 import { defineConfig, loadEnv } from 'vite';
 import react from '@vitejs/plugin-react';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+const require = createRequire(import.meta.url);
+const { publishWechatBrowserDraft } = require('./server/lib/browserDraftPublisher');
+const { toErrorResponse } = require('./server/lib/errors');
 
 const saveThemePlugin = () => ({
   name: 'save-theme',
@@ -61,6 +65,38 @@ const saveThemePlugin = () => ({
   }
 });
 
+const browserDraftPlugin = () => ({
+  name: 'wechat-browser-draft',
+  configureServer(server) {
+    server.middlewares.use('/api/wechat/browser-draft', async (req, res, next) => {
+      if (req.method !== 'POST') {
+        next();
+        return;
+      }
+
+      let body = '';
+      req.on('data', (chunk) => {
+        body += chunk;
+      });
+
+      req.on('end', async () => {
+        try {
+          const payload = body ? JSON.parse(body) : {};
+          const result = await publishWechatBrowserDraft(payload);
+          res.statusCode = 200;
+          res.setHeader('Content-Type', 'application/json');
+          res.end(JSON.stringify(result));
+        } catch (error) {
+          const response = toErrorResponse(error);
+          res.statusCode = response.statusCode;
+          res.setHeader('Content-Type', 'application/json');
+          res.end(JSON.stringify(response.body));
+        }
+      });
+    });
+  }
+});
+
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, '.', '');
   return {
@@ -82,7 +118,7 @@ export default defineConfig(({ mode }) => {
         },
       },
     },
-    plugins: [react(), saveThemePlugin()],
+    plugins: [react(), saveThemePlugin(), browserDraftPlugin()],
     define: {
       'process.env.API_KEY': JSON.stringify(env.GEMINI_API_KEY),
       'process.env.GEMINI_API_KEY': JSON.stringify(env.GEMINI_API_KEY)
