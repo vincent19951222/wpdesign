@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>排版实验室 DEMO - 深色像素风</title>
+    
+    <!-- 引入思源黑体 Noto Sans SC -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;700&display=swap" rel="stylesheet">
+
+    <!-- 引入 Fusion Pixel 融合像素字体 (12px 比例 简体中文) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/fusion-pixel-12px-proportional-sc/index.css">
+
+    <style>
+        :root {
+            /* 浅色/白天模式色板 (默认) */
+            --bg-sky: #cce6f4;
+            --bg-grass: #98ce7b;
+            --ui-bg: #ffffff;
+            --ui-border: #1a1c29;
+            --text-main: #1a1c29;
+            --text-light: #5b6b7a;
+            --accent-yellow: #ffd83d;
+            --accent-green: #59b25a;
+            --accent-blue: #4a90e2;
+            --code-bg: #f4f6f9;
+            --shadow-offset: 6px;
+            
+            /* 组件特定变量 - 浅色 */
+            --panel-shadow: var(--ui-border);
+            --h1-text-color: #e68a00; /* 修改：浅色模式使用更深的橘金色，降低刺眼感 */
+            --h1-stroke-inner: #fff;
+            --h1-stroke-outer: var(--ui-border);
+            --h1-drop-shadow: var(--ui-border);
+            --link-text: #ffffff;
+            --code-inline-color: var(--text-main);
+            --blockquote-bg: #fffde6;
+            --blockquote-text: var(--text-main);
+        }
+
+        [data-theme="dark"] {
+            /* 深色护眼模式色板 (Dark Mode) */
+            --bg-sky: #161925;
+            --bg-grass: #1e2c24;
+            --ui-bg: #2d3240;
+            --ui-border: #0b0c10;
+            --text-main: #e2e8f0;
+            --text-light: #8b9bb4;
+            --accent-yellow: #fbbf24;
+            --accent-green: #4ade80;
+            --accent-blue: #3b82f6;
+            --code-bg: #1a1d27;
+            
+            /* 组件特定变量 - 深色 */
+            --panel-shadow: rgba(0, 0, 0, 0.8);
+            --h1-text-color: var(--accent-yellow); /* 保持深色模式下的明亮感 */
+            --h1-stroke-inner: var(--ui-border);
+            --h1-stroke-outer: var(--ui-border);
+            --h1-drop-shadow: rgba(0, 0, 0, 0.6);
+            --link-text: #ffffff;
+            --code-inline-color: var(--accent-yellow);
+            --blockquote-bg: #383120;
+            --blockquote-text: #fdf6e3;
+        }
+
+        /* 增加颜色过渡动画，让切换更平滑 */
+        body, .pixel-panel, blockquote, code, table, th, td, a {
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, text-shadow 0.3s ease, transform 0.1s ease;
+        }
+
+        body {
+            /* 模拟从深夜到暗林的背景 */
+            background-color: var(--bg-sky);
+            background-image: linear-gradient(180deg, var(--bg-sky) 0%, var(--bg-sky) 50%, var(--bg-grass) 100%);
+            background-attachment: fixed; /* 背景固定，不随滚动条滚动 */
+            
+            font-family: 'Noto Sans SC', sans-serif;
+            color: var(--text-main);
+            line-height: 1.7;
+            padding: 3rem 1rem;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+        }
+
+        /* 主容器：模仿图片中的气泡卡片，改为暗色态 */
+        .pixel-panel {
+            background-color: var(--ui-bg);
+            max-width: 720px;
+            width: 100%;
+            padding: 40px;
+            position: relative;
+            
+            /* 粗深色边框 + 硬切变阴影 */
+            border: 4px solid var(--ui-border);
+            border-radius: 12px;
+            /* 使用 CSS 变量适配明暗模式阴影 */
+            box-shadow: var(--shadow-offset) var(--shadow-offset) 0px 0px var(--panel-shadow);
+        }
+
+        /* 标题排版：使用 Fusion Pixel */
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Fusion Pixel 12px Proportional SC', sans-serif;
+            color: var(--text-main);
+            margin-top: 1.5em;
+            margin-bottom: 0.8em;
+            font-weight: normal;
+            letter-spacing: 1px;
+        }
+
+        /* 核心特效：深色模式下的标题凸显 */
+        h1 { 
+            font-size: 3.5rem; 
+            text-align: center; 
+            margin-top: -10px; 
+            margin-bottom: 30px;
+            color: var(--h1-text-color); 
+            /* 动态层叠文字阴影 */
+            text-shadow: 
+                /* 1. 内层细描边 (浅色模式为白，深色模式为黑) */
+                -2px -2px 0 var(--h1-stroke-inner), 2px -2px 0 var(--h1-stroke-inner), -2px 2px 0 var(--h1-stroke-inner), 2px 2px 0 var(--h1-stroke-inner),
+                0px -2px 0 var(--h1-stroke-inner), 0px 2px 0 var(--h1-stroke-inner), -2px 0px 0 var(--h1-stroke-inner), 2px 0px 0 var(--h1-stroke-inner),
+                /* 2. 外层粗描边 */
+                -4px -4px 0 var(--h1-stroke-outer), 4px -4px 0 var(--h1-stroke-outer), -4px 4px 0 var(--h1-stroke-outer), 4px 4px 0 var(--h1-stroke-outer),
+                0px -4px 0 var(--h1-stroke-outer), 0px 4px 0 var(--h1-stroke-outer), -4px 0px 0 var(--h1-stroke-outer), 4px 0px 0 var(--h1-stroke-outer),
+                /* 3. 底层下沉阴影 */
+                6px 8px 0 var(--h1-drop-shadow);
+        }
+
+        h2 { font-size: 2rem; border-bottom: 4px solid var(--ui-border); padding-bottom: 8px; display: inline-block;}
+        h3 { font-size: 1.5rem; color: var(--accent-blue); }
+        h4 { font-size: 1.25rem; }
+        h5 { font-size: 1.1rem; color: var(--text-light); }
+
+        /* 正文元素 */
+        p { margin-bottom: 1.2em; font-size: 1.05rem; }
+
+        strong {
+            color: var(--accent-blue);
+            font-weight: 700;
+        }
+
+        em { color: var(--text-light); font-style: italic; }
+
+        a {
+            color: var(--link-text); /* 动态文本颜色 */
+            background-color: var(--accent-blue);
+            text-decoration: none;
+            padding: 2px 6px;
+            border: 2px solid var(--ui-border);
+            border-radius: 4px;
+            box-shadow: 2px 2px 0px 0px var(--ui-border);
+            font-weight: bold;
+            transition: all 0.1s ease;
+        }
+
+        a:hover {
+            transform: translate(2px, 2px);
+            box-shadow: 0px 0px 0px 0px var(--ui-border);
+        }
+
+        /* 行内代码 */
+        code:not(pre code) {
+            font-family: 'Fusion Pixel 12px Proportional SC', monospace;
+            background-color: var(--code-bg);
+            padding: 2px 6px;
+            border: 2px solid var(--ui-border);
+            border-radius: 4px;
+            font-size: 0.95rem;
+            color: var(--code-inline-color); /* 动态适配颜色 */
+        }
+
+        /* 代码块 */
+        pre {
+            background-color: var(--code-bg);
+            padding: 16px;
+            border: 3px solid var(--ui-border);
+            border-radius: 8px;
+            overflow-x: auto;
+            box-shadow: 4px 4px 0px 0px var(--ui-border);
+        }
+
+        pre code {
+            font-family: 'Courier New', Courier, monospace;
+            color: var(--text-light);
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        /* 列表 */
+        ul, ol { padding-left: 2rem; margin-bottom: 1.2em; }
+        ul li, ol li { margin-bottom: 0.6em; }
+
+        /* 自定义像素风无序列表符号 */
+        ul li { list-style-type: none; position: relative; }
+        ul li::before {
+            content: '';
+            position: absolute;
+            left: -1.5rem;
+            top: 0.5rem;
+            width: 8px;
+            height: 8px;
+            background-color: var(--accent-yellow);
+            border: 2px solid var(--ui-border);
+        }
+
+        ol li { font-weight: bold; color: var(--accent-blue); }
+        ol li span { font-weight: normal; color: var(--text-main); }
+
+        /* 引用块 - 调整为动态色调 */
+        blockquote {
+            margin: 1.5em 0;
+            padding: 16px 20px;
+            background-color: var(--blockquote-bg);
+            border: 3px solid var(--ui-border);
+            border-radius: 8px;
+            position: relative;
+            box-shadow: 4px 4px 0px 0px var(--ui-border);
+        }
+        
+        blockquote p { margin: 0; color: var(--blockquote-text); }
+
+        /* 表格 */
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-bottom: 1.5em;
+            background-color: var(--ui-bg);
+            border: 3px solid var(--ui-border);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 4px 4px 0px 0px var(--ui-border);
+        }
+
+        th, td {
+            border-bottom: 2px solid var(--ui-border);
+            border-right: 2px solid var(--ui-border);
+            padding: 12px;
+            font-size: 1rem;
+        }
+
+        th:last-child, td:last-child { border-right: none; }
+        tr:last-child td { border-bottom: none; }
+
+        th {
+            font-family: 'Fusion Pixel 12px Proportional SC', sans-serif;
+            background-color: var(--code-bg);
+            font-size: 1.2rem;
+            text-align: left;
+        }
+
+        /* 分割线 */
+        hr {
+            border: none;
+            height: 4px;
+            background-color: var(--ui-border);
+            margin: 3rem 0;
+            border-radius: 2px;
+        }
+
+        /* 悬浮切换按钮样式 */
+        .theme-toggle-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            font-family: 'Fusion Pixel 12px Proportional SC', sans-serif;
+            background-color: var(--ui-bg);
+            color: var(--text-main);
+            border: 3px solid var(--ui-border);
+            border-radius: 8px;
+            padding: 12px 20px;
+            font-size: 1rem;
+            cursor: pointer;
+            box-shadow: 4px 4px 0px 0px var(--ui-border);
+            z-index: 1000;
+            transition: all 0.1s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .theme-toggle-btn:hover {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0px 0px var(--ui-border);
+        }
+        
+        .theme-toggle-btn:active {
+            transform: translate(4px, 4px);
+            box-shadow: 0px 0px 0px 0px var(--ui-border);
+        }
+
+    </style>
+</head>
+<body>
+
+    <main class="pixel-panel">
+        <h1>排版实验室 DEMO</h1>
+
+        <h2>1. 基础排版元素</h2>
+        <p>这是普通段落 (p)，通过简单的 Markdown 转换，我们生成符合主题风格的微信排版。<br>
+        这里展示了 <strong>加粗文字 (strong)</strong> 和 <em>斜体文字 (em)</em> 以及 <code>行内代码 (code)</code> 的混合排版效果。</p>
+        
+        <p>你可以访问 <a href="https://github.com" target="_blank">排版实验室 (Link)</a> 了解更多详情。</p>
+
+        <h3>2. 列表与引用 (H3)</h3>
+
+        <h4>无序列表 (H4)</h4>
+        <ul>
+            <li>列表项一：自动识别样式</li>
+            <li>列表项二：支持多级嵌套</li>
+            <li>列表项三：完美的对齐</li>
+        </ul>
+
+        <h4>有序列表 (H4)</h4>
+        <ol>
+            <li><span>第一步：准备 Markdown 素材</span></li>
+            <li><span>第二步：选择喜欢的主题</span></li>
+            <li><span>第三步：一键复制到公众号</span></li>
+        </ol>
+
+        <blockquote>
+            <p>引用块 (Blockquote)<br>
+            这是一个带有徽章装饰的引用块。<br>
+            它可以用来突出显示重要信息或提示。</p>
+        </blockquote>
+
+        <h3>3. 代码与表格 (H3)</h3>
+
+        <h4>代码演示 (H4)</h4>
+<pre><code class="language-javascript">// 这是一个代码块 (Pre + Code)
+function pixelArt() {
+  const style = "retro";
+  console.log(`Generating ${style} style...`);
+  return true;
+}</code></pre>
+
+        <h5>五级标题示例 (H5)</h5>
+        <p>这里是更细分的层级，通常用于注释或补充说明。</p>
+
+        <h4>数据表格 (Table)</h4>
+        <table>
+            <thead>
+                <tr>
+                    <th style="text-align: left;">组件名称</th>
+                    <th style="text-align: center;">渲染状态</th>
+                    <th style="text-align: right;">复杂度</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td style="text-align: left;">标题系统</td>
+                    <td style="text-align: center;">✅ 完美</td>
+                    <td style="text-align: right;">⭐⭐</td>
+                </tr>
+                <tr>
+                    <td style="text-align: left;">代码高亮</td>
+                    <td style="text-align: center;">✅ 支持</td>
+                    <td style="text-align: right;">⭐⭐⭐</td>
+                </tr>
+                <tr>
+                    <td style="text-align: left;">复杂表格</td>
+                    <td style="text-align: center;">🚧 适配中</td>
+                    <td style="text-align: right;">⭐⭐⭐⭐</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <hr>
+        <p style="text-align: center; color: var(--text-light); font-size: 0.9rem;">(上方是分割线 HR)</p>
+
+    </main>
+
+    <!-- 悬浮的明暗切换按钮 -->
+    <button class="theme-toggle-btn" id="themeToggleBtn">
+        🌓 切换模式
+    </button>
+
+    <script>
+        // 术语解释：DOM (文档对象模型)，用于获取页面元素；EventListener 监听器用于捕获鼠标点击动作
+        const toggleBtn = document.getElementById('themeToggleBtn');
+        const htmlElement = document.documentElement;
+
+        toggleBtn.addEventListener('click', () => {
+            const currentTheme = htmlElement.getAttribute('data-theme');
+            if (currentTheme === 'dark') {
+                // 如果当前是深色，移除属性，恢复为 :root 默认的浅色 (现代清新像素风)
+                htmlElement.removeAttribute('data-theme');
+            } else {
+                // 如果当前是浅色，添加深色属性，激活 [data-theme="dark"] 样式 (深色护眼像素风)
+                htmlElement.setAttribute('data-theme', 'dark');
+            }
+        });
+    </script>
+</body>
+</html>

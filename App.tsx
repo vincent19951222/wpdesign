@@ -85,8 +85,8 @@ const INITIAL_TEMPLATES: (Template & { theme: ITheme })[] = [
   {
     id: 'tech-minimalist',
     name: '科技极简',
-    description: '深色背景与霓虹光效，未来感十足。',
-    thumbnailColor: '#0a0a0a',
+    description: '浅色科技感版式，冷静留白与精密蓝色点缀。',
+    thumbnailColor: '#f5f8fc',
     thumbnailUrl: '/thumbnails/tech-minimalist.jpg',
     theme: techMinimalistThemeDefault as unknown as ITheme
   },

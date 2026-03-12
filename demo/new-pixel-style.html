@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>排版实验室 DEMO - 星露谷风格</title>
+    
+    <!-- 引入思源黑体 Noto Sans SC -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;700&display=swap" rel="stylesheet">
+
+    <!-- 引入 Fusion Pixel 融合像素字体 (12px 比例 简体中文) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/fusion-pixel-12px-proportional-sc/index.css">
+
+    <style>
+        :root {
+            /* 现代清新像素风格色板 (提取自提供的图片) */
+            --bg-sky: #cce6f4;        /* 天空蓝背景 */
+            --bg-grass: #98ce7b;      /* 草地绿底色 */
+            --ui-bg: #ffffff;         /* 气泡/面板纯白底色 */
+            --ui-border: #1a1c29;     /* 极深藏青色描边 (视觉上的黑色) */
+            --text-main: #1a1c29;     /* 正文颜色 */
+            --text-light: #5b6b7a;    /* 次要文本/英文 */
+            --accent-yellow: #ffd83d; /* 标题高亮黄 */
+            --accent-green: #59b25a;  /* 成功/强调绿 */
+            --accent-blue: #4a90e2;   /* 链接蓝 */
+            --code-bg: #f4f6f9;       /* 代码块浅灰底色 */
+            --shadow-offset: 6px;     /* 硬阴影偏移量 */
+        }
+
+        body {
+            /* 模拟从天空到草地的背景 */
+            background-color: var(--bg-sky);
+            background-image: linear-gradient(180deg, var(--bg-sky) 0%, var(--bg-sky) 50%, var(--bg-grass) 100%);
+            background-attachment: fixed; /* 背景固定，不随滚动条滚动 */
+            
+            font-family: 'Noto Sans SC', sans-serif;
+            color: var(--text-main);
+            line-height: 1.7;
+            padding: 3rem 1rem;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+        }
+
+        /* 主容器：模仿图片中的气泡卡片 */
+        .pixel-panel {
+            background-color: var(--ui-bg);
+            max-width: 720px;
+            width: 100%;
+            padding: 40px;
+            position: relative;
+            
+            /* 粗深色边框 + 硬切变阴影 */
+            border: 4px solid var(--ui-border);
+            border-radius: 12px; /* 图片中的气泡带有微小的圆角 */
+            box-shadow: var(--shadow-offset) var(--shadow-offset) 0px 0px var(--ui-border);
+        }
+
+        /* 标题排版：使用 Fusion Pixel */
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Fusion Pixel 12px Proportional SC', sans-serif;
+            color: var(--text-main);
+            margin-top: 1.5em;
+            margin-bottom: 0.8em;
+            font-weight: normal;
+            letter-spacing: 1px;
+        }
+
+        /* 核心特效：复刻图片主标题的多层镶边效果 */
+        h1 { 
+            font-size: 3.5rem; 
+            text-align: center; 
+            margin-top: -10px; 
+            margin-bottom: 30px;
+            color: var(--accent-yellow); 
+            /* 利用多重文字阴影模拟出：白边 -> 黑边 -> 立体投影 */
+            text-shadow: 
+                /* 1. 第一层白色细描边 */
+                -2px -2px 0 #fff, 2px -2px 0 #fff, -2px 2px 0 #fff, 2px 2px 0 #fff,
+                0px -2px 0 #fff, 0px 2px 0 #fff, -2px 0px 0 #fff, 2px 0px 0 #fff,
+                /* 2. 第二层深色粗描边 */
+                -4px -4px 0 var(--ui-border), 4px -4px 0 var(--ui-border), -4px 4px 0 var(--ui-border), 4px 4px 0 var(--ui-border),
+                0px -4px 0 var(--ui-border), 0px 4px 0 var(--ui-border), -4px 0px 0 var(--ui-border), 4px 0px 0 var(--ui-border),
+                /* 3. 最底层的下沉阴影 */
+                4px 8px 0 var(--ui-border);
+        }
+
+        h2 { font-size: 2rem; border-bottom: 4px solid var(--ui-border); padding-bottom: 8px; display: inline-block;}
+        h3 { font-size: 1.5rem; color: var(--accent-blue); }
+        h4 { font-size: 1.25rem; }
+        h5 { font-size: 1.1rem; color: var(--text-light); }
+
+        /* 正文元素 */
+        p { margin-bottom: 1.2em; font-size: 1.05rem; }
+
+        strong {
+            color: var(--accent-blue);
+            font-weight: 700;
+        }
+
+        em { color: var(--text-light); font-style: italic; }
+
+        a {
+            color: var(--ui-bg);
+            background-color: var(--accent-blue);
+            text-decoration: none;
+            padding: 2px 6px;
+            border: 2px solid var(--ui-border);
+            border-radius: 4px;
+            box-shadow: 2px 2px 0px 0px var(--ui-border);
+            font-weight: bold;
+            transition: all 0.1s ease;
+        }
+
+        a:hover {
+            transform: translate(2px, 2px);
+            box-shadow: 0px 0px 0px 0px var(--ui-border);
+        }
+
+        /* 行内代码 */
+        code:not(pre code) {
+            font-family: 'Fusion Pixel 12px Proportional SC', monospace;
+            background-color: var(--code-bg);
+            padding: 2px 6px;
+            border: 2px solid var(--ui-border);
+            border-radius: 4px;
+            font-size: 0.95rem;
+            color: var(--text-main);
+        }
+
+        /* 代码块 */
+        pre {
+            background-color: var(--code-bg);
+            padding: 16px;
+            border: 3px solid var(--ui-border);
+            border-radius: 8px;
+            overflow-x: auto;
+            box-shadow: 4px 4px 0px 0px var(--ui-border);
+        }
+
+        pre code {
+            font-family: 'Courier New', Courier, monospace;
+            color: var(--text-main);
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        /* 列表 */
+        ul, ol { padding-left: 2rem; margin-bottom: 1.2em; }
+        ul li, ol li { margin-bottom: 0.6em; }
+
+        /* 自定义像素风无序列表符号 */
+        ul li { list-style-type: none; position: relative; }
+        ul li::before {
+            content: '';
+            position: absolute;
+            left: -1.5rem;
+            top: 0.5rem;
+            width: 8px;
+            height: 8px;
+            background-color: var(--accent-yellow);
+            border: 2px solid var(--ui-border);
+        }
+
+        ol li { font-weight: bold; color: var(--accent-blue); }
+        ol li span { font-weight: normal; color: var(--text-main); }
+
+        /* 引用块 - 模拟小号对话框 */
+        blockquote {
+            margin: 1.5em 0;
+            padding: 16px 20px;
+            background-color: #fffde6; /* 淡淡的暖黄色提示背景 */
+            border: 3px solid var(--ui-border);
+            border-radius: 8px;
+            position: relative;
+            box-shadow: 4px 4px 0px 0px var(--ui-border);
+        }
+        
+        blockquote p { margin: 0; }
+
+        /* 表格 */
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-bottom: 1.5em;
+            background-color: var(--ui-bg);
+            border: 3px solid var(--ui-border);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 4px 4px 0px 0px var(--ui-border);
+        }
+
+        th, td {
+            border-bottom: 2px solid var(--ui-border);
+            border-right: 2px solid var(--ui-border);
+            padding: 12px;
+            font-size: 1rem;
+        }
+
+        th:last-child, td:last-child { border-right: none; }
+        tr:last-child td { border-bottom: none; }
+
+        th {
+            font-family: 'Fusion Pixel 12px Proportional SC', sans-serif;
+            background-color: var(--code-bg);
+            font-size: 1.2rem;
+            text-align: left;
+        }
+
+        /* 分割线 */
+        hr {
+            border: none;
+            height: 4px;
+            background-color: var(--ui-border);
+            margin: 3rem 0;
+            border-radius: 2px;
+        }
+
+    </style>
+</head>
+<body>
+
+    <main class="pixel-panel">
+        <h1>排版实验室 DEMO</h1>
+
+        <h2>1. 基础排版元素</h2>
+        <p>这是普通段落 (p)，通过简单的 Markdown 转换，我们生成符合主题风格的微信排版。<br>
+        这里展示了 <strong>加粗文字 (strong)</strong> 和 <em>斜体文字 (em)</em> 以及 <code>行内代码 (code)</code> 的混合排版效果。</p>
+        
+        <p>你可以访问 <a href="https://github.com" target="_blank">排版实验室 (Link)</a> 了解更多详情。</p>
+
+        <h3>2. 列表与引用 (H3)</h3>
+
+        <h4>无序列表 (H4)</h4>
+        <ul>
+            <li>列表项一：自动识别样式</li>
+            <li>列表项二：支持多级嵌套</li>
+            <li>列表项三：完美的对齐</li>
+        </ul>
+
+        <h4>有序列表 (H4)</h4>
+        <ol>
+            <li><span>第一步：准备 Markdown 素材</span></li>
+            <li><span>第二步：选择喜欢的主题</span></li>
+            <li><span>第三步：一键复制到公众号</span></li>
+        </ol>
+
+        <blockquote>
+            <p>引用块 (Blockquote)<br>
+            这是一个带有徽章装饰的引用块。<br>
+            它可以用来突出显示重要信息或提示。</p>
+        </blockquote>
+
+        <h3>3. 代码与表格 (H3)</h3>
+
+        <h4>代码演示 (H4)</h4>
+<pre><code class="language-javascript">// 这是一个代码块 (Pre + Code)
+function pixelArt() {
+  const style = "retro";
+  console.log(`Generating ${style} style...`);
+  return true;
+}</code></pre>
+
+        <h5>五级标题示例 (H5)</h5>
+        <p>这里是更细分的层级，通常用于注释或补充说明。</p>
+
+        <h4>数据表格 (Table)</h4>
+        <table>
+            <thead>
+                <tr>
+                    <th style="text-align: left;">组件名称</th>
+                    <th style="text-align: center;">渲染状态</th>
+                    <th style="text-align: right;">复杂度</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td style="text-align: left;">标题系统</td>
+                    <td style="text-align: center;">✅ 完美</td>
+                    <td style="text-align: right;">⭐⭐</td>
+                </tr>
+                <tr>
+                    <td style="text-align: left;">代码高亮</td>
+                    <td style="text-align: center;">✅ 支持</td>
+                    <td style="text-align: right;">⭐⭐⭐</td>
+                </tr>
+                <tr>
+                    <td style="text-align: left;">复杂表格</td>
+                    <td style="text-align: center;">🚧 适配中</td>
+                    <td style="text-align: right;">⭐⭐⭐⭐</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <hr>
+        <p style="text-align: center; color: var(--sv-text-light); font-size: 0.9rem;">(上方是分割线 HR)</p>
+
+    </main>
+
+</body>
+</html>

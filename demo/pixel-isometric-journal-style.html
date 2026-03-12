@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>像素街区周末手册</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        @font-face {
+            font-family: 'Zpix';
+            src: url('https://cdn.jsdelivr.net/gh/SolidZORO/zpix-pixel-font/dist/zpix.ttf') format('truetype');
+            font-display: swap;
+        }
+
+        :root {
+            --page-bg: #ebe4d7;
+            --panel-bg: #fbfaf6;
+            --panel-warm: #f4efdf;
+            --ink: #23212e;
+            --text: #58576a;
+            --soft: #7a7886;
+            --mint: #a9d4c0;
+            --sky: #97c0df;
+            --gold: #efbf4e;
+            --coral: #e68a66;
+            --berry: #c9677e;
+            --code-bg: #f1efe7;
+            --shadow: #bfa36d;
+            --line: 4px solid var(--ink);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            padding: 32px 16px;
+            background:
+                linear-gradient(150deg, transparent 0 24px, rgba(191, 163, 109, 0.18) 24px 26px, transparent 26px) 0 0 / 72px 72px,
+                linear-gradient(var(--page-bg), var(--page-bg));
+            color: var(--text);
+            font-family: 'Noto Sans SC', sans-serif;
+            line-height: 1.9;
+        }
+
+        .pixel-panel {
+            width: min(760px, 100%);
+            margin: 0 auto;
+            padding: 36px 26px;
+            background: linear-gradient(180deg, var(--panel-bg), var(--panel-warm));
+            border: var(--line);
+            box-shadow: 10px 10px 0 0 var(--shadow);
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5 {
+            margin: 0 0 0.8em 0;
+            color: var(--ink);
+            font-family: 'Zpix', 'Courier New', monospace;
+            font-weight: normal;
+            letter-spacing: 0.06em;
+        }
+
+        h1 {
+            margin-bottom: 1em;
+            font-size: clamp(32px, 7vw, 54px);
+            line-height: 1.35;
+        }
+
+        h2 {
+            display: inline-block;
+            padding: 10px 16px;
+            background: var(--coral);
+            border: var(--line);
+            box-shadow: 7px 7px 0 0 rgba(35, 33, 46, 0.18);
+            font-size: clamp(18px, 3vw, 22px);
+            line-height: 1.55;
+        }
+
+        h3 {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 1.8em;
+            font-size: 18px;
+            line-height: 1.7;
+        }
+
+        h3::before {
+            content: 'H3';
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 72px;
+            padding: 6px 10px;
+            background: var(--sky);
+            border: var(--line);
+            box-shadow: 5px 5px 0 0 rgba(35, 33, 46, 0.16);
+            font-size: 12px;
+        }
+
+        h4 {
+            display: inline-block;
+            margin-top: 1.6em;
+            padding: 8px 12px;
+            background: #fff;
+            border: var(--line);
+            box-shadow: 5px 5px 0 0 rgba(35, 33, 46, 0.12);
+            font-size: 15px;
+            line-height: 1.6;
+        }
+
+        h5 {
+            margin-top: 1.8em;
+            font-size: 14px;
+            color: var(--soft);
+            line-height: 1.6;
+        }
+
+        p {
+            margin: 0 0 1.1em 0;
+            font-size: 16px;
+        }
+
+        strong {
+            color: #8d5665;
+            background: rgba(230, 138, 102, 0.12);
+            padding: 0 0.16em;
+            font-weight: 700;
+        }
+
+        em {
+            color: var(--soft);
+            font-style: normal;
+            background: rgba(239, 191, 78, 0.18);
+            padding: 0 0.16em;
+        }
+
+        del {
+            color: #9c98a3;
+            text-decoration-thickness: 2px;
+        }
+
+        a {
+            color: #fffaf1;
+            background: #557eb3;
+            border: 3px solid var(--ink);
+            box-shadow: 4px 4px 0 0 rgba(35, 33, 46, 0.18);
+            padding: 0.08em 0.45em;
+            text-decoration: none;
+        }
+
+        code:not(pre code) {
+            padding: 0.18em 0.42em;
+            border: 3px solid var(--ink);
+            background: #fff2d1;
+            color: var(--ink);
+            font-family: 'Zpix', 'Courier New', monospace;
+            font-size: 0.85em;
+        }
+
+        ul,
+        ol {
+            margin: 0 0 1.2em 0;
+            padding-left: 0;
+        }
+
+        ul li,
+        ol li {
+            list-style: none;
+            position: relative;
+            padding-left: 30px;
+            margin-bottom: 0.75em;
+            font-size: 16px;
+        }
+
+        ul li::before,
+        ol li::before {
+            position: absolute;
+            left: 0;
+            top: 0.42em;
+            width: 10px;
+            height: 10px;
+            border: 3px solid var(--ink);
+            background: var(--gold);
+            content: '';
+            box-shadow: 3px 3px 0 0 rgba(35, 33, 46, 0.14);
+        }
+
+        ol {
+            counter-reset: item;
+        }
+
+        ol li::before {
+            top: 0.12em;
+            width: 20px;
+            height: 20px;
+            content: counter(item);
+            counter-increment: item;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--mint);
+            font-family: 'Zpix', 'Courier New', monospace;
+            font-size: 10px;
+        }
+
+        .task-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding-left: 0;
+        }
+
+        .task-list li::before {
+            content: none;
+        }
+
+        .task-list input {
+            margin: 5px 0 0;
+            width: 18px;
+            height: 18px;
+            accent-color: #6ba46b;
+            flex: 0 0 auto;
+        }
+
+        blockquote {
+            margin: 1.4em 0;
+            padding: 0;
+            background: #fff5dc;
+            border: var(--line);
+            box-shadow: 7px 7px 0 0 rgba(35, 33, 46, 0.16);
+            overflow: hidden;
+        }
+
+        blockquote p {
+            margin: 0;
+            padding: 18px 18px 20px;
+            color: var(--ink);
+        }
+
+        blockquote::before {
+            content: 'NOTE';
+            display: inline-block;
+            padding: 8px 12px;
+            border-right: var(--line);
+            border-bottom: var(--line);
+            background: var(--berry);
+            color: #fff7ef;
+            font-family: 'Zpix', 'Courier New', monospace;
+            font-size: 11px;
+            letter-spacing: 0.08em;
+        }
+
+        pre {
+            margin: 1.2em 0;
+            padding: 16px 18px;
+            overflow-x: auto;
+            background: var(--code-bg);
+            border: var(--line);
+            box-shadow: 7px 7px 0 0 rgba(35, 33, 46, 0.16);
+        }
+
+        pre code {
+            padding: 0;
+            border: 0;
+            background: transparent;
+            color: var(--ink);
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.7;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin: 1.2em 0;
+            background: #fffdf8;
+            border: var(--line);
+            box-shadow: 7px 7px 0 0 rgba(35, 33, 46, 0.16);
+            overflow: hidden;
+        }
+
+        th,
+        td {
+            padding: 12px 14px;
+            border-right: 3px solid var(--ink);
+            border-bottom: 3px solid var(--ink);
+            text-align: left;
+            font-size: 15px;
+        }
+
+        th:last-child,
+        td:last-child {
+            border-right: 0;
+        }
+
+        tbody tr:last-child td {
+            border-bottom: 0;
+        }
+
+        th {
+            background: #f5e7ba;
+            color: var(--ink);
+            font-family: 'Zpix', 'Courier New', monospace;
+            font-weight: normal;
+            font-size: 13px;
+        }
+
+        hr {
+            margin: 2em 0;
+            border: 0;
+            height: 12px;
+            background:
+                linear-gradient(90deg, transparent 0 4%, var(--ink) 4% 12%, transparent 12% 20%, var(--ink) 20% 28%, transparent 28% 36%, var(--ink) 36% 44%, transparent 44% 52%, var(--ink) 52% 60%, transparent 60% 68%, var(--ink) 68% 76%, transparent 76% 84%, var(--ink) 84% 92%, transparent 92%);
+            opacity: 0.24;
+        }
+
+        .footer-note {
+            margin: 0;
+            font-size: 15px;
+        }
+
+        @media (max-width: 640px) {
+            body {
+                padding: 16px 10px;
+            }
+
+            .pixel-panel {
+                padding: 22px 16px;
+            }
+
+            h1 {
+                font-size: 30px;
+            }
+
+            h2 {
+                width: 100%;
+            }
+
+            th,
+            td {
+                padding: 10px;
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <main class="pixel-panel">
+        <h1>像素街区周末手册：把穿搭、散步和小店都收进一页里</h1>
+
+        <p>春天一到，很多人的周末不再想去赶行程，而是想在城市里慢慢走一圈。买一束花，试一件轻薄外套，顺手记下几家想再去一次的小店，已经足够构成一篇完整的生活提案。</p>
+
+        <p>真正舒服的周末穿搭，不是把所有流行元素都堆上去，而是知道今天的移动路线是什么。要走很多路、会进小店、下午可能起风，那就应该先把衣橱里的层次想清楚。</p>
+
+        <h2>出门之前</h2>
+        <p>我最近最常穿的是一件 <em>奶油白针织背心 + 水洗蓝衬衫 + 直筒深色长裤</em>。它不夸张，但在街角玻璃、地铁窗面和咖啡店镜子里都会显得很干净。</p>
+
+        <h3>结构化的小标题</h3>
+        <p>如果当天的重点是闲逛，而不是见很多人，我会故意让颜色更轻一点。米白、浅杏、灰蓝、豆绿这些颜色，在晴天里会比纯黑看起来更松弛。</p>
+
+        <h4>带什么出门刚好</h4>
+        <p>包里带一支护手霜、一本薄杂志和耳机，通常就够了。周末真正有气氛的，不是准备很多，而是每一样东西都刚好。</p>
+
+        <h5>最后一眼</h5>
+        <p>出门前最后看一眼天气，比临时加戏更重要。</p>
+
+        <hr>
+
+        <h2>路上的观察</h2>
+        <h3>那些让路线成立的小事</h3>
+        <p>周末路线之所以让人期待，往往不是因为目的地特别重要，而是沿路会不断捡到一些很轻的小细节。比如某家店新换的橱窗、隔壁花店摆出来的水仙、或者一张让人想停下来的海报。</p>
+
+        <ul>
+            <li><strong>最值得记住的是步速</strong>：只要走得慢，城市会自动把更多东西交给你。</li>
+            <li><em>如果某家店让你想多站三十秒</em>，那它多半已经完成了今天的任务。</li>
+            <li><a href="#">想回访的小店</a> 通常不一定最热门，但会在离开之后还留下一点具体画面。</li>
+            <li><del>原本计划去的远一点的商场</del> 最后被取消，换来了一整个更松动的下午。</li>
+            <li>路书其实只写了两行：<code>market -&gt; riverside -&gt; bookstore</code>。</li>
+        </ul>
+
+        <h4>下午三点的风</h4>
+        <p>下午三点以后，风会把衬衫吹得更有层次。这个时间特别适合拍照，因为光线已经不那么硬，路人的穿着也会开始显出各自真正舒服的状态。</p>
+
+        <hr>
+
+        <h2>可重复的周末公式</h2>
+        <h4>记一句</h4>
+        <blockquote>
+            <p>真正耐看的周末，不是安排得很满，而是让自己有机会在一条普通街道上重新感到新鲜。</p>
+        </blockquote>
+
+        <h4>三步路线</h4>
+        <ol>
+            <li>先去市场买一束便宜但精神很好的花。</li>
+            <li>再绕进两三家不赶时间的小店，试一件并不急着买的衣服。</li>
+            <li>最后在河边或者书店坐一会儿，把今天的路线慢慢收尾。</li>
+        </ol>
+
+        <h4>沿街备忘</h4>
+        <ul>
+            <li>花店门口总有当天最适合拍照的那一盆绿色。</li>
+            <li>旧书店最值得看的常常不是新书台，而是靠墙那一层被翻旧的杂志。</li>
+            <li>路边甜品店如果只剩最后两块蛋糕，通常值得进去看看。</li>
+        </ul>
+
+        <h4>出门清单</h4>
+        <ul class="task-list">
+            <li><input type="checkbox" checked disabled><span><del>出门前检查天气</del></span></li>
+            <li><input type="checkbox" checked disabled><span><del>顺路买花和面包</del></span></li>
+            <li><input type="checkbox" disabled><span>傍晚前找到一家可以坐半小时的店</span></li>
+        </ul>
+
+        <hr>
+
+        <h2>小店索引</h2>
+        <h4>今天想记住的三家店</h4>
+        <table>
+            <thead>
+                <tr>
+                    <th>地点</th>
+                    <th>类型</th>
+                    <th>适合停留</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>North Market</td>
+                    <td><code>Flower</code></td>
+                    <td>水仙、郁金香和很便宜的满天星</td>
+                </tr>
+                <tr>
+                    <td>Corner Room</td>
+                    <td><code>Vintage</code></td>
+                    <td>旧杂志、帆布包、轻薄针织</td>
+                </tr>
+                <tr>
+                    <td>Riverside Shelf</td>
+                    <td><code>Bookstore</code></td>
+                    <td>靠窗位置适合坐到天色变暗</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h4>顺手记下</h4>
+        <pre><code>09:40  market, white tulips, green ribbon
+11:10  try on light blue shirt, no rush to buy
+14:20  coffee by the window, sunlight on the sleeve
+16:45  bookstore bench, one essay collection
+18:05  walk home before the sky turns fully dark</code></pre>
+
+        <hr>
+
+        <p class="footer-note">有些周末并不需要新的答案，只需要一条愿意慢慢走完的路线。等走到天快黑的时候，你会发现今天其实已经收集到了足够多的好心情。</p>
+    </main>
+</body>
+
+</html>
