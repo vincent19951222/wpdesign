@@ -106,7 +106,7 @@ const WeChatRenderer: React.FC<Props> = ({ content, theme }) => {
             a: ({ node, ...props }) => <a style={styles.a} {...props} />,
             blockquote: ({ node, ...props }) => (
               <blockquote style={styles.blockquote}>
-                <section style={styles.blockquoteBadge}>提示</section>
+                <section style={styles.blockquoteBadge}>{theme.meta?.blockquoteLabel || '提示'}</section>
                 <section style={styles.blockquoteContent} {...props} />
               </blockquote>
             ),

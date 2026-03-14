@@ -3,7 +3,8 @@
     "headerType": "none",
     "footerType": "none",
     "author": "排版实验室",
-    "description": "Classic pixel theme optimized for WeChat API-safe fidelity"
+    "description": "Classic pixel theme optimized for WeChat API-safe fidelity",
+    "blockquoteLabel": "Meow"
   },
   "wrapper": {
     "margin": "0",

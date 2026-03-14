@@ -6,6 +6,7 @@ export interface ITheme {
     footerType: 'pixel' | 'classic' | 'none';
     author?: string;
     description?: string;
+    blockquoteLabel?: string;
   };
 
   // Base Styles
@@ -68,4 +69,3 @@ export interface ITheme {
   footerIcon: CSSProperties;
   footerText?: CSSProperties;
 }
-
