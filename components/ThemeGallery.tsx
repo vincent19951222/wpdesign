@@ -16,6 +16,10 @@ const ThemeGallery = <T extends Template>({ templates, onSelect, currentId }: Th
     const itemsPerPage = 8; // 2 Rows on Desktop
     const totalPages = Math.ceil(templates.length / itemsPerPage);
 
+    React.useEffect(() => {
+        setCurrentPage(1);
+    }, [templates]);
+
     const paginate = (pageNumber: number) => {
         if (pageNumber < 1 || pageNumber > totalPages) return;
         setCurrentPage(pageNumber);

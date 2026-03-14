@@ -15,6 +15,9 @@ import techMinimalistThemeDefault from './themes/tech-minimalist-theme.json';
 import magazineFashionThemeDefault from './themes/magazine-fashion-theme.json';
 import neumorphismThemeDefault from './themes/neumorphism-theme.json';
 import retroNewspaperThemeDefault from './themes/retro-newspaper-theme.json';
+import pixelV4ThemeDefault from './themes/pixel-v4-theme.json';
+import pixelV4ApiSafeThemeDefault from './themes/pixel-v4-api-safe-theme.json';
+import pixelClassicApiSafeThemeDefault from './themes/pixel-classic-api-safe-theme.json';
 
 const DEFAULT_MD = `# 排版实验室 DEMO
 
@@ -80,7 +83,35 @@ const INITIAL_TEMPLATES: (Template & { theme: ITheme })[] = [
     description: '复古赛博朋克风格，灵感来自 8-bit 游戏。',
     thumbnailColor: '#FFD700',
     thumbnailUrl: '/thumbnails/pixel-classic.jpg',
+    category: 'standard',
     theme: pixelThemeDefault as unknown as ITheme
+  },
+  {
+    id: 'pixel-v4',
+    name: '像素原野',
+    description: '基于 v4 的清新像素主题，适合公众号日常发布。',
+    thumbnailColor: '#ebe4d7',
+    thumbnailUrl: '/thumbnails/pixel-classic.jpg',
+    category: 'standard',
+    theme: pixelV4ThemeDefault as unknown as ITheme
+  },
+  {
+    id: 'pixel-v4-api-safe',
+    name: '像素原野 API',
+    description: '为草稿 API 收敛的版本，弱化边框、阴影和外层装饰。',
+    thumbnailColor: '#ffffff',
+    thumbnailUrl: '/thumbnails/pixel-classic.jpg',
+    category: 'api-safe',
+    theme: pixelV4ApiSafeThemeDefault as unknown as ITheme
+  },
+  {
+    id: 'pixel-classic-api-safe',
+    name: '经典像素 API',
+    description: '保留经典像素的文字识别度，移除厚重容器装饰，适合公众号 API-safe 发布。',
+    thumbnailColor: '#fff2c4',
+    thumbnailUrl: '/thumbnails/pixel-classic.jpg',
+    category: 'api-safe',
+    theme: pixelClassicApiSafeThemeDefault as unknown as ITheme
   },
   {
     id: 'tech-minimalist',
@@ -88,6 +119,7 @@ const INITIAL_TEMPLATES: (Template & { theme: ITheme })[] = [
     description: '浅色科技感版式，冷静留白与精密蓝色点缀。',
     thumbnailColor: '#f5f8fc',
     thumbnailUrl: '/thumbnails/tech-minimalist.jpg',
+    category: 'standard',
     theme: techMinimalistThemeDefault as unknown as ITheme
   },
   {
@@ -96,6 +128,7 @@ const INITIAL_TEMPLATES: (Template & { theme: ITheme })[] = [
     description: '高端黑白金配色，大气的衬线字体排版。',
     thumbnailColor: '#ffffff',
     thumbnailUrl: '/thumbnails/magazine-fashion.jpg',
+    category: 'standard',
     theme: magazineFashionThemeDefault as unknown as ITheme
   },
   {
@@ -104,6 +137,7 @@ const INITIAL_TEMPLATES: (Template & { theme: ITheme })[] = [
     description: '柔和的阴影与圆角设计，极具质感的 Soft UI 风格。',
     thumbnailColor: '#e0e5ec',
     thumbnailUrl: '/thumbnails/neumorphism.jpg',
+    category: 'standard',
     theme: neumorphismThemeDefault as unknown as ITheme
   },
   {
@@ -112,6 +146,7 @@ const INITIAL_TEMPLATES: (Template & { theme: ITheme })[] = [
     description: '泛黄的旧报纸风格，Typewriter 字体与衬线体。',
     thumbnailColor: '#f4f1ea',
     thumbnailUrl: '/thumbnails/retro-newspaper.jpg',
+    category: 'standard',
     theme: retroNewspaperThemeDefault as unknown as ITheme
   },
   {
@@ -120,6 +155,7 @@ const INITIAL_TEMPLATES: (Template & { theme: ITheme })[] = [
     description: '简洁专业的风格，适合正式文档和通讯。',
     thumbnailColor: '#0056b3',
     thumbnailUrl: '/thumbnails/classic-theme.jpg',
+    category: 'standard',
     theme: classicThemeDefault as unknown as ITheme
   },
   {
@@ -128,6 +164,7 @@ const INITIAL_TEMPLATES: (Template & { theme: ITheme })[] = [
     description: '干净简约的默认主题，适合微信文章。',
     thumbnailColor: '#f2f2f2',
     thumbnailUrl: '/thumbnails/default-theme.jpg',
+    category: 'standard',
     theme: defaultThemeDefault as unknown as ITheme
   },
   {
@@ -136,6 +173,7 @@ const INITIAL_TEMPLATES: (Template & { theme: ITheme })[] = [
     description: '俏皮的手绘风格，带有漫画字体和虚线边框。',
     thumbnailColor: '#ffb347',
     thumbnailUrl: '/thumbnails/hand-drawn.jpg',
+    category: 'standard',
     theme: handDrawnThemeDefault as unknown as ITheme
   }
 ];
@@ -151,8 +189,8 @@ const App: React.FC = () => {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      // Ensure we have exactly 8 presets for the grid
-      const targetCount = 8;
+      // Ensure we have exactly 10 presets for the grid
+      const targetCount = 10;
       const currentCount = INITIAL_TEMPLATES.length;
       const needed = Math.max(0, targetCount - currentCount);
 
@@ -230,14 +268,12 @@ const App: React.FC = () => {
       {step === 1 && (
         <LandingPage
           templates={templates}
-          templatesList={templates}
           isLoading={isLoading}
           onEnterStudio={() => setStep(2)}
           onOpenExtractor={() => setShowExtractor(true)}
           onOpenDocs={() => setStep(4)}
           onSelectTheme={setCurrentTheme}
           currentThemeId={templates.find(t => JSON.stringify(t.theme) === JSON.stringify(currentTheme))?.id || 'pixel-classic'}
-          currentTheme={currentTheme}
         />
       )}
 

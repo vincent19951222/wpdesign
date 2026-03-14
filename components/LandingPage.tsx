@@ -4,7 +4,7 @@ import { Wand2, Layout } from 'lucide-react';
 import { InfiniteMarquee, NeoGridBackground } from './NeoEffects';
 import ThemeGallery from './ThemeGallery';
 import type { ITheme } from '../types/ITheme';
-import type { Template } from '../types';
+import type { Template, TemplateCategory } from '../types';
 import TypewriterLogo from './Logo';
 
 export const LandingPage: React.FC<{
@@ -15,9 +15,23 @@ export const LandingPage: React.FC<{
     onOpenDocs: () => void;
     onSelectTheme: (theme: ITheme) => void;
     currentThemeId: string;
-    currentTheme: ITheme;
-    templatesList: (Template & { theme: ITheme })[];
 }> = ({ templates, isLoading, onEnterStudio, onOpenExtractor, onOpenDocs, onSelectTheme, currentThemeId }) => {
+    const currentTemplate = templates.find((template) => template.id === currentThemeId);
+    const [activeTab, setActiveTab] = React.useState<TemplateCategory>(currentTemplate?.category ?? 'standard');
+
+    React.useEffect(() => {
+        if (currentTemplate) {
+            setActiveTab(currentTemplate.category);
+        }
+    }, [currentTemplate]);
+
+    const tabItems: { id: TemplateCategory; label: string; hint: string }[] = [
+        { id: 'standard', label: '常规主题', hint: '适合手动复制和常规预览' },
+        { id: 'api-safe', label: 'API-safe', hint: '为草稿 API 和低保真通道收敛' }
+    ];
+
+    const templatesByTab = templates.filter((template) => template.category === activeTab);
+
     return (
         <NeoGridBackground>
             <div className="flex min-h-screen flex-col relative">
@@ -124,8 +138,42 @@ export const LandingPage: React.FC<{
                                 </p>
                             </div>
 
+                            <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                                <div className="flex flex-wrap gap-3">
+                                    {tabItems.map((tab) => {
+                                        const isActive = activeTab === tab.id;
+                                        const count = templates.filter((template) => template.category === tab.id).length;
+
+                                        return (
+                                            <button
+                                                key={tab.id}
+                                                onClick={() => setActiveTab(tab.id)}
+                                                className={`min-w-[172px] border-4 border-neo-ink px-4 py-3 text-left transition-all ${isActive
+                                                    ? 'bg-neo-yellow shadow-none translate-x-[4px] translate-y-[4px]'
+                                                    : 'bg-white shadow-neo-sm hover:-translate-y-1'
+                                                    }`}
+                                            >
+                                                <div className="flex items-center justify-between gap-4">
+                                                    <span className="text-base font-black uppercase tracking-wide">{tab.label}</span>
+                                                    <span className="border-2 border-neo-ink bg-white px-2 py-0.5 font-mono text-xs font-black">
+                                                        {count}
+                                                    </span>
+                                                </div>
+                                                <div className="mt-2 text-xs font-bold text-neo-ink/60">
+                                                    {tab.hint}
+                                                </div>
+                                            </button>
+                                        );
+                                    })}
+                                </div>
+
+                                <div className="border-4 border-neo-ink bg-neo-bg px-4 py-3 text-sm font-bold text-neo-ink/75 shadow-neo-sm">
+                                    当前分类：{activeTab === 'api-safe' ? 'API-safe 模式' : '常规主题'}
+                                </div>
+                            </div>
+
                             <ThemeGallery
-                                templates={templates}
+                                templates={templatesByTab}
                                 onSelect={(t) => {
                                     onSelectTheme(t.theme);
                                     onEnterStudio();

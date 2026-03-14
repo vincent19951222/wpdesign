@@ -25,6 +25,12 @@ export const Preview: React.FC<PreviewProps> = ({
 }) => {
     const [viewMode, setViewMode] = useState<ViewMode>('dual');
 
+    const PreviewFrame = ({ mobile = false }: { mobile?: boolean }) => (
+        <div className={`w-full bg-white ${mobile ? 'px-4 pb-6 pt-4' : 'px-5 md:px-6 py-6'} min-h-full box-border`}>
+            <WeChatRenderer content={markdown} theme={theme} />
+        </div>
+    );
+
     const SwitcherButton = ({ mode, icon: Icon, label }: { mode: ViewMode, icon: any, label: string }) => (
         <button
             onClick={() => setViewMode(mode)}
@@ -85,7 +91,7 @@ export const Preview: React.FC<PreviewProps> = ({
                             </div>
 
                             <div className="w-full h-full overflow-y-auto bg-white pt-8 custom-scrollbar">
-                                <WeChatRenderer content={markdown} theme={theme} />
+                                <PreviewFrame mobile />
                             </div>
                         </motion.div>
                     )}
@@ -112,7 +118,7 @@ export const Preview: React.FC<PreviewProps> = ({
 
                             <div className="flex-1 overflow-y-auto bg-neo-cream/30 p-4 md:p-8 custom-scrollbar">
                                 <div className="max-w-[700px] mx-auto bg-white border-2 border-neo-ink/10 shadow-sm min-h-full">
-                                    <WeChatRenderer content={markdown} theme={theme} />
+                                    <PreviewFrame />
                                 </div>
                             </div>
                         </motion.div>
@@ -130,7 +136,7 @@ export const Preview: React.FC<PreviewProps> = ({
                             <div className="relative w-full max-w-[320px] h-[640px] border-4 border-neo-ink bg-white shadow-neo-lg overflow-hidden rounded-[2.5rem] shrink-0 scale-90 md:scale-100 origin-top">
                                 <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-6 bg-neo-ink rounded-b-2xl z-20" />
                                 <div className="w-full h-full overflow-y-auto bg-white pt-6 custom-scrollbar">
-                                    <WeChatRenderer content={markdown} theme={theme} />
+                                    <PreviewFrame mobile />
                                 </div>
                             </div>
 
@@ -143,7 +149,7 @@ export const Preview: React.FC<PreviewProps> = ({
                                 </div>
                                 <div className="flex-1 overflow-y-auto bg-neo-cream/20 p-4 custom-scrollbar">
                                     <div className="max-w-[600px] mx-auto bg-white border border-neo-ink/5 shadow-sm min-h-full">
-                                        <WeChatRenderer content={markdown} theme={theme} />
+                                        <PreviewFrame />
                                     </div>
                                 </div>
                             </div>
