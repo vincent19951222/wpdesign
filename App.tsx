@@ -183,6 +183,7 @@ const App: React.FC = () => {
   const [markdown, setMarkdown] = useState(DEFAULT_MD);
   const [copied, setCopied] = useState(false);
   const [currentTheme, setCurrentTheme] = useState<ITheme>(pixelThemeDefault as unknown as ITheme);
+  const [currentThemeId, setCurrentThemeId] = useState('pixel-classic');
   const [showExtractor, setShowExtractor] = useState(false);
   const [templates, setTemplates] = useState<(Template & { theme: ITheme })[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -216,6 +217,7 @@ const App: React.FC = () => {
       try {
         const json = JSON.parse(e.target?.result as string);
         setCurrentTheme(json as ITheme);
+        setCurrentThemeId('custom-upload');
         alert('主题加载成功！');
       } catch (err) {
         alert('无效的 JSON 文件');
@@ -272,8 +274,11 @@ const App: React.FC = () => {
           onEnterStudio={() => setStep(2)}
           onOpenExtractor={() => setShowExtractor(true)}
           onOpenDocs={() => setStep(4)}
-          onSelectTheme={setCurrentTheme}
-          currentThemeId={templates.find(t => JSON.stringify(t.theme) === JSON.stringify(currentTheme))?.id || 'pixel-classic'}
+          onSelectTheme={(theme, templateId) => {
+            setCurrentTheme(theme);
+            setCurrentThemeId(templateId || 'custom-theme');
+          }}
+          currentThemeId={currentThemeId}
         />
       )}
 
@@ -292,6 +297,7 @@ const App: React.FC = () => {
         <Preview
           markdown={markdown}
           theme={currentTheme}
+          currentThemeId={currentThemeId}
           copied={copied}
           onBack={() => setStep(2)}
           onCopy={handleCopy}
@@ -306,6 +312,7 @@ const App: React.FC = () => {
         <ThemeExtractorUI
           onThemeExtracted={(theme) => {
             setCurrentTheme(theme);
+            setCurrentThemeId('extracted-theme');
             setShowExtractor(false);
             setStep(2);
           }}

@@ -38,7 +38,7 @@ const WeChatRenderer: React.FC<Props> = ({ content, theme }) => {
           remarkPlugins={[RemarkGfm]}
           components={{
             h1: ({ node, ...props }) => (
-              <section style={styles.h1Container}>
+              <section style={styles.h1Container} data-wechat-title-container="true">
                 <h1 style={styles.h1} {...props} />
                 <p style={styles.h1Subtitle}>
                   {theme.meta?.description || '演示版本 3.3 | 排版实验室'}
@@ -51,9 +51,9 @@ const WeChatRenderer: React.FC<Props> = ({ content, theme }) => {
               </section>
             ),
             h3: ({ node, ...props }) => (
-              <section style={styles.h3Container}>
-                <span style={styles.h3Badge}></span>
-                <h3 style={styles.h3} {...props} />
+              <section style={styles.h3Container} data-wechat-h3-container="true">
+                <span style={styles.h3Badge} data-wechat-h3-badge="true"></span>
+                <h3 style={styles.h3} data-wechat-h3-title="true" {...props} />
               </section>
             ),
             h4: ({ node, ...props }) => (
@@ -89,15 +89,15 @@ const WeChatRenderer: React.FC<Props> = ({ content, theme }) => {
                   width: '100%',
                   minWidth: '100%',
                   boxSizing: 'border-box'
-                }}>
-                  <section style={styles.preHeader}>
+                }} data-wechat-code-block="true">
+                  <section style={styles.preHeader} data-wechat-code-header="true">
                     <section style={{ ...styles.preDot, backgroundColor: '#FF4757' }} />
                     <section style={{ ...styles.preDot, backgroundColor: '#FFD700' }} />
                     <section style={{ ...styles.preDot, backgroundColor: '#00E099' }} />
-                    <span style={{ marginLeft: 'auto', color: '#00E099', fontFamily: "'Courier New'", fontSize: '12px' }}>代码片段</span>
+                    <span style={{ marginLeft: 'auto', color: '#00E099', fontFamily: "'Courier New'", fontSize: '12px' }} data-wechat-code-label="true">代码片段</span>
                   </section>
-                  <section style={styles.preBody}>
-                    <code {...props}>{children}</code>
+                  <section style={styles.preBody} data-wechat-code-body="true">
+                    <code data-wechat-code-content="true" {...props}>{children}</code>
                   </section>
                 </section>
               )
@@ -105,9 +105,9 @@ const WeChatRenderer: React.FC<Props> = ({ content, theme }) => {
             pre: ({ node, children, ...props }) => <>{children}</>, // 完全透传，不产生额外包裹层
             a: ({ node, ...props }) => <a style={styles.a} {...props} />,
             blockquote: ({ node, ...props }) => (
-              <blockquote style={styles.blockquote}>
-                <section style={styles.blockquoteBadge}>{theme.meta?.blockquoteLabel || '提示'}</section>
-                <section style={styles.blockquoteContent} {...props} />
+              <blockquote style={styles.blockquote} data-wechat-blockquote="true">
+                <section style={styles.blockquoteBadge} data-wechat-blockquote-badge="true">{theme.meta?.blockquoteLabel || '提示'}</section>
+                <section style={styles.blockquoteContent} data-wechat-blockquote-content="true" {...props} />
               </blockquote>
             ),
             hr: () => (
@@ -242,6 +242,50 @@ const WeChatRenderer: React.FC<Props> = ({ content, theme }) => {
             </>
           )}
 
+          {footerType === 'pixel-api-safe' && (
+            <section data-wechat-footer="true" style={{ textAlign: 'center' }}>
+              <section style={{ textAlign: 'center', marginBottom: '18px' }}>
+                <section
+                  style={{
+                    display: 'inline-block',
+                    verticalAlign: 'middle',
+                    marginRight: '14px'
+                  }}
+                >
+                  <section style={styles.footerIcon} data-wechat-footer-icon="true">🎮</section>
+                </section>
+                <span
+                  data-wechat-footer-cta="true"
+                  style={{
+                    display: 'inline-block',
+                    verticalAlign: 'middle',
+                    backgroundColor: '#ff4757',
+                    color: '#ffffff',
+                    padding: '10px 26px',
+                    border: '3px solid #1a1a1a',
+                    boxShadow: '4px 4px 0 #1a1a1a',
+                    fontFamily: "'Courier New', Courier, monospace",
+                    fontSize: '18px',
+                    fontWeight: 900,
+                    letterSpacing: '1px',
+                    lineHeight: '1.2'
+                  }}
+                >
+                  投币关注
+                </span>
+              </section>
+              <p
+                data-wechat-footer-title="true"
+                style={{ margin: '0', textAlign: 'center', fontSize: '18px', fontWeight: 800, color: '#1a1a1a' }}
+              >
+                {theme.meta?.author || '李面条的实验室'}
+              </p>
+              <p data-wechat-footer-subtitle="true" style={styles.footerText}>
+                由 AI 和猫猫共同构建
+              </p>
+            </section>
+          )}
+
           {footerType === 'classic' && (
             <>
               <p style={styles.footerText}>
@@ -253,9 +297,11 @@ const WeChatRenderer: React.FC<Props> = ({ content, theme }) => {
 
       </section>
 
-      <section style={{ textAlign: 'center', paddingBottom: '20px', fontSize: '12px', color: '#ccc', fontFamily: 'monospace' }}>
-        © {new Date().getFullYear()} {theme.meta?.author || '排版实验室'}. 版权所有.
-      </section>
+      {footerType !== 'pixel-api-safe' && (
+        <section style={{ textAlign: 'center', paddingBottom: '20px', fontSize: '12px', color: '#ccc', fontFamily: 'monospace' }}>
+          © {new Date().getFullYear()} {theme.meta?.author || '排版实验室'}. 版权所有.
+        </section>
+      )}
     </section>
   );
 };

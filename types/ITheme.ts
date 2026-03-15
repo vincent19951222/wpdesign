@@ -3,7 +3,7 @@ import { CSSProperties } from 'react';
 export interface ITheme {
   meta?: {
     headerType: 'pixel' | 'classic' | 'none';
-    footerType: 'pixel' | 'classic' | 'none';
+    footerType: 'pixel' | 'pixel-api-safe' | 'classic' | 'none';
     author?: string;
     description?: string;
     blockquoteLabel?: string;

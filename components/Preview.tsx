@@ -1,14 +1,16 @@
-import React, { useState } from 'react';
-import { ChevronLeft, Check, Copy, Smartphone, Monitor, Layout, Maximize2, Minimize2 } from 'lucide-react';
+import React, { useMemo, useState } from 'react';
+import { ChevronLeft, Check, Copy, Smartphone, Monitor, Layout, Send, AlertCircle } from 'lucide-react';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
 import WeChatRenderer from './WeChatRenderer';
 import { ITheme } from '../types/ITheme';
 import { motion, AnimatePresence } from 'framer-motion';
+import { buildDraftHtmlFromPreview, CLASSIC_PIXEL_API_SAFE_THEME_ID, extractDraftTitleFromMarkdown } from '../lib/wechatDraft';
 
 interface PreviewProps {
     markdown: string;
     theme: ITheme;
+    currentThemeId: string;
     copied: boolean;
     onBack: () => void;
     onCopy: () => void;
@@ -19,17 +21,75 @@ type ViewMode = 'mobile' | 'pc' | 'dual';
 export const Preview: React.FC<PreviewProps> = ({
     markdown,
     theme,
+    currentThemeId,
     copied,
     onBack,
     onCopy
 }) => {
     const [viewMode, setViewMode] = useState<ViewMode>('dual');
+    const [isSyncing, setIsSyncing] = useState(false);
+    const [syncMessage, setSyncMessage] = useState<{ type: 'success' | 'error' | 'info'; text: string } | null>(null);
+    const supportsDraftSync = currentThemeId === CLASSIC_PIXEL_API_SAFE_THEME_ID;
+    const draftTitle = useMemo(() => extractDraftTitleFromMarkdown(markdown), [markdown]);
 
     const PreviewFrame = ({ mobile = false }: { mobile?: boolean }) => (
         <div className={`w-full bg-white ${mobile ? 'px-4 pb-6 pt-4' : 'px-5 md:px-6 py-6'} min-h-full box-border`}>
             <WeChatRenderer content={markdown} theme={theme} />
         </div>
     );
+
+    const handleDraftSync = async () => {
+        if (!supportsDraftSync) {
+            setSyncMessage({ type: 'info', text: 'v1 仅支持“经典像素 API”主题同步草稿。你仍可继续使用复制功能。' });
+            return;
+        }
+
+        if (!draftTitle) {
+            setSyncMessage({ type: 'error', text: '请先在 Markdown 中提供一个一级标题（# 标题），再同步草稿。' });
+            return;
+        }
+
+        const node = document.getElementById('wechat-output');
+        if (!node) {
+            setSyncMessage({ type: 'error', text: '未找到预览内容，无法生成草稿正文。' });
+            return;
+        }
+
+        setIsSyncing(true);
+        setSyncMessage({ type: 'info', text: '正在同步到微信公众号草稿箱…' });
+
+        try {
+            const contentHtml = buildDraftHtmlFromPreview(node);
+            const response = await fetch('/api/wechat/drafts', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    title: draftTitle,
+                    contentHtml
+                })
+            });
+
+            const data = await response.json().catch(() => ({}));
+
+            if (!response.ok) {
+                throw new Error(data.message || data.error || '同步草稿失败');
+            }
+
+            setSyncMessage({
+                type: 'success',
+                text: `草稿已创建成功${data.mediaId ? `，media_id: ${data.mediaId}` : ''}。如需继续调整，仍可使用复制功能。`
+            });
+        } catch (error) {
+            setSyncMessage({
+                type: 'error',
+                text: `${error instanceof Error ? error.message : '同步草稿失败'}。你仍可继续使用复制功能。`
+            });
+        } finally {
+            setIsSyncing(false);
+        }
+    };
 
     const SwitcherButton = ({ mode, icon: Icon, label }: { mode: ViewMode, icon: any, label: string }) => (
         <button
@@ -67,10 +127,44 @@ export const Preview: React.FC<PreviewProps> = ({
                     <SwitcherButton mode="dual" icon={Layout} label="Dual View" />
                 </div>
 
-                <div className="hidden md:block">
-                    <Button onClick={onCopy} variant={copied ? "secondary" : "primary"} className="px-8 py-6 text-lg">
-                        {copied ? <><Check strokeWidth={3} className="mr-2" /> COPIED!</> : <><Copy strokeWidth={3} className="mr-2" /> COPY FOR WECHAT</>}
+                <div className="flex w-full md:w-auto justify-end gap-2">
+                    <Button
+                        onClick={handleDraftSync}
+                        variant={supportsDraftSync ? 'accent' : 'outline'}
+                        className="px-5 py-4 text-sm md:text-base"
+                        disabled={isSyncing}
+                    >
+                        {isSyncing ? <><Send strokeWidth={3} className="mr-2" /> SYNCING...</> : <><Send strokeWidth={3} className="mr-2" /> SYNC DRAFT</>}
                     </Button>
+                    <div className="hidden md:block">
+                        <Button onClick={onCopy} variant={copied ? "secondary" : "primary"} className="px-8 py-6 text-lg">
+                            {copied ? <><Check strokeWidth={3} className="mr-2" /> COPIED!</> : <><Copy strokeWidth={3} className="mr-2" /> COPY FOR WECHAT</>}
+                        </Button>
+                    </div>
+                </div>
+            </div>
+
+            <div className="w-full max-w-7xl mx-auto mb-6">
+                <div className={`border-4 border-neo-ink p-4 text-sm md:text-base ${syncMessage?.type === 'success'
+                    ? 'bg-[#E6FFF2]'
+                    : syncMessage?.type === 'error'
+                        ? 'bg-[#FFECEC]'
+                        : 'bg-white'
+                    }`}>
+                    <div className="flex items-start gap-3">
+                        <AlertCircle size={18} className="mt-0.5 shrink-0" />
+                        <div className="space-y-1">
+                            <p className="font-black uppercase tracking-wide">
+                                {supportsDraftSync ? '草稿同步已启用' : '草稿同步范围提示'}
+                            </p>
+                            <p className="text-neo-ink/80">
+                                {supportsDraftSync
+                                    ? '当前主题为“经典像素 API”，可以直接创建微信公众号草稿。系统会使用 Markdown 的首个 H1 作为草稿标题。'
+                                    : 'v1 仅支持“经典像素 API”主题同步草稿。其他主题仍建议使用现有复制流程。'}
+                            </p>
+                            {syncMessage && <p className="font-bold">{syncMessage.text}</p>}
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -158,8 +252,16 @@ export const Preview: React.FC<PreviewProps> = ({
                 </AnimatePresence>
             </div>
 
-            {/* Mobile Floating Button */}
-            <div className="fixed bottom-6 right-6 md:hidden z-50">
+            {/* Mobile Floating Buttons */}
+            <div className="fixed bottom-6 right-6 md:hidden z-50 flex flex-col gap-3">
+                <button
+                    onClick={handleDraftSync}
+                    disabled={isSyncing}
+                    className={`w-16 h-16 border-4 border-neo-ink shadow-neo-sm flex items-center justify-center active:translate-y-1 active:shadow-none transition-all ${supportsDraftSync ? 'bg-neo-accent text-white' : 'bg-white'
+                        }`}
+                >
+                    <Send size={24} strokeWidth={3} />
+                </button>
                 <button
                     onClick={onCopy}
                     className={`w-16 h-16 border-4 border-neo-ink shadow-neo-sm flex items-center justify-center active:translate-y-1 active:shadow-none transition-all ${copied ? 'bg-neo-muted' : 'bg-neo-yellow'

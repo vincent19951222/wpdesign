@@ -1,8 +1,8 @@
 {
   "meta": {
     "headerType": "none",
-    "footerType": "none",
-    "author": "排版实验室",
+    "footerType": "pixel-api-safe",
+    "author": "李面条的实验室",
     "description": "Classic pixel theme optimized for WeChat API-safe fidelity",
     "blockquoteLabel": "Meow"
   },
@@ -299,12 +299,30 @@
     "fontSize": "15px"
   },
   "footer": {
-    "display": "none"
+    "marginTop": "42px",
+    "paddingTop": "12px",
+    "textAlign": "center"
   },
   "footerIcon": {
-    "display": "none"
+    "display": "inline-block",
+    "minWidth": "56px",
+    "height": "56px",
+    "lineHeight": "56px",
+    "textAlign": "center",
+    "backgroundColor": "#ffd700",
+    "color": "#1a1a1a",
+    "border": "3px solid #1a1a1a",
+    "fontFamily": "'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif",
+    "fontWeight": 900,
+    "fontSize": "34px",
+    "boxShadow": "4px 4px 0 #ff4757"
   },
   "footerText": {
-    "display": "none"
+    "margin": "6px 0 0",
+    "textAlign": "center",
+    "fontSize": "12px",
+    "color": "#999999",
+    "fontFamily": "'Courier New', monospace",
+    "lineHeight": "1.5"
   }
 }

@@ -13,7 +13,7 @@ export const LandingPage: React.FC<{
     onEnterStudio: () => void;
     onOpenExtractor: () => void;
     onOpenDocs: () => void;
-    onSelectTheme: (theme: ITheme) => void;
+    onSelectTheme: (theme: ITheme, templateId?: string) => void;
     currentThemeId: string;
 }> = ({ templates, isLoading, onEnterStudio, onOpenExtractor, onOpenDocs, onSelectTheme, currentThemeId }) => {
     const currentTemplate = templates.find((template) => template.id === currentThemeId);
@@ -175,7 +175,7 @@ export const LandingPage: React.FC<{
                             <ThemeGallery
                                 templates={templatesByTab}
                                 onSelect={(t) => {
-                                    onSelectTheme(t.theme);
+                                    onSelectTheme(t.theme, t.id);
                                     onEnterStudio();
                                 }}
                                 currentId={currentThemeId}
