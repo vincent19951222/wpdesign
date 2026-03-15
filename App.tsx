@@ -13,9 +13,6 @@ import defaultThemeDefault from './themes/default-theme.json';
 import handDrawnThemeDefault from './themes/hand-drawn-theme.json';
 
 import techMinimalistThemeDefault from './themes/tech-minimalist-theme.json';
-import magazineFashionThemeDefault from './themes/magazine-fashion-theme.json';
-import neumorphismThemeDefault from './themes/neumorphism-theme.json';
-import retroNewspaperThemeDefault from './themes/retro-newspaper-theme.json';
 import pixelV4ThemeDefault from './themes/pixel-v4-theme.json';
 import pixelV4ApiSafeThemeDefault from './themes/pixel-v4-api-safe-theme.json';
 import pixelClassicApiSafeThemeDefault from './themes/pixel-classic-api-safe-theme.json';
@@ -124,33 +121,6 @@ const INITIAL_TEMPLATES: (Template & { theme: ITheme })[] = [
     theme: techMinimalistThemeDefault as unknown as ITheme
   },
   {
-    id: 'magazine-fashion',
-    name: '时尚杂志',
-    description: '高端黑白金配色，大气的衬线字体排版。',
-    thumbnailColor: '#ffffff',
-    thumbnailUrl: '/thumbnails/magazine-fashion.jpg',
-    category: 'standard',
-    theme: magazineFashionThemeDefault as unknown as ITheme
-  },
-  {
-    id: 'neumorphism',
-    name: '新拟态',
-    description: '柔和的阴影与圆角设计，极具质感的 Soft UI 风格。',
-    thumbnailColor: '#e0e5ec',
-    thumbnailUrl: '/thumbnails/neumorphism.jpg',
-    category: 'standard',
-    theme: neumorphismThemeDefault as unknown as ITheme
-  },
-  {
-    id: 'retro-newspaper',
-    name: '复古报纸',
-    description: '泛黄的旧报纸风格，Typewriter 字体与衬线体。',
-    thumbnailColor: '#f4f1ea',
-    thumbnailUrl: '/thumbnails/retro-newspaper.jpg',
-    category: 'standard',
-    theme: retroNewspaperThemeDefault as unknown as ITheme
-  },
-  {
     id: 'classic-theme',
     name: '商务经典',
     description: '简洁专业的风格，适合正式文档和通讯。',
@@ -199,20 +169,7 @@ const App: React.FC = () => {
     }
 
     const timer = setTimeout(() => {
-      // Ensure we have exactly 10 presets for the grid
-      const targetCount = 10;
-      const currentCount = INITIAL_TEMPLATES.length;
-      const needed = Math.max(0, targetCount - currentCount);
-
-      const demoTemplates = [
-        ...INITIAL_TEMPLATES,
-        ...INITIAL_TEMPLATES.slice(0, needed).map(t => ({
-          ...t,
-          id: t.id + '_copy',
-          name: t.name + ' 2.0'
-        }))
-      ];
-      setTemplates(demoTemplates);
+      setTemplates(INITIAL_TEMPLATES);
       setIsLoading(false);
     }, 1000);
     return () => clearTimeout(timer);
