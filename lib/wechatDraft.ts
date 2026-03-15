@@ -315,6 +315,26 @@ export const buildDraftHtmlFromPreview = (root: HTMLElement): string => {
     blockquote.replaceWith(table);
   });
 
+  Array.from(clone.querySelectorAll('[data-wechat-hr="true"]')).forEach((hrContainer) => {
+    const doc = hrContainer.ownerDocument;
+    const hrText = hrContainer.querySelector('[data-wechat-hr-text="true"]') as HTMLElement | null;
+    const paragraph = doc.createElement('p');
+    paragraph.setAttribute(
+      'style',
+      'margin:2rem 0; text-align:center; opacity:0.35;'
+    );
+
+    const span = doc.createElement('span');
+    span.setAttribute(
+      'style',
+      'display:inline-block; font-size:18px; letter-spacing:8px; color:#1a1a1a; text-align:center;'
+    );
+    span.innerHTML = hrText?.innerHTML || '•••••';
+
+    paragraph.appendChild(span);
+    hrContainer.replaceWith(paragraph);
+  });
+
   Array.from(clone.querySelectorAll('[data-wechat-footer="true"]')).forEach((footer) => {
     const doc = footer.ownerDocument;
     const icon = footer.querySelector('[data-wechat-footer-icon="true"]') as HTMLElement | null;
@@ -322,30 +342,24 @@ export const buildDraftHtmlFromPreview = (root: HTMLElement): string => {
     const subtitle = footer.querySelector('[data-wechat-footer-subtitle="true"]') as HTMLElement | null;
     const cta = footer.querySelector('[data-wechat-footer-cta="true"]') as HTMLElement | null;
 
-    const table = doc.createElement('table');
-    table.setAttribute(
+    const wrapper = doc.createElement('div');
+    wrapper.setAttribute(
       'style',
-      'width:100%; border-collapse:collapse; table-layout:fixed; margin:2.8em 0 0;'
+      'width:100%; margin:2.8em 0 0; text-align:center; border:none;'
     );
-    table.setAttribute('cellpadding', '0');
-    table.setAttribute('cellspacing', '0');
-    table.setAttribute('role', 'presentation');
-
-    const tbody = doc.createElement('tbody');
 
     if (icon || cta) {
-      const topRow = doc.createElement('tr');
-      const topCell = doc.createElement('td');
-      topCell.setAttribute('style', 'text-align:center; padding:0 0 18px;');
+      const topRow = doc.createElement('p');
+      topRow.setAttribute('style', 'margin:0 0 18px; text-align:center;');
 
       if (icon) {
         const iconSpan = doc.createElement('span');
         iconSpan.setAttribute(
           'style',
-          "display:inline-block; vertical-align:middle; min-width:56px; height:56px; line-height:56px; text-align:center; background:#ffd700; color:#1a1a1a; border:3px solid #1a1a1a; font-size:34px; font-weight:900; font-family:'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji',sans-serif; margin-right:14px;"
+          "display:inline-block; vertical-align:middle; min-width:48px; height:48px; line-height:48px; text-align:center; background:#ffd700; color:#1a1a1a; border:3px solid #1a1a1a; font-size:28px; font-weight:900; font-family:'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji',sans-serif; box-shadow:4px 4px 0 #1a1a1a; margin-right:10px;"
         );
         iconSpan.textContent = icon.textContent || '🎮';
-        topCell.appendChild(iconSpan);
+        topRow.appendChild(iconSpan);
       }
 
       if (cta) {
@@ -355,18 +369,13 @@ export const buildDraftHtmlFromPreview = (root: HTMLElement): string => {
           "display:inline-block; vertical-align:middle; background:#ff4757; color:#ffffff; padding:10px 26px; border:3px solid #1a1a1a; font-family:'Courier New', Courier, monospace; font-size:18px; font-weight:900; letter-spacing:1px; line-height:1.2;"
         );
         ctaSpan.innerHTML = cta.innerHTML;
-        topCell.appendChild(ctaSpan);
+        topRow.appendChild(ctaSpan);
       }
 
-      topRow.appendChild(topCell);
-      tbody.appendChild(topRow);
+      wrapper.appendChild(topRow);
     }
 
     if (title || subtitle) {
-      const textRow = doc.createElement('tr');
-      const textCell = doc.createElement('td');
-      textCell.setAttribute('style', 'text-align:center; padding:0;');
-
       if (title) {
         const titleP = doc.createElement('p');
         titleP.setAttribute(
@@ -374,7 +383,7 @@ export const buildDraftHtmlFromPreview = (root: HTMLElement): string => {
           'margin:0; text-align:center; font-size:18px; font-weight:800; color:#1a1a1a; line-height:1.5;'
         );
         titleP.innerHTML = title.innerHTML;
-        textCell.appendChild(titleP);
+        wrapper.appendChild(titleP);
       }
 
       if (subtitle) {
@@ -384,15 +393,11 @@ export const buildDraftHtmlFromPreview = (root: HTMLElement): string => {
           "margin:6px 0 0; text-align:center; font-size:12px; color:#999999; font-family:'Courier New', monospace; line-height:1.5;"
         );
         subtitleP.innerHTML = subtitle.innerHTML;
-        textCell.appendChild(subtitleP);
+        wrapper.appendChild(subtitleP);
       }
-
-      textRow.appendChild(textCell);
-      tbody.appendChild(textRow);
     }
 
-    table.appendChild(tbody);
-    footer.replaceWith(table);
+    footer.replaceWith(wrapper);
   });
 
   Array.from(clone.querySelectorAll('ol, ul')).forEach((list) => {

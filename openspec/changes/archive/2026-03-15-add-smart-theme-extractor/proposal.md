@@ -34,3 +34,11 @@
 - **Dependencies**: 
   - 需要 Kimi K2 API 密钥 (`MOONSHOT_API_KEY`)
   - 可能需要添加 `cheerio` 或 `style-to-object` 依赖
+
+## Final Disposition
+
+该能力在产品评估后不再继续推进为前台主功能。
+
+- 前端主题提取器保留为后台内部实验工具
+- AI 后端抽取链路与验证任务暂停，不继续投入主线开发
+- 本 change 关闭时不写入主 spec，避免把低优先级实验固化为正式能力

@@ -305,17 +305,17 @@
   },
   "footerIcon": {
     "display": "inline-block",
-    "minWidth": "56px",
-    "height": "56px",
-    "lineHeight": "56px",
+    "minWidth": "48px",
+    "height": "48px",
+    "lineHeight": "48px",
     "textAlign": "center",
     "backgroundColor": "#ffd700",
     "color": "#1a1a1a",
     "border": "3px solid #1a1a1a",
     "fontFamily": "'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif",
     "fontWeight": 900,
-    "fontSize": "34px",
-    "boxShadow": "4px 4px 0 #ff4757"
+    "fontSize": "28px",
+    "boxShadow": "4px 4px 0 #1a1a1a"
   },
   "footerText": {
     "margin": "6px 0 0",

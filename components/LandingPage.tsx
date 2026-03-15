@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button } from './ui/button';
-import { Wand2, Layout } from 'lucide-react';
+import { Layout } from 'lucide-react';
 import { InfiniteMarquee, NeoGridBackground } from './NeoEffects';
 import ThemeGallery from './ThemeGallery';
 import type { ITheme } from '../types/ITheme';
@@ -11,13 +11,15 @@ export const LandingPage: React.FC<{
     templates: (Template & { theme: ITheme })[];
     isLoading: boolean;
     onEnterStudio: () => void;
-    onOpenExtractor: () => void;
     onOpenDocs: () => void;
+    onAdminTrigger: () => void;
     onSelectTheme: (theme: ITheme, templateId?: string) => void;
     currentThemeId: string;
-}> = ({ templates, isLoading, onEnterStudio, onOpenExtractor, onOpenDocs, onSelectTheme, currentThemeId }) => {
+}> = ({ templates, isLoading, onEnterStudio, onOpenDocs, onAdminTrigger, onSelectTheme, currentThemeId }) => {
     const currentTemplate = templates.find((template) => template.id === currentThemeId);
     const [activeTab, setActiveTab] = React.useState<TemplateCategory>(currentTemplate?.category ?? 'standard');
+    const [adminTapCount, setAdminTapCount] = React.useState(0);
+    const adminTapResetRef = React.useRef<number | null>(null);
 
     React.useEffect(() => {
         if (currentTemplate) {
@@ -25,12 +27,38 @@ export const LandingPage: React.FC<{
         }
     }, [currentTemplate]);
 
+    React.useEffect(() => {
+        return () => {
+            if (adminTapResetRef.current) {
+                window.clearTimeout(adminTapResetRef.current);
+            }
+        };
+    }, []);
+
     const tabItems: { id: TemplateCategory; label: string; hint: string }[] = [
         { id: 'standard', label: '常规主题', hint: '适合手动复制和常规预览' },
         { id: 'api-safe', label: 'API-safe', hint: '为草稿 API 和低保真通道收敛' }
     ];
 
     const templatesByTab = templates.filter((template) => template.category === activeTab);
+    const handleAdminTap = () => {
+        const nextCount = adminTapCount + 1;
+        setAdminTapCount(nextCount);
+
+        if (adminTapResetRef.current) {
+            window.clearTimeout(adminTapResetRef.current);
+        }
+
+        if (nextCount >= 5) {
+            setAdminTapCount(0);
+            onAdminTrigger();
+            return;
+        }
+
+        adminTapResetRef.current = window.setTimeout(() => {
+            setAdminTapCount(0);
+        }, 1600);
+    };
 
     return (
         <NeoGridBackground>
@@ -42,11 +70,15 @@ export const LandingPage: React.FC<{
                             <div className="font-sans text-xl font-black uppercase tracking-wider">Wp Design</div>
                             <div className="font-mono text-[11px] uppercase tracking-[0.22em] text-neo-ink/50">WeChat publishing workbench</div>
                         </div>
+                        <button
+                            type="button"
+                            onClick={handleAdminTap}
+                            className="border-4 border-neo-ink bg-neo-bg px-3 py-1 text-xs font-black uppercase tracking-[0.18em] shadow-neo-sm transition-transform hover:-translate-y-0.5 active:translate-y-0.5"
+                        >
+                            VPD站
+                        </button>
                     </div>
                     <div className="flex gap-2 md:gap-4">
-                        <Button size="sm" className="bg-neo-yellow border-neo-ink text-neo-ink font-bold hover:bg-[#FFE170]" onClick={onOpenExtractor}>
-                            <Wand2 size={16} className="mr-0 md:mr-2" /> <span className="hidden md:inline">提取主题</span>
-                        </Button>
                         <Button size="sm" variant="ghost" className="hover:bg-neo-ink hover:text-white" onClick={onOpenDocs}>
                             文档
                         </Button>

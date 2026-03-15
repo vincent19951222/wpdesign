@@ -111,8 +111,8 @@ const WeChatRenderer: React.FC<Props> = ({ content, theme }) => {
               </blockquote>
             ),
             hr: () => (
-              <section style={styles.hrContainer}>
-                <span style={styles.hrText}>•••••</span>
+              <section style={styles.hrContainer} data-wechat-hr="true">
+                <span style={styles.hrText} data-wechat-hr-text="true">•••••</span>
               </section>
             ),
             // Custom OL renderer to handle numbering manually
@@ -249,7 +249,7 @@ const WeChatRenderer: React.FC<Props> = ({ content, theme }) => {
                   style={{
                     display: 'inline-block',
                     verticalAlign: 'middle',
-                    marginRight: '14px'
+                    marginRight: '10px'
                   }}
                 >
                   <section style={styles.footerIcon} data-wechat-footer-icon="true">🎮</section>
@@ -271,7 +271,7 @@ const WeChatRenderer: React.FC<Props> = ({ content, theme }) => {
                     lineHeight: '1.2'
                   }}
                 >
-                  投币关注
+                  点赞关注
                 </span>
               </section>
               <p

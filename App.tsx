@@ -4,6 +4,7 @@ import { Editor } from './components/Editor';
 import { Preview } from './components/Preview';
 import { Help } from './components/Help';
 import ThemeExtractorUI from './components/ThemeExtractorUI';
+import AdminWorkbench from './components/AdminWorkbench';
 import { Template } from './types';
 import { ITheme } from './types/ITheme';
 import pixelThemeDefault from './themes/pixel-theme.json';
@@ -179,16 +180,24 @@ const INITIAL_TEMPLATES: (Template & { theme: ITheme })[] = [
 ];
 
 const App: React.FC = () => {
-  const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
+  const [step, setStep] = useState<1 | 2 | 3 | 4 | 5>(1);
   const [markdown, setMarkdown] = useState(DEFAULT_MD);
   const [copied, setCopied] = useState(false);
   const [currentTheme, setCurrentTheme] = useState<ITheme>(pixelThemeDefault as unknown as ITheme);
   const [currentThemeId, setCurrentThemeId] = useState('pixel-classic');
   const [showExtractor, setShowExtractor] = useState(false);
+  const [showAdminAuth, setShowAdminAuth] = useState(false);
+  const [adminPassword, setAdminPassword] = useState('');
+  const [adminError, setAdminError] = useState('');
   const [templates, setTemplates] = useState<(Template & { theme: ITheme })[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    const storedAdminAccess = window.sessionStorage.getItem('wpdesign-admin-access');
+    if (storedAdminAccess === 'granted') {
+      setStep(5);
+    }
+
     const timer = setTimeout(() => {
       // Ensure we have exactly 10 presets for the grid
       const targetCount = 10;
@@ -265,6 +274,36 @@ const App: React.FC = () => {
     }
   };
 
+  const handleOpenAdminAuth = () => {
+    setAdminPassword('');
+    setAdminError('');
+    setShowAdminAuth(true);
+  };
+
+  const handleAdminSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    if (adminPassword.trim() !== 'admin') {
+      setAdminError('密码不正确');
+      return;
+    }
+
+    window.sessionStorage.setItem('wpdesign-admin-access', 'granted');
+    setShowAdminAuth(false);
+    setAdminPassword('');
+    setAdminError('');
+    setStep(5);
+  };
+
+  const handleAdminLogout = () => {
+    window.sessionStorage.removeItem('wpdesign-admin-access');
+    setShowExtractor(false);
+    setShowAdminAuth(false);
+    setAdminPassword('');
+    setAdminError('');
+    setStep(1);
+  };
+
   return (
     <div className="min-h-screen bg-neo-cream font-sans text-neo-ink selection:bg-neo-yellow selection:text-black">
       {step === 1 && (
@@ -272,8 +311,8 @@ const App: React.FC = () => {
           templates={templates}
           isLoading={isLoading}
           onEnterStudio={() => setStep(2)}
-          onOpenExtractor={() => setShowExtractor(true)}
           onOpenDocs={() => setStep(4)}
+          onAdminTrigger={handleOpenAdminAuth}
           onSelectTheme={(theme, templateId) => {
             setCurrentTheme(theme);
             setCurrentThemeId(templateId || 'custom-theme');
@@ -308,6 +347,14 @@ const App: React.FC = () => {
         <Help onBack={() => setStep(1)} />
       )}
 
+      {step === 5 && (
+        <AdminWorkbench
+          onBack={() => setStep(1)}
+          onLogout={handleAdminLogout}
+          onOpenThemeExtractor={() => setShowExtractor(true)}
+        />
+      )}
+
       {showExtractor && (
         <ThemeExtractorUI
           onThemeExtracted={(theme) => {
@@ -318,6 +365,61 @@ const App: React.FC = () => {
           }}
           onClose={() => setShowExtractor(false)}
         />
+      )}
+
+      {showAdminAuth && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/65 p-4">
+          <div className="w-full max-w-md border-4 border-neo-ink bg-white p-6 shadow-neo-xl md:p-8">
+            <div className="mb-4 inline-flex items-center gap-2 border-4 border-neo-ink bg-neo-yellow px-3 py-1 text-xs font-black uppercase tracking-[0.18em] shadow-neo-sm">
+              Hidden Entrance
+            </div>
+            <h2 className="text-3xl font-black uppercase">后台验证</h2>
+            <p className="mt-3 text-base leading-relaxed text-neo-ink/70">
+              输入后台密码后进入实验工具工作台。
+            </p>
+
+            <form className="mt-6 space-y-4" onSubmit={handleAdminSubmit}>
+              <div>
+                <label className="mb-2 block text-xs font-black uppercase tracking-[0.2em] text-neo-ink/60">
+                  密码
+                </label>
+                <input
+                  type="password"
+                  value={adminPassword}
+                  onChange={(event) => {
+                    setAdminPassword(event.target.value);
+                    if (adminError) setAdminError('');
+                  }}
+                  autoFocus
+                  className="w-full border-4 border-neo-ink bg-neo-bg px-4 py-3 text-lg font-bold outline-none transition-colors focus:bg-white"
+                  placeholder="请输入密码"
+                />
+              </div>
+
+              {adminError && (
+                <div className="border-4 border-neo-ink bg-[#ffe2e2] px-4 py-3 text-sm font-bold text-neo-accent">
+                  {adminError}
+                </div>
+              )}
+
+              <div className="flex gap-3">
+                <button
+                  type="button"
+                  onClick={() => setShowAdminAuth(false)}
+                  className="flex-1 border-4 border-neo-ink bg-white px-4 py-3 text-sm font-black uppercase tracking-wide shadow-neo-sm"
+                >
+                  取消
+                </button>
+                <button
+                  type="submit"
+                  className="flex-1 border-4 border-neo-ink bg-neo-accent px-4 py-3 text-sm font-black uppercase tracking-wide text-white shadow-neo-sm"
+                >
+                  进入后台
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
       )}
     </div>
   );

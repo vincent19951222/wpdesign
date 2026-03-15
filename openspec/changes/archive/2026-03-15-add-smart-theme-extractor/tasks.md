@@ -53,3 +53,5 @@
 3. Implementing the API endpoint that calls Kimi K2 with the System Prompt
 
 The frontend will show an informative error if the API is not available.
+
+**Disposition:** 该功能已降级为后台内部工具。剩余后端接入与测试任务暂停，不再作为主线能力继续推进。
