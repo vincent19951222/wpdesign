@@ -7,6 +7,9 @@ import ThemeExtractorUI from './components/ThemeExtractorUI';
 import AdminWorkbench from './components/AdminWorkbench';
 import { Template } from './types';
 import { ITheme } from './types/ITheme';
+import { Input } from './components/ui/input';
+import { Button } from './components/ui/button';
+import { Badge } from './components/ui/badge';
 import pixelThemeDefault from './themes/pixel-theme.json';
 import classicThemeDefault from './themes/classic-theme.json';
 import defaultThemeDefault from './themes/default-theme.json';
@@ -163,11 +166,6 @@ const App: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const storedAdminAccess = window.sessionStorage.getItem('wpdesign-admin-access');
-    if (storedAdminAccess === 'granted') {
-      setStep(5);
-    }
-
     const timer = setTimeout(() => {
       setTemplates(INITIAL_TEMPLATES);
       setIsLoading(false);
@@ -262,7 +260,7 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-neo-cream font-sans text-neo-ink selection:bg-neo-yellow selection:text-black">
+    <div className="min-h-screen bg-neo-cream font-sans text-neo-ink">
       {step === 1 && (
         <LandingPage
           templates={templates}
@@ -326,10 +324,8 @@ const App: React.FC = () => {
 
       {showAdminAuth && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/65 p-4">
-          <div className="w-full max-w-md border-4 border-neo-ink bg-white p-6 shadow-neo-xl md:p-8">
-            <div className="mb-4 inline-flex items-center gap-2 border-4 border-neo-ink bg-neo-yellow px-3 py-1 text-xs font-black uppercase tracking-[0.18em] shadow-neo-sm">
-              Hidden Entrance
-            </div>
+          <div className="pixel-panel w-full max-w-md p-6 md:p-8">
+            <Badge className="font-en-ui mb-4">HIDDEN ENTRANCE</Badge>
             <h2 className="text-3xl font-black uppercase">后台验证</h2>
             <p className="mt-3 text-base leading-relaxed text-neo-ink/70">
               输入后台密码后进入实验工具工作台。
@@ -337,10 +333,10 @@ const App: React.FC = () => {
 
             <form className="mt-6 space-y-4" onSubmit={handleAdminSubmit}>
               <div>
-                <label className="mb-2 block text-xs font-black uppercase tracking-[0.2em] text-neo-ink/60">
+                <label className="mb-2 block text-xs text-neo-ink/60">
                   密码
                 </label>
-                <input
+                <Input
                   type="password"
                   value={adminPassword}
                   onChange={(event) => {
@@ -348,31 +344,33 @@ const App: React.FC = () => {
                     if (adminError) setAdminError('');
                   }}
                   autoFocus
-                  className="w-full border-4 border-neo-ink bg-neo-bg px-4 py-3 text-lg font-bold outline-none transition-colors focus:bg-white"
+                  className="text-base"
                   placeholder="请输入密码"
                 />
               </div>
 
               {adminError && (
-                <div className="border-4 border-neo-ink bg-[#ffe2e2] px-4 py-3 text-sm font-bold text-neo-accent">
+                <div className="pixel-chip bg-[#ffe2e2] px-4 py-3 text-sm text-neo-accent">
                   {adminError}
                 </div>
               )}
 
               <div className="flex gap-3">
-                <button
+                <Button
                   type="button"
+                  variant="outline"
                   onClick={() => setShowAdminAuth(false)}
-                  className="flex-1 border-4 border-neo-ink bg-white px-4 py-3 text-sm font-black uppercase tracking-wide shadow-neo-sm"
+                  className="flex-1"
                 >
                   取消
-                </button>
-                <button
+                </Button>
+                <Button
                   type="submit"
-                  className="flex-1 border-4 border-neo-ink bg-neo-accent px-4 py-3 text-sm font-black uppercase tracking-wide text-white shadow-neo-sm"
+                  variant="destructive"
+                  className="flex-1"
                 >
                   进入后台
-                </button>
+                </Button>
               </div>
             </form>
           </div>

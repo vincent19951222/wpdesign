@@ -1,11 +1,109 @@
 import React from 'react';
-import { Button } from './ui/button';
-import { Layout } from 'lucide-react';
-import { InfiniteMarquee, NeoGridBackground } from './NeoEffects';
-import ThemeGallery from './ThemeGallery';
+import { ArrowRight, BookOpen, Compass, Search, ShieldCheck, Sparkles, Wand2 } from 'lucide-react';
 import type { ITheme } from '../types/ITheme';
 import type { Template, TemplateCategory } from '../types';
-import TypewriterLogo from './Logo';
+
+type DiscoveryFilter = 'all' | 'pixel' | 'clean' | 'editorial' | 'api-safe';
+
+type TemplateMeta = {
+    label: string;
+    route: string;
+    vibe: string;
+    highlight: string;
+    difficulty: string;
+    filter: DiscoveryFilter;
+    accent: string;
+};
+
+const templateMetaById: Record<string, TemplateMeta> = {
+    'pixel-classic': {
+        label: '像素主题',
+        route: '复古高辨识',
+        vibe: '8-bit',
+        highlight: '适合做强风格公众号封面与标题体系',
+        difficulty: 'Beginner',
+        filter: 'pixel',
+        accent: '#FFD500'
+    },
+    'pixel-v4': {
+        label: '像素主题',
+        route: '清新原野',
+        vibe: 'Bright Pixel',
+        highlight: '更轻盈的像素语言，适合日常更新',
+        difficulty: 'Intermediate',
+        filter: 'pixel',
+        accent: '#34D399'
+    },
+    'pixel-v4-api-safe': {
+        label: 'API-safe',
+        route: '草稿同步',
+        vibe: 'Publishing',
+        highlight: '为公众号草稿同步收敛外层装饰',
+        difficulty: 'Advanced',
+        filter: 'api-safe',
+        accent: '#38BDF8'
+    },
+    'pixel-classic-api-safe': {
+        label: 'API-safe',
+        route: '经典同步',
+        vibe: 'Publishing',
+        highlight: '保留经典像素识别度，适合 API-safe 发布',
+        difficulty: 'Intermediate',
+        filter: 'api-safe',
+        accent: '#F97316'
+    },
+    'tech-minimalist': {
+        label: '科技极简',
+        route: '留白控场',
+        vibe: 'Minimal',
+        highlight: '适合做更克制的科技文章版式',
+        difficulty: 'Intermediate',
+        filter: 'clean',
+        accent: '#60A5FA'
+    },
+    'classic-theme': {
+        label: '商务经典',
+        route: '稳重排版',
+        vibe: 'Editorial',
+        highlight: '适合正式文稿、通讯和专业内容',
+        difficulty: 'Beginner',
+        filter: 'editorial',
+        accent: '#A78BFA'
+    },
+    'default-theme': {
+        label: '极简默认',
+        route: '快速起稿',
+        vibe: 'Minimal',
+        highlight: '默认风格，适合快速开始和二次调整',
+        difficulty: 'Beginner',
+        filter: 'clean',
+        accent: '#4ADE80'
+    },
+    'hand-drawn-theme': {
+        label: '手绘表达',
+        route: '个性内容',
+        vibe: 'Creative',
+        highlight: '适合更轻松、插画感更强的内容',
+        difficulty: 'Intermediate',
+        filter: 'editorial',
+        accent: '#FB7185'
+    }
+};
+
+const filterItems: { id: DiscoveryFilter; label: string }[] = [
+    { id: 'all', label: '全部主题' },
+    { id: 'pixel', label: '像素风' },
+    { id: 'clean', label: '极简风' },
+    { id: 'editorial', label: '内容表达' },
+    { id: 'api-safe', label: 'API-safe' }
+];
+
+const categoryLabels: Record<TemplateCategory, string> = {
+    standard: '常规主题',
+    'api-safe': '草稿同步'
+};
+
+const capabilityChips = ['Markdown 编辑', '主题切换', '实时预览', '复制到公众号', '草稿同步'];
 
 export const LandingPage: React.FC<{
     templates: (Template & { theme: ITheme })[];
@@ -16,16 +114,11 @@ export const LandingPage: React.FC<{
     onSelectTheme: (theme: ITheme, templateId?: string) => void;
     currentThemeId: string;
 }> = ({ templates, isLoading, onEnterStudio, onOpenDocs, onAdminTrigger, onSelectTheme, currentThemeId }) => {
-    const currentTemplate = templates.find((template) => template.id === currentThemeId);
-    const [activeTab, setActiveTab] = React.useState<TemplateCategory>(currentTemplate?.category ?? 'standard');
+    const [query, setQuery] = React.useState('');
+    const [activeFilter, setActiveFilter] = React.useState<DiscoveryFilter>('all');
+    const [activeCategory, setActiveCategory] = React.useState<TemplateCategory | 'all'>('all');
     const [adminTapCount, setAdminTapCount] = React.useState(0);
     const adminTapResetRef = React.useRef<number | null>(null);
-
-    React.useEffect(() => {
-        if (currentTemplate) {
-            setActiveTab(currentTemplate.category);
-        }
-    }, [currentTemplate]);
 
     React.useEffect(() => {
         return () => {
@@ -35,12 +128,49 @@ export const LandingPage: React.FC<{
         };
     }, []);
 
-    const tabItems: { id: TemplateCategory; label: string; hint: string }[] = [
-        { id: 'standard', label: '常规主题', hint: '适合手动复制和常规预览' },
-        { id: 'api-safe', label: 'API-safe', hint: '为草稿 API 和低保真通道收敛' }
-    ];
+    const enrichedTemplates = React.useMemo(() => {
+        return templates.map((template, index) => {
+            const meta = templateMetaById[template.id] ?? {
+                label: '主题模板',
+                route: `路线 ${index + 1}`,
+                vibe: 'Typography',
+                highlight: template.description,
+                difficulty: index % 3 === 0 ? 'Beginner' : index % 3 === 1 ? 'Intermediate' : 'Advanced',
+                filter: template.category === 'api-safe' ? 'api-safe' : 'clean',
+                accent: '#FFD500'
+            };
 
-    const templatesByTab = templates.filter((template) => template.category === activeTab);
+            return {
+                ...template,
+                meta,
+                searchText: [
+                    template.name,
+                    template.description,
+                    meta.label,
+                    meta.route,
+                    meta.vibe,
+                    meta.highlight,
+                    template.category
+                ].join(' ').toLowerCase()
+            };
+        });
+    }, [templates]);
+
+    const currentTemplate = React.useMemo(() => {
+        return enrichedTemplates.find((template) => template.id === currentThemeId) ?? enrichedTemplates[0];
+    }, [currentThemeId, enrichedTemplates]);
+
+    const filteredTemplates = React.useMemo(() => {
+        const lowered = query.trim().toLowerCase();
+
+        return enrichedTemplates.filter((template) => {
+            const matchesFilter = activeFilter === 'all' ? true : template.meta.filter === activeFilter;
+            const matchesCategory = activeCategory === 'all' ? true : template.category === activeCategory;
+            const matchesQuery = lowered.length === 0 ? true : template.searchText.includes(lowered);
+            return matchesFilter && matchesCategory && matchesQuery;
+        });
+    }, [activeCategory, activeFilter, enrichedTemplates, query]);
+
     const handleAdminTap = () => {
         const nextCount = adminTapCount + 1;
         setAdminTapCount(nextCount);
@@ -60,186 +190,338 @@ export const LandingPage: React.FC<{
         }, 1600);
     };
 
+    const handleSelectTemplate = (template: Template & { theme: ITheme }) => {
+        onSelectTheme(template.theme, template.id);
+        onEnterStudio();
+    };
+
     return (
-        <NeoGridBackground>
-            <div className="flex min-h-screen flex-col relative">
-                <nav className="sticky top-0 z-50 relative flex items-center justify-between border-b-4 border-neo-ink bg-white p-4 md:p-6">
+        <div className="homepage-shell homepage-noise font-home-sans">
+            <header className="homepage-nav sticky top-0 z-30">
+                <div className="mx-auto flex max-w-[1480px] items-center justify-between gap-4 px-4 py-5 md:px-8">
                     <div className="flex items-center gap-3">
-                        <TypewriterLogo size={44} />
-                        <div className="hidden sm:block">
-                            <div className="font-sans text-xl font-black uppercase tracking-wider">Wp Design</div>
-                            <div className="font-mono text-[11px] uppercase tracking-[0.22em] text-neo-ink/50">WeChat publishing workbench</div>
-                        </div>
                         <button
                             type="button"
                             onClick={handleAdminTap}
-                            className="border-4 border-neo-ink bg-neo-bg px-3 py-1 text-xs font-black uppercase tracking-[0.18em] shadow-neo-sm transition-transform hover:-translate-y-0.5 active:translate-y-0.5"
+                            className="homepage-coin font-en-display text-[10px] leading-none"
+                            aria-label="Hidden admin trigger"
                         >
-                            VPD站
+                            P
                         </button>
-                    </div>
-                    <div className="flex gap-2 md:gap-4">
-                        <Button size="sm" variant="ghost" className="hover:bg-neo-ink hover:text-white" onClick={onOpenDocs}>
-                            文档
-                        </Button>
-                        <Button size="sm" variant="ghost" className="hidden sm:flex hover:bg-neo-ink hover:text-white" onClick={() => window.open('https://github.com', '_blank')}>
-                            GitHub
-                        </Button>
-                    </div>
-                </nav>
-
-                <header className="border-b-4 border-neo-ink bg-neo-bg px-4 pb-10 pt-14 md:pb-14 md:pt-20">
-                    <div className="mx-auto max-w-6xl">
-                        <div className="mb-6 inline-flex items-center gap-3 border-4 border-neo-ink bg-white px-4 py-2 font-mono text-xs font-bold uppercase tracking-[0.18em] shadow-neo-sm md:mb-8 md:text-sm">
-                            <span className="inline-block h-2.5 w-2.5 border-2 border-neo-ink bg-neo-yellow" />
-                            Markdown → Preview → Copy
-                        </div>
-
-                        <div className="grid items-start gap-10 lg:grid-cols-[1.15fr_0.85fr] lg:gap-14">
-                            <div className="text-left">
-                                <p className="mb-5 font-mono text-sm font-bold uppercase tracking-[0.2em] text-neo-ink/50 md:text-base">
-                                    为公众号创作者和内容团队准备
-                                </p>
-                                <h1 className="font-cnhy text-5xl leading-[0.92] tracking-wide text-neo-ink md:text-8xl">
-                                    微信公众号
-                                    <br />
-                                    <span className="mt-3 inline-block border-4 border-neo-ink bg-neo-yellow px-3 py-1 text-4xl shadow-neo-sm md:px-5 md:text-7xl">
-                                        排版工作台
-                                    </span>
-                                </h1>
-                                <p className="mt-8 max-w-2xl text-xl font-medium leading-relaxed text-neo-ink/80 md:text-2xl">
-                                    从 Markdown 到可复制的公众号成稿预览，减少手工排版时间，保留你真正关心的内容风格和发布效率。
-                                </p>
-                                <div className="mt-8 flex flex-wrap gap-3">
-                                    <div className="border-4 border-neo-ink bg-white px-4 py-2 text-sm font-bold shadow-neo-sm md:text-base">
-                                        实时主题预览
-                                    </div>
-                                    <div className="border-4 border-neo-ink bg-white px-4 py-2 text-sm font-bold shadow-neo-sm md:text-base">
-                                        复制即用
-                                    </div>
-                                    <div className="border-4 border-neo-ink bg-white px-4 py-2 text-sm font-bold shadow-neo-sm md:text-base">
-                                        面向公众号编辑器
-                                    </div>
-                                </div>
+                        <div>
+                            <div lang="en" className="font-en-display text-base text-white md:text-xl">
+                                Pixel Lab
                             </div>
-
-                            <div className="lg:pt-6">
-                                <div className="border-4 border-neo-ink bg-white p-6 shadow-neo-md md:p-8">
-                                    <div className="mb-5 inline-block border-4 border-neo-ink bg-neo-yellow px-3 py-1 text-sm font-black uppercase tracking-wide">
-                                        产品介绍
-                                    </div>
-                                    <div className="space-y-5 text-left">
-                                        <div>
-                                            <p className="mb-2 font-mono text-xs uppercase tracking-[0.2em] text-neo-ink/45">01</p>
-                                            <p className="text-lg font-bold leading-relaxed md:text-xl">直接粘贴 Markdown，快速切换主题，预览最终排版。</p>
-                                        </div>
-                                        <div>
-                                            <p className="mb-2 font-mono text-xs uppercase tracking-[0.2em] text-neo-ink/45">02</p>
-                                            <p className="text-lg font-bold leading-relaxed md:text-xl">重点不是花哨模板，而是一套稳定、清晰、适合持续写作的内容工作流。</p>
-                                        </div>
-                                        <div>
-                                            <p className="mb-2 font-mono text-xs uppercase tracking-[0.2em] text-neo-ink/45">03</p>
-                                            <p className="text-lg font-bold leading-relaxed md:text-xl">适合独立创作者、品牌账号，以及需要高频产出的内容团队。</p>
-                                        </div>
-                                    </div>
-                                </div>
+                            <div className="text-xs font-medium uppercase tracking-[0.24em] text-slate-400 md:text-sm">
+                                排版实验室
                             </div>
                         </div>
                     </div>
-                </header>
 
-                <div className="relative z-20 border-b-4 border-neo-ink bg-white py-3">
-                    <InfiniteMarquee
-                        text="MARKDOWN • THEME PREVIEW • WECHAT COPYFLOW • FAST ITERATION • CONTENT WORKBENCH • "
-                        className="text-lg font-black text-neo-ink md:text-xl"
-                    />
+                    <nav className="hidden items-center gap-3 lg:flex">
+                        <button
+                            type="button"
+                            className="homepage-ghost-btn px-4 py-3 text-sm font-medium"
+                            onClick={() => {
+                                setActiveFilter('all');
+                                setActiveCategory('all');
+                                setQuery('');
+                            }}
+                        >
+                            主题广场
+                        </button>
+                        <button
+                            type="button"
+                            className="homepage-ghost-btn px-4 py-3 text-sm font-medium"
+                            onClick={onOpenDocs}
+                        >
+                            使用说明
+                        </button>
+                        <button
+                            type="button"
+                            className="homepage-cta rounded-[14px] px-4 py-3 text-sm font-semibold"
+                            onClick={onEnterStudio}
+                        >
+                            进入编辑台
+                        </button>
+                    </nav>
                 </div>
+            </header>
 
-                <main className="relative z-10 flex flex-1 flex-col items-center justify-center bg-white py-20">
-                    <div className="pointer-events-none absolute top-0 left-0 h-12 w-full bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMiIgY3k9IjIiIHI9IjIiIGZpbGw9IiMwMDAiIG9wYWNpdHk9IjAuMSIvPjwvc3ZnPg==')] opacity-20 h-full"></div>
+            <main>
+                <section className="homepage-hero-frame">
+                    <div
+                        className="absolute inset-0 bg-cover bg-center"
+                        style={{
+                            backgroundImage: "url('/assets/bg.jpg')"
+                        }}
+                    />
+                    <div className="homepage-hero-glow" />
+                    <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-[#050816] to-transparent" />
+
+                    <div className="relative mx-auto grid max-w-[1480px] gap-10 px-4 py-14 md:px-8 md:py-18 lg:min-h-[560px] lg:grid-cols-[minmax(0,1.2fr)_420px] lg:items-end">
+                        <div className="max-w-[820px] pb-6 lg:pb-12">
+                            <p className="homepage-section-kicker text-xs md:text-sm">
+                                WeChat typography playground
+                            </p>
+                            <h1 className="mt-6 text-[44px] font-black leading-[1.08] text-white md:text-[58px] lg:text-[72px]">
+                                排版实验室
+                            </h1>
+                            <p className="mt-6 max-w-[760px] text-lg leading-8 text-slate-200 md:text-2xl md:leading-10">
+                                挑一个合适的主题，把 Markdown 推进编辑台，完成预览、复制和公众号草稿同步。首页的任务不是展示假产品导航，而是帮你更快找到合适的排版路线。
+                            </p>
+
+                            <div className="mt-8 flex flex-wrap gap-4">
+                                <button
+                                    type="button"
+                                    className="homepage-cta rounded-[16px] px-5 py-4 text-base font-semibold md:px-6"
+                                    onClick={() => currentTemplate && handleSelectTemplate(currentTemplate)}
+                                >
+                                    继续当前主题
+                                    <ArrowRight size={18} />
+                                </button>
+                                <button
+                                    type="button"
+                                    className="homepage-ghost-btn px-5 py-4 text-base font-medium"
+                                    onClick={onOpenDocs}
+                                >
+                                    <BookOpen size={18} />
+                                    查看说明
+                                </button>
+                            </div>
+                        </div>
+
+                        <div className="pb-6 lg:pb-12">
+                            <div className="homepage-panel relative overflow-hidden p-6 md:p-7">
+                                <div className="absolute right-5 top-5 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-semibold uppercase tracking-[0.22em] text-cyan-300">
+                                    当前推荐
+                                </div>
+                                <p className="homepage-section-kicker text-[10px] md:text-xs">
+                                    Active theme
+                                </p>
+                                <div className="mt-5 text-3xl font-bold tracking-tight text-white md:text-4xl">
+                                    {currentTemplate?.name || '经典像素'}
+                                </div>
+                                <p className="mt-4 text-base leading-7 text-slate-300 md:text-lg">
+                                    {currentTemplate?.meta.highlight || '挑一个风格，直接进入编辑台继续创作。'}
+                                </p>
+
+                                <div className="mt-6 flex flex-wrap gap-3">
+                                    <span className="homepage-level-pill px-3 py-2 text-sm font-medium">{currentTemplate?.meta.route || '主题路线'}</span>
+                                    <span className="homepage-level-pill px-3 py-2 text-sm font-medium">{currentTemplate?.meta.vibe || 'Typography'}</span>
+                                    <span className="homepage-level-pill px-3 py-2 text-sm font-medium">{categoryLabels[currentTemplate?.category || 'standard']}</span>
+                                </div>
+
+                                <div className="mt-6 flex items-center gap-3 text-sm text-slate-300">
+                                    <Sparkles size={16} className="text-[#FFD500]" />
+                                    进入编辑台后会直接带入当前主题与既有内容工作流。
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section className="border-y border-[#202839] bg-[#08101f]/76">
+                    <div className="mx-auto flex max-w-[1480px] flex-wrap items-center gap-3 px-4 py-5 md:px-8">
+                        <span className="homepage-section-kicker text-[10px] md:text-xs">Capabilities</span>
+                        {capabilityChips.map((item) => (
+                            <span key={item} className="homepage-sponsor-chip px-4 py-2 text-sm font-medium md:text-base">
+                                {item}
+                            </span>
+                        ))}
+                    </div>
+                </section>
+
+                <section className="mx-auto max-w-[1480px] px-4 py-14 md:px-8 md:py-18">
+                    <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+                        <div className="max-w-[920px]">
+                            <div className="flex items-center gap-3 text-[#9acb59]">
+                                <Compass size={24} />
+                                <span className="homepage-section-kicker text-xs md:text-sm">Theme discovery</span>
+                            </div>
+                            <h2 className="mt-5 text-4xl font-semibold tracking-tight text-white md:text-5xl">
+                                找到适合内容气质的排版主题
+                            </h2>
+                            <p className="mt-5 max-w-[980px] text-lg leading-8 text-slate-300 md:text-[22px] md:leading-10">
+                                这里展示的是排版实验室真实可用的主题库。你可以按风格、发布方式和内容气质筛选，然后一键进入编辑台继续写作。
+                            </p>
+                        </div>
+
+                        <div className="flex flex-wrap gap-3">
+                            <button type="button" className="homepage-ghost-btn px-4 py-3 text-sm font-medium" onClick={onOpenDocs}>
+                                <ShieldCheck size={18} />
+                                API-safe 说明
+                            </button>
+                            <button type="button" className="homepage-cta rounded-[14px] px-4 py-3 text-sm font-semibold" onClick={onEnterStudio}>
+                                <Wand2 size={18} />
+                                直接开始写
+                            </button>
+                        </div>
+                    </div>
+
+                    <div className="mt-10 grid gap-6 xl:grid-cols-[minmax(0,360px)_minmax(0,1fr)]">
+                        <div className="homepage-panel p-5 md:p-6">
+                            <label htmlFor="homepage-search" className="homepage-section-kicker text-[10px] md:text-xs">
+                                Search themes
+                            </label>
+                            <div className="relative mt-4">
+                                <Search className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
+                                <input
+                                    id="homepage-search"
+                                    className="homepage-search h-14 w-full pl-12 pr-4 text-base"
+                                    placeholder="搜索主题名、风格或发布方式..."
+                                    value={query}
+                                    onChange={(event) => setQuery(event.target.value)}
+                                />
+                            </div>
+
+                            <div className="mt-6 space-y-4">
+                                <div>
+                                    <div className="homepage-section-kicker text-[10px] md:text-xs">Category</div>
+                                    <div className="homepage-scroll-row mt-3 flex gap-3 overflow-x-auto pb-1">
+                                        <button
+                                            type="button"
+                                            data-active={activeCategory === 'all'}
+                                            onClick={() => setActiveCategory('all')}
+                                            className="homepage-filter shrink-0 px-4 py-3 text-sm font-medium"
+                                        >
+                                            全部
+                                        </button>
+                                        {(Object.keys(categoryLabels) as TemplateCategory[]).map((category) => (
+                                            <button
+                                                key={category}
+                                                type="button"
+                                                data-active={activeCategory === category}
+                                                onClick={() => setActiveCategory(category)}
+                                                className="homepage-filter shrink-0 px-4 py-3 text-sm font-medium"
+                                            >
+                                                {categoryLabels[category]}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <div className="homepage-section-kicker text-[10px] md:text-xs">Style filter</div>
+                                    <div className="homepage-scroll-row mt-3 flex gap-3 overflow-x-auto pb-1">
+                                        {filterItems.map((item) => (
+                                            <button
+                                                key={item.id}
+                                                type="button"
+                                                data-active={activeFilter === item.id}
+                                                onClick={() => setActiveFilter(item.id)}
+                                                className="homepage-filter shrink-0 px-4 py-3 text-sm font-medium"
+                                            >
+                                                {item.label}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="homepage-panel p-5 md:p-6">
+                            <div className="flex items-center justify-between gap-4">
+                                <div>
+                                    <div className="homepage-section-kicker text-[10px] md:text-xs">Current result</div>
+                                    <div className="mt-3 text-xl font-semibold text-white">
+                                        {filteredTemplates.length} 个可用主题
+                                    </div>
+                                </div>
+                                <div className="hidden rounded-full border border-white/10 bg-white/5 px-3 py-2 text-sm font-medium text-slate-300 md:inline-flex">
+                                    点击卡片直接进入编辑台
+                                </div>
+                            </div>
+
+                            <p className="mt-4 text-base leading-7 text-slate-300">
+                                当前首页不再承载假的产品导航和无效按钮，所有主要入口都直接对应真实功能：挑主题、查看说明、进入编辑台。
+                            </p>
+                        </div>
+                    </div>
 
                     {isLoading ? (
-                        <div className="border-4 border-neo-ink bg-neo-yellow px-8 py-4 text-2xl font-black shadow-neo-md">LOADING RESOURCES...</div>
-                    ) : (
-                        <div className="w-full max-w-7xl px-4">
-                            <div className="mb-10 max-w-3xl">
-                                <p className="mb-3 font-mono text-xs uppercase tracking-[0.2em] text-neo-ink/45">Theme Gallery</p>
-                                <h2 className="mb-3 text-3xl font-black md:text-5xl">选择一个适合你内容气质的主题</h2>
-                                <p className="text-lg leading-relaxed text-neo-ink/70 md:text-xl">
-                                    先预览，再进入编辑器。你不需要从零搭样式，而是从一个稳定的排版基线开始。
-                                </p>
-                            </div>
-
-                            <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-                                <div className="flex flex-wrap gap-3">
-                                    {tabItems.map((tab) => {
-                                        const isActive = activeTab === tab.id;
-                                        const count = templates.filter((template) => template.category === tab.id).length;
-
-                                        return (
-                                            <button
-                                                key={tab.id}
-                                                onClick={() => setActiveTab(tab.id)}
-                                                className={`min-w-[172px] border-4 border-neo-ink px-4 py-3 text-left transition-all ${isActive
-                                                    ? 'bg-neo-yellow shadow-none translate-x-[4px] translate-y-[4px]'
-                                                    : 'bg-white shadow-neo-sm hover:-translate-y-1'
-                                                    }`}
-                                            >
-                                                <div className="flex items-center justify-between gap-4">
-                                                    <span className="text-base font-black uppercase tracking-wide">{tab.label}</span>
-                                                    <span className="border-2 border-neo-ink bg-white px-2 py-0.5 font-mono text-xs font-black">
-                                                        {count}
-                                                    </span>
-                                                </div>
-                                                <div className="mt-2 text-xs font-bold text-neo-ink/60">
-                                                    {tab.hint}
-                                                </div>
-                                            </button>
-                                        );
-                                    })}
-                                </div>
-
-                                <div className="border-4 border-neo-ink bg-neo-bg px-4 py-3 text-sm font-bold text-neo-ink/75 shadow-neo-sm">
-                                    当前分类：{activeTab === 'api-safe' ? 'API-safe 模式' : '常规主题'}
-                                </div>
-                            </div>
-
-                            <ThemeGallery
-                                templates={templatesByTab}
-                                onSelect={(t) => {
-                                    onSelectTheme(t.theme, t.id);
-                                    onEnterStudio();
+                        <div className="homepage-panel mt-8 p-8 text-center text-lg text-slate-300">
+                            正在装载主题库...
+                        </div>
+                    ) : filteredTemplates.length === 0 ? (
+                        <div className="homepage-panel mt-8 p-8 md:p-10">
+                            <div className="text-2xl font-semibold text-white">没有找到匹配的主题</div>
+                            <p className="mt-4 max-w-[640px] text-base leading-7 text-slate-300">
+                                可以清空搜索词或切换筛选条件，回到完整的主题列表。
+                            </p>
+                            <button
+                                type="button"
+                                className="homepage-cta mt-6 rounded-[14px] px-4 py-3 text-sm font-semibold"
+                                onClick={() => {
+                                    setQuery('');
+                                    setActiveFilter('all');
+                                    setActiveCategory('all');
                                 }}
-                                currentId={currentThemeId}
-                            />
+                            >
+                                重置筛选
+                            </button>
+                        </div>
+                    ) : (
+                        <div className="mt-8 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+                            {filteredTemplates.map((template, index) => {
+                                const isCurrent = template.id === currentThemeId;
+                                const routeIndex = String(index + 1).padStart(2, '0');
 
-                            <div className="mt-20 flex justify-center">
-                                <div className="group rotate-[0.6deg] border-4 border-neo-ink bg-neo-yellow p-2 shadow-neo-xl transition-transform duration-300 hover:rotate-0">
-                                    <Button
-                                        size="xl"
-                                        onClick={onEnterStudio}
-                                        className="h-auto border-2 border-neo-ink bg-white px-12 py-8 text-2xl text-neo-ink shadow-none transition-all hover:bg-neo-bg hover:scale-105"
+                                return (
+                                    <button
+                                        key={template.id}
+                                        type="button"
+                                        onClick={() => handleSelectTemplate(template)}
+                                        className={`homepage-card text-left ${isCurrent ? 'homepage-card--active' : ''}`}
                                     >
-                                        进入编辑台 <Layout className="ml-4 h-8 w-8" strokeWidth={3} />
-                                    </Button>
-                                </div>
-                            </div>
+                                        <div className="homepage-card-media h-44 md:h-48">
+                                            <div
+                                                className="absolute inset-0 bg-cover bg-center"
+                                                style={{
+                                                    backgroundColor: template.thumbnailColor,
+                                                    backgroundImage: template.thumbnailUrl ? `url(${template.thumbnailUrl})` : undefined
+                                                }}
+                                            />
+                                            <div className="absolute left-4 top-4 rounded-full bg-[#08101f]/72 px-3 py-1 text-xs font-semibold uppercase tracking-[0.26em] text-slate-200">
+                                                Theme {routeIndex}
+                                            </div>
+                                            <div
+                                                className="absolute right-4 top-4 rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-[0.22em] text-[#08101f]"
+                                                style={{ backgroundColor: template.meta.accent }}
+                                            >
+                                                {isCurrent ? '当前' : template.meta.label}
+                                            </div>
+                                        </div>
+
+                                        <div className="p-6">
+                                            <div className="text-sm font-medium uppercase tracking-[0.26em] text-slate-400">
+                                                {template.meta.route}
+                                            </div>
+                                            <div className="mt-4 text-[28px] font-semibold leading-[1.15] tracking-tight text-white">
+                                                {template.name}
+                                            </div>
+                                            <p className="mt-4 min-h-24 text-lg leading-8 text-slate-300">
+                                                {template.description}
+                                            </p>
+
+                                            <div className="mt-6 flex flex-wrap items-center gap-3">
+                                                <span className="homepage-level-pill px-3 py-2 text-sm font-medium">{template.meta.vibe}</span>
+                                                <span className="homepage-level-pill px-3 py-2 text-sm font-medium">{categoryLabels[template.category]}</span>
+                                                <span className="homepage-level-pill px-3 py-2 text-sm font-medium">{template.meta.difficulty}</span>
+                                            </div>
+
+                                            <div className="mt-6 flex items-center justify-between text-sm text-slate-400">
+                                                <span>选择主题并进入编辑台</span>
+                                                <ArrowRight size={16} />
+                                            </div>
+                                        </div>
+                                    </button>
+                                );
+                            })}
                         </div>
                     )}
-                </main>
-
-                <footer className="relative overflow-hidden border-t-4 border-neo-ink bg-neo-bg p-12 text-center font-mono text-sm font-bold text-neo-ink">
-                    <div className="absolute top-0 left-0 h-2 w-full bg-neo-yellow"></div>
-                    <div className="mx-auto flex max-w-4xl flex-col items-center justify-between gap-6 md:flex-row">
-                        <div className="text-2xl font-black uppercase tracking-tighter">Wp Design</div>
-                        <div className="flex flex-wrap justify-center gap-4 opacity-70">
-                            <span>© 2026</span>
-                            <span>•</span>
-                            <span>Made for WeChat publishing workflows</span>
-                        </div>
-                    </div>
-                </footer>
-            </div>
-        </NeoGridBackground>
+                </section>
+            </main>
+        </div>
     );
 };

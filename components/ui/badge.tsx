@@ -3,14 +3,14 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "../../lib/utils"
 
 const badgeVariants = cva(
-    "inline-flex items-center border-2 border-neo-ink px-2.5 py-0.5 text-xs font-bold uppercase transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 shadow-neo-sm",
+    "pixel-chip inline-flex items-center px-2 py-1 text-xs leading-none text-neo-ink transition-colors",
     {
         variants: {
             variant: {
-                default: "bg-neo-yellow text-neo-ink hover:bg-neo-yellow/80",
-                secondary: "bg-neo-secondary text-neo-ink hover:bg-neo-secondary/80",
-                destructive: "bg-neo-accent text-white hover:bg-neo-accent/80",
-                outline: "text-neo-ink border-neo-ink",
+                default: "bg-pixel-yellow text-neo-ink",
+                secondary: "bg-pixel-orange text-white",
+                destructive: "bg-pixel-red text-white",
+                outline: "bg-pixel-panel text-neo-ink",
             },
             shape: {
                 default: "rounded-none",

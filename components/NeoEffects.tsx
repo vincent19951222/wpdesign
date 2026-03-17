@@ -13,7 +13,7 @@ export const InfiniteMarquee: React.FC<{ text: string; className?: string; speed
     speed = 20
 }) => {
     return (
-        <div className={cn("w-full overflow-hidden border-y-4 border-neo-ink bg-neo-yellow whitespace-nowrap py-3", className)}>
+        <div className={cn("w-full overflow-hidden whitespace-nowrap py-4", className)}>
             <motion.div
                 className="inline-block"
                 animate={{ x: [0, -1000] }}
@@ -23,7 +23,7 @@ export const InfiniteMarquee: React.FC<{ text: string; className?: string; speed
                     duration: speed
                 }}
             >
-                <span className="text-4xl md:text-6xl font-black font-sans uppercase tracking-tighter mx-4">
+                <span className="mx-4 inline-block text-xl md:text-2xl">
                     {text} • {text} • {text} • {text} • {text} •
                 </span>
             </motion.div>
@@ -36,7 +36,7 @@ export const InfiniteMarquee: React.FC<{ text: string; className?: string; speed
                     duration: speed
                 }}
             >
-                <span className="text-4xl md:text-6xl font-black font-sans uppercase tracking-tighter mx-4">
+                <span className="mx-4 inline-block text-xl md:text-2xl">
                     {text} • {text} • {text} • {text} • {text} •
                 </span>
             </motion.div>
@@ -67,22 +67,13 @@ export const DraggableSticker: React.FC<{
 
 export const NeoGridBackground: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     return (
-        <div className="relative min-h-screen bg-neo-cream overflow-hidden">
-            {/* CSS Pattern Grid */}
-            <div className="absolute inset-0 z-0 opacity-10 pointer-events-none"
+        <div className="relative min-h-screen overflow-hidden bg-neo-cream">
+            <div className="absolute inset-0 z-0 pointer-events-none opacity-20"
                 style={{
-                    backgroundImage: 'radial-gradient(#000 1px, transparent 1px)',
-                    backgroundSize: '24px 24px'
+                    backgroundImage: 'radial-gradient(#1a1a1a 1px, transparent 1px)',
+                    backgroundSize: '16px 16px'
                 }}
             />
-
-            {/* Interactive hover cells could be implemented as a grid of divs if performance allows, 
-            but for full page background, maybe just mouse tracking spotlight is better or keeping it simple.
-            Detailed requirement: "Hover-sensitive Grid". 
-            Let's make a grid of spans? Too heavy for full screen.
-            Let's skip the heavy hover-grid for the whole page and use it for a section or just the dots pattern for now.
-            I will use a simpler localized lighting effect or just the pattern.
-        */}
 
             <div className="relative z-10">
                 {children}

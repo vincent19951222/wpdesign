@@ -4,6 +4,7 @@ import { Check, MousePointerClick } from 'lucide-react';
 import { Template } from '../types';
 import { cn } from '../lib/utils';
 import { Badge } from './ui/badge';
+import { Button } from './ui/button';
 
 interface ThemeGalleryProps<T extends Template> {
     templates: T[];
@@ -13,7 +14,7 @@ interface ThemeGalleryProps<T extends Template> {
 
 const ThemeGallery = <T extends Template>({ templates, onSelect, currentId }: ThemeGalleryProps<T>) => {
     const [currentPage, setCurrentPage] = React.useState(1);
-    const itemsPerPage = 8; // 2 Rows on Desktop
+    const itemsPerPage = 8;
     const totalPages = Math.ceil(templates.length / itemsPerPage);
 
     React.useEffect(() => {
@@ -31,131 +32,100 @@ const ThemeGallery = <T extends Template>({ templates, onSelect, currentId }: Th
     );
 
     return (
-        <div className="w-full flex flex-col gap-8">
-            {/* Grid Container */}
-            <div className="min-h-[600px]"> {/* Fixed height container to prevent layout shift */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 px-4">
-                    {currentTemplates.map((item) => {
-                        const isActive = item.id === currentId;
+        <div className="flex w-full flex-col gap-6">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                {currentTemplates.map((item) => {
+                    const isActive = item.id === currentId;
 
-                        return (
-                            <motion.div
-                                layoutId={item.id}
-                                key={item.id}
-                                initial={{ opacity: 0, scale: 0.9 }}
-                                animate={{ opacity: 1, scale: 1 }}
-                                transition={{ duration: 0.2 }}
-                                onClick={() => onSelect(item)}
-                                className={cn(
-                                    "group relative flex flex-col cursor-pointer transition-all duration-200 border-4 border-neo-ink bg-white overflow-hidden h-[380px]",
-                                    // Active State: "Pressed" down, yellow bg, no shadow
-                                    isActive
-                                        ? "transform translate-x-[8px] translate-y-[8px] shadow-none ring-4 ring-neo-yellow/50"
-                                        : "shadow-neo-lg hover:-translate-y-2 hover:shadow-neo-xl"
-                                )}
+                    return (
+                        <motion.button
+                            type="button"
+                            layoutId={item.id}
+                            key={item.id}
+                            initial={{ opacity: 0, y: 16 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.18 }}
+                            onClick={() => onSelect(item)}
+                            data-pressed={isActive}
+                            className={cn(
+                                "group relative overflow-hidden border-4 border-neo-ink bg-pixel-panel text-left shadow-[4px_4px_0px_0px_#1a1a1a] transition-transform duration-150",
+                                isActive && "translate-x-[4px] translate-y-[4px] shadow-none"
+                            )}
+                        >
+                            <div
+                                className="relative h-28 border-b-4 border-neo-ink md:h-32"
+                                style={{
+                                    backgroundColor: item.thumbnailColor,
+                                    backgroundImage: item.thumbnailUrl ? `url(${item.thumbnailUrl})` : undefined,
+                                    backgroundSize: 'cover',
+                                    backgroundPosition: 'center'
+                                }}
                             >
-                                {/* Header / Color Block */}
-                                <div
-                                    className="h-32 w-full border-b-4 border-neo-ink relative overflow-hidden shrink-0"
-                                    style={{
-                                        backgroundColor: item.thumbnailColor,
-                                        backgroundImage: item.thumbnailUrl ? `url(${item.thumbnailUrl})` : undefined,
-                                        backgroundSize: 'cover',
-                                        backgroundPosition: 'center'
-                                    }}
-                                >
-                                    {/* Pattern Overlay for texture - only if no image */}
-                                    {!item.thumbnailUrl && (
-                                        <div className="absolute inset-0 opacity-20 bg-[radial-gradient(#000_2px,transparent_2px)] [background-size:16px_16px]"></div>
-                                    )}
-
-                                    {/* Active Badge */}
-                                    {isActive && (
-                                        <div className="absolute top-2 right-2">
-                                            <Badge className="bg-neo-ink text-white border-white shadow-none animate-in zoom-in duration-200">
-                                                <Check size={12} className="mr-1" strokeWidth={4} /> SELECTED
-                                            </Badge>
-                                        </div>
-                                    )}
-                                </div>
-
-                                {/* Content Body */}
-                                <div className={cn(
-                                    "p-6 flex-1 flex flex-col transition-colors duration-200",
-                                    isActive ? "bg-neo-yellow/10" : "bg-white"
-                                )}>
-                                    <h3 className="text-xl font-black font-sans uppercase text-neo-ink mb-3 leading-none tracking-tighter truncate">
-                                        {item.name}
-                                    </h3>
-
-                                    {/* Decorative Separator */}
-                                    <div className="flex gap-1 mb-4">
-                                        <div className="w-2 h-2 bg-neo-ink"></div>
-                                        <div className="w-2 h-2 bg-neo-accent"></div>
-                                        <div className="w-2 h-2 bg-neo-ink"></div>
-                                        <div className="w-full h-2 bg-neo-ink/10"></div>
-                                    </div>
-
-                                    <p className="text-sm font-bold font-mono text-neo-ink/70 leading-relaxed line-clamp-3">
-                                        {item.description}
-                                    </p>
-
-                                    <div className="mt-auto pt-4 border-t-2 border-dashed border-neo-ink/20 flex justify-between items-center opacity-0 group-hover:opacity-100 transition-opacity">
-                                        <span className="text-xs font-black uppercase text-neo-accent flex items-center gap-1">
-                                            <MousePointerClick size={14} /> SELECT
-                                        </span>
-                                        <div className="w-4 h-4 rounded-full border-2 border-neo-ink"></div>
-                                    </div>
-                                </div>
-
-                                {/* Sticker Effect Details (Optional decorations) */}
+                                {!item.thumbnailUrl && <div className="pixel-dot-bg absolute inset-0 opacity-20" />}
+                                <div className="absolute inset-x-0 bottom-0 h-5 border-t-4 border-neo-ink bg-pixel-green" />
                                 {isActive && (
-                                    <>
-                                        <div className="absolute -bottom-8 -right-8 w-24 h-24 bg-neo-yellow rounded-full blur-2xl opacity-20 pointer-events-none"></div>
-                                    </>
+                                    <div className="absolute right-2 top-2">
+                                        <Badge variant="destructive" className="font-en-ui">
+                                            <Check size={12} className="mr-1" strokeWidth={4} />
+                                            ACTIVE
+                                        </Badge>
+                                    </div>
                                 )}
-                            </motion.div>
-                        );
-                    })}
-                </div>
+                            </div>
+
+                            <div className="p-4 md:p-5">
+                                <div className="flex items-start justify-between gap-4">
+                                    <div>
+                                        <h3 className="text-lg leading-[1.5] text-neo-ink md:text-xl">{item.name}</h3>
+                                        <div lang="en" className="font-en-ui mt-2 text-xs text-neo-ink/55">
+                                            {item.id.replace(/-/g, ' ')}
+                                        </div>
+                                    </div>
+                                    <div className="pixel-chip bg-pixel-panel px-2 py-1 text-xs">
+                                        {item.category === 'api-safe' ? 'API' : 'STD'}
+                                    </div>
+                                </div>
+
+                                <p className="mt-3 min-h-16 text-sm leading-[1.7] text-neo-ink/75">
+                                    {item.description}
+                                </p>
+
+                                <div className="pixel-divider mt-3" />
+
+                                <div className="mt-3 flex items-center justify-between gap-4">
+                                    <span lang="en" className="font-en-ui flex items-center gap-2 text-xs text-neo-ink/70">
+                                        <MousePointerClick size={14} />
+                                        SELECT THEME
+                                    </span>
+                                    <span className="pixel-chip bg-pixel-yellow px-2 py-1 text-xs">
+                                        {isActive ? '已选中' : '点击进入'}
+                                    </span>
+                                </div>
+                            </div>
+                        </motion.button>
+                    );
+                })}
             </div>
 
-            {/* Pagination Controls */}
             {totalPages > 1 && (
-                <div className="flex justify-center items-center gap-4 mt-4">
-                    <button
-                        onClick={() => paginate(currentPage - 1)}
-                        disabled={currentPage === 1}
-                        className="w-12 h-12 flex items-center justify-center bg-white border-4 border-neo-ink shadow-neo-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-neo-yellow active:translate-y-1 active:shadow-none transition-all"
-                    >
+                <div className="flex items-center justify-center gap-4">
+                    <Button type="button" variant="outline" size="icon" className="font-en-ui" onClick={() => paginate(currentPage - 1)} disabled={currentPage === 1}>
                         &lt;
-                    </button>
-
-                    <div className="flex gap-2 font-mono font-bold text-xl items-center bg-white px-4 py-2 border-4 border-neo-ink shadow-neo-sm">
-                        <span>PAGE</span>
-                        <span className="text-neo-accent">{currentPage}</span>
-                        <span>/</span>
-                        <span>{totalPages}</span>
+                    </Button>
+                    <div className="pixel-chip bg-pixel-panel px-4 py-2">
+                        <span lang="en" className="font-en-ui text-sm text-neo-ink">PAGE {currentPage} / {totalPages}</span>
                     </div>
-
-                    <button
-                        onClick={() => paginate(currentPage + 1)}
-                        disabled={currentPage === totalPages}
-                        className="w-12 h-12 flex items-center justify-center bg-white border-4 border-neo-ink shadow-neo-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-neo-yellow active:translate-y-1 active:shadow-none transition-all"
-                    >
+                    <Button type="button" variant="outline" size="icon" className="font-en-ui" onClick={() => paginate(currentPage + 1)} disabled={currentPage === totalPages}>
                         &gt;
-                    </button>
+                    </Button>
                 </div>
             )}
 
-            {/* Context Helper Text */}
-            <div className="text-center font-mono text-xs font-bold text-neo-ink/40 uppercase tracking-widest">
-                [ SHOWING {Math.min(currentPage * itemsPerPage, templates.length)} / {templates.length} CARTRIDGES ]
+            <div lang="en" className="font-en-ui text-center text-xs text-neo-ink/50">
+                SHOWING {Math.min(currentPage * itemsPerPage, templates.length)} / {templates.length} CARTRIDGES
             </div>
         </div>
     );
 };
-
-
 
 export default ThemeGallery;

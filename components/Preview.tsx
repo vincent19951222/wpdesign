@@ -1,7 +1,5 @@
 import React, { useMemo, useState } from 'react';
 import { ChevronLeft, Check, Copy, Smartphone, Monitor, Layout, Send, AlertCircle } from 'lucide-react';
-import { Button } from './ui/button';
-import { Badge } from './ui/badge';
 import WeChatRenderer from './WeChatRenderer';
 import { ITheme } from '../types/ITheme';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -33,7 +31,7 @@ export const Preview: React.FC<PreviewProps> = ({
     const draftTitle = useMemo(() => extractDraftTitleFromMarkdown(markdown), [markdown]);
 
     const PreviewFrame = ({ mobile = false }: { mobile?: boolean }) => (
-        <div className={`w-full bg-white ${mobile ? 'px-4 pb-6 pt-4' : 'px-5 md:px-6 py-6'} min-h-full box-border`}>
+        <div className={`w-full bg-white ${mobile ? 'px-4 py-4' : 'px-6 py-6'} min-h-full box-border`}>
             <WeChatRenderer content={markdown} theme={theme} />
         </div>
     );
@@ -91,184 +89,171 @@ export const Preview: React.FC<PreviewProps> = ({
         }
     };
 
-    const SwitcherButton = ({ mode, icon: Icon, label }: { mode: ViewMode, icon: any, label: string }) => (
+    const SwitcherButton = ({ mode, icon: Icon, label }: { mode: ViewMode; icon: typeof Smartphone; label: string }) => (
         <button
+            type="button"
             onClick={() => setViewMode(mode)}
-            className={`flex items-center gap-2 px-4 py-2 border-2 border-neo-ink transition-all ${viewMode === mode
-                ? 'bg-neo-yellow translate-x-1 translate-y-1 shadow-none'
-                : 'bg-white hover:bg-neo-cream shadow-neo-sm active:translate-x-0.5 active:translate-y-0.5 active:shadow-none'
-                }`}
+            data-active={viewMode === mode}
+            className="homepage-filter flex items-center gap-2 px-4 py-3 text-sm"
         >
             <Icon size={18} strokeWidth={3} />
-            <span className="font-bold text-xs uppercase hidden sm:inline">{label}</span>
+            <span className="font-home-sans font-medium">{label}</span>
         </button>
     );
 
     return (
-        <div className="min-h-screen flex flex-col bg-neo-cream p-4 md:p-8 overflow-x-hidden">
-            {/* Header Control Bar */}
-            <div className="w-full max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4 mb-8">
-                <div className="flex items-center gap-4 w-full md:w-auto">
-                    <button onClick={onBack} className="hover:-translate-x-1 transition-transform shrink-0">
-                        <div className="bg-neo-ink text-white p-2 border-2 border-black shadow-neo-sm">
+        <div className="lab-shell font-home-sans px-4 py-6 md:px-8 md:py-8">
+            <div className="mx-auto max-w-7xl">
+                <div className="mb-6 flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
+                    <div className="flex items-center gap-4">
+                        <button type="button" onClick={onBack} className="homepage-ghost-btn h-12 w-12 p-0">
                             <ChevronLeft strokeWidth={3} />
+                        </button>
+                        <div>
+                            <div className="homepage-section-kicker text-[10px] md:text-xs">Preview workflow</div>
+                            <div className="mt-3 text-2xl font-semibold leading-[1.3] text-white md:text-3xl">预览与发布确认</div>
+                            <p className="mt-2 text-sm leading-[1.8] text-slate-300 md:text-base">
+                                这一步只做真实业务动作：确认最终排版，然后复制到公众号或走草稿同步链路。
+                            </p>
                         </div>
-                    </button>
-                    <div className="flex flex-col">
-                        <Badge variant="default" className="bg-neo-ink text-white w-fit mb-1">PREVIEW STUDIO</Badge>
-                        <span className="text-xs font-bold text-neo-ink/50 uppercase tracking-widest">Multi-Device Simulation</span>
                     </div>
-                </div>
 
-                {/* View Switcher */}
-                <div className="flex bg-neo-ink/5 p-1 border-2 border-neo-ink rounded-none gap-1">
-                    <SwitcherButton mode="mobile" icon={Smartphone} label="Mobile" />
-                    <SwitcherButton mode="pc" icon={Monitor} label="Desktop" />
-                    <SwitcherButton mode="dual" icon={Layout} label="Dual View" />
-                </div>
+                    <div className="grid gap-4 xl:justify-items-end">
+                        <div className="flex flex-wrap gap-4">
+                            <SwitcherButton mode="mobile" icon={Smartphone} label="MOBILE" />
+                            <SwitcherButton mode="pc" icon={Monitor} label="DESKTOP" />
+                            <SwitcherButton mode="dual" icon={Layout} label="DUAL" />
+                        </div>
 
-                <div className="flex w-full md:w-auto justify-end gap-2">
-                    <Button
-                        onClick={handleDraftSync}
-                        variant={supportsDraftSync ? 'accent' : 'outline'}
-                        className="px-5 py-4 text-sm md:text-base"
-                        disabled={isSyncing}
-                    >
-                        {isSyncing ? <><Send strokeWidth={3} className="mr-2" /> SYNCING...</> : <><Send strokeWidth={3} className="mr-2" /> SYNC DRAFT</>}
-                    </Button>
-                    <div className="hidden md:block">
-                        <Button onClick={onCopy} variant={copied ? "secondary" : "primary"} className="px-8 py-6 text-lg">
-                            {copied ? <><Check strokeWidth={3} className="mr-2" /> COPIED!</> : <><Copy strokeWidth={3} className="mr-2" /> COPY FOR WECHAT</>}
-                        </Button>
-                    </div>
-                </div>
-            </div>
-
-            <div className="w-full max-w-7xl mx-auto mb-6">
-                <div className={`border-4 border-neo-ink p-4 text-sm md:text-base ${syncMessage?.type === 'success'
-                    ? 'bg-[#E6FFF2]'
-                    : syncMessage?.type === 'error'
-                        ? 'bg-[#FFECEC]'
-                        : 'bg-white'
-                    }`}>
-                    <div className="flex items-start gap-3">
-                        <AlertCircle size={18} className="mt-0.5 shrink-0" />
-                        <div className="space-y-1">
-                            <p className="font-black uppercase tracking-wide">
-                                {supportsDraftSync ? '草稿同步已启用' : '草稿同步范围提示'}
-                            </p>
-                            <p className="text-neo-ink/80">
-                                {supportsDraftSync
-                                    ? '当前主题为“经典像素 API”，可以直接创建微信公众号草稿。系统会使用 Markdown 的首个 H1 作为草稿标题。'
-                                    : 'v1 仅支持“经典像素 API”主题同步草稿。其他主题仍建议使用现有复制流程。'}
-                            </p>
-                            {syncMessage && <p className="font-bold">{syncMessage.text}</p>}
+                        <div className="flex flex-wrap gap-4">
+                            <button
+                                type="button"
+                                onClick={handleDraftSync}
+                                disabled={isSyncing}
+                                className={supportsDraftSync ? 'homepage-cta rounded-[14px] px-4 py-3 text-sm font-semibold disabled:opacity-60' : 'homepage-ghost-btn px-4 py-3 text-sm font-medium disabled:opacity-60'}
+                            >
+                                <Send strokeWidth={3} />
+                                {isSyncing ? '同步中' : '同步草稿'}
+                            </button>
+                            <button type="button" onClick={onCopy} className={copied ? 'homepage-ghost-btn px-4 py-3 text-sm font-medium' : 'homepage-cta rounded-[14px] px-4 py-3 text-sm font-semibold'}>
+                                {copied ? <><Check strokeWidth={3} /> 已复制</> : <><Copy strokeWidth={3} /> 复制 HTML</>}
+                            </button>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            {/* Preview Area */}
-            <div className="flex-1 flex flex-col items-center justify-center">
-                <AnimatePresence mode="wait">
-                    {viewMode === 'mobile' && (
-                        <motion.div
-                            key="mobile"
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -20 }}
-                            className="relative w-full max-w-[375px] h-[750px] border-8 border-neo-ink bg-white shadow-neo-xl overflow-hidden rounded-[3rem] p-1"
-                        >
-                            {/* Fake Notch */}
-                            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-40 h-7 bg-neo-ink rounded-b-3xl z-20 flex items-center justify-center">
-                                <div className="w-12 h-1 bg-white/20 rounded-full"></div>
+                <div className="mb-6 grid gap-6 xl:grid-cols-[minmax(0,1fr)_304px]">
+                    <div className={`lab-panel p-6 md:p-8 ${syncMessage?.type === 'success'
+                        ? 'bg-[#10241b]'
+                        : syncMessage?.type === 'error'
+                            ? 'bg-[#2a1714]'
+                            : ''
+                        }`}>
+                        <div className="flex items-start gap-4">
+                            <AlertCircle className="mt-1 shrink-0 text-cyan-300" size={18} />
+                            <div>
+                                <div className="text-lg leading-[1.6] text-white">{supportsDraftSync ? '草稿同步已启用' : '草稿同步范围提示'}</div>
+                                <p className="mt-3 text-sm leading-[1.8] text-slate-300 md:text-base">
+                                    {supportsDraftSync
+                                        ? '当前主题为“经典像素 API”，可以直接创建微信公众号草稿。系统会使用 Markdown 的首个 H1 作为草稿标题。'
+                                        : 'v1 仅支持“经典像素 API”主题同步草稿。其他主题仍建议使用现有复制流程。'}
+                                </p>
+                                {syncMessage && <p className="mt-3 text-sm leading-[1.8] text-slate-200 md:text-base">{syncMessage.text}</p>}
                             </div>
+                        </div>
+                    </div>
 
-                            <div className="w-full h-full overflow-y-auto bg-white pt-8 custom-scrollbar">
-                                <PreviewFrame mobile />
-                            </div>
-                        </motion.div>
-                    )}
+                    <div className="lab-panel p-6 md:p-8">
+                        <div className="homepage-section-kicker text-[10px] md:text-xs">Title source</div>
+                        <div className="mt-3 text-base leading-[1.7] text-white">
+                            {draftTitle || '当前 Markdown 还没有一级标题'}
+                        </div>
+                        <div className="mt-4 border-t border-[#243042]" />
+                        <div className="mt-4 text-sm leading-[1.8] text-slate-300">
+                            草稿同步会把首个一级标题作为文章标题，正文中对应模块会被移除，避免重复。
+                        </div>
+                    </div>
+                </div>
 
-                    {viewMode === 'pc' && (
-                        <motion.div
-                            key="pc"
-                            initial={{ opacity: 0, scale: 0.95 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            exit={{ opacity: 0, scale: 1.05 }}
-                            className="w-full max-w-5xl h-[80vh] border-4 border-neo-ink bg-white shadow-neo-xl overflow-hidden flex flex-col"
-                        >
-                            {/* Browser Header */}
-                            <div className="h-10 bg-neo-ink flex items-center px-4 gap-2">
-                                <div className="flex gap-1.5">
-                                    <div className="w-3 h-3 rounded-full bg-neo-accent border border-black/20" />
-                                    <div className="w-3 h-3 rounded-full bg-neo-secondary border border-black/20" />
-                                    <div className="w-3 h-3 rounded-full bg-neo-muted border border-black/20" />
-                                </div>
-                                <div className="flex-1 max-w-md mx-auto h-6 bg-white/10 rounded-sm flex items-center px-3">
-                                    <div className="w-full h-2 bg-white/20 rounded-full" />
-                                </div>
-                            </div>
-
-                            <div className="flex-1 overflow-y-auto bg-neo-cream/30 p-4 md:p-8 custom-scrollbar">
-                                <div className="max-w-[700px] mx-auto bg-white border-2 border-neo-ink/10 shadow-sm min-h-full">
-                                    <PreviewFrame />
-                                </div>
-                            </div>
-                        </motion.div>
-                    )}
-
-                    {viewMode === 'dual' && (
-                        <motion.div
-                            key="dual"
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                            className="w-full max-w-7xl flex flex-col lg:flex-row items-center lg:items-start justify-center gap-12 lg:gap-8 pb-12"
-                        >
-                            {/* Mini Mobile */}
-                            <div className="relative w-full max-w-[320px] h-[640px] border-4 border-neo-ink bg-white shadow-neo-lg overflow-hidden rounded-[2.5rem] shrink-0 scale-90 md:scale-100 origin-top">
-                                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-6 bg-neo-ink rounded-b-2xl z-20" />
-                                <div className="w-full h-full overflow-y-auto bg-white pt-6 custom-scrollbar">
-                                    <PreviewFrame mobile />
-                                </div>
-                            </div>
-
-                            {/* Mini PC */}
-                            <div className="flex-1 w-full max-w-4xl h-[640px] border-4 border-neo-ink bg-white shadow-neo-lg overflow-hidden flex flex-col">
-                                <div className="h-8 bg-neo-ink flex items-center px-3 gap-1.5 shrink-0">
-                                    <div className="w-2.5 h-2.5 rounded-full bg-neo-accent" />
-                                    <div className="w-2.5 h-2.5 rounded-full bg-neo-secondary" />
-                                    <div className="w-2.5 h-2.5 rounded-full bg-neo-muted" />
-                                </div>
-                                <div className="flex-1 overflow-y-auto bg-neo-cream/20 p-4 custom-scrollbar">
-                                    <div className="max-w-[600px] mx-auto bg-white border border-neo-ink/5 shadow-sm min-h-full">
-                                        <PreviewFrame />
+                <div className="flex-1">
+                    <AnimatePresence mode="wait">
+                        {viewMode === 'mobile' && (
+                            <motion.div
+                                key="mobile"
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: -20 }}
+                                className="mx-auto w-full max-w-[392px]"
+                            >
+                                <div className="lab-preview-frame p-4 md:p-6">
+                                    <div className="homepage-section-kicker mb-4 text-[10px] md:text-xs">Mobile view</div>
+                                    <div className="pixel-screen pixel-scroll h-[720px] overflow-y-auto bg-[#fcfaf4]">
+                                        <PreviewFrame mobile />
                                     </div>
                                 </div>
-                            </div>
-                        </motion.div>
-                    )}
-                </AnimatePresence>
-            </div>
+                            </motion.div>
+                        )}
 
-            {/* Mobile Floating Buttons */}
-            <div className="fixed bottom-6 right-6 md:hidden z-50 flex flex-col gap-3">
-                <button
-                    onClick={handleDraftSync}
-                    disabled={isSyncing}
-                    className={`w-16 h-16 border-4 border-neo-ink shadow-neo-sm flex items-center justify-center active:translate-y-1 active:shadow-none transition-all ${supportsDraftSync ? 'bg-neo-accent text-white' : 'bg-white'
-                        }`}
-                >
-                    <Send size={24} strokeWidth={3} />
-                </button>
-                <button
-                    onClick={onCopy}
-                    className={`w-16 h-16 border-4 border-neo-ink shadow-neo-sm flex items-center justify-center active:translate-y-1 active:shadow-none transition-all ${copied ? 'bg-neo-muted' : 'bg-neo-yellow'
-                        }`}
-                >
-                    {copied ? <Check size={28} strokeWidth={3} /> : <Copy size={28} strokeWidth={3} />}
-                </button>
+                        {viewMode === 'pc' && (
+                            <motion.div
+                                key="pc"
+                                initial={{ opacity: 0, scale: 0.96 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                exit={{ opacity: 0, scale: 1.04 }}
+                                className="w-full"
+                            >
+                                <div className="lab-preview-frame p-4 md:p-6">
+                                    <div className="mb-4 flex items-center justify-between">
+                                        <div className="homepage-section-kicker text-[10px] md:text-xs">Desktop view</div>
+                                        <div className="flex gap-2">
+                                            <span className="h-3 w-3 rounded-full bg-[#fb7185]" />
+                                            <span className="h-3 w-3 rounded-full bg-[#facc15]" />
+                                            <span className="h-3 w-3 rounded-full bg-[#4ade80]" />
+                                        </div>
+                                    </div>
+                                    <div className="pixel-screen pixel-scroll h-[768px] overflow-y-auto bg-[#fcfaf4]">
+                                        <div className="mx-auto max-w-[736px]">
+                                            <PreviewFrame />
+                                        </div>
+                                    </div>
+                                </div>
+                            </motion.div>
+                        )}
+
+                        {viewMode === 'dual' && (
+                            <motion.div
+                                key="dual"
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                className="grid gap-6 xl:grid-cols-[392px_minmax(0,1fr)]"
+                            >
+                                <div className="lab-preview-frame p-4">
+                                    <div className="homepage-section-kicker mb-4 text-[10px] md:text-xs">Mobile view</div>
+                                    <div className="pixel-screen pixel-scroll h-[640px] overflow-y-auto bg-[#fcfaf4]">
+                                        <PreviewFrame mobile />
+                                    </div>
+                                </div>
+
+                                <div className="lab-preview-frame p-4 md:p-6">
+                                    <div className="mb-4 flex items-center justify-between">
+                                        <div className="homepage-section-kicker text-[10px] md:text-xs">Desktop view</div>
+                                        <div className="flex gap-2">
+                                            <span className="h-3 w-3 rounded-full bg-[#fb7185]" />
+                                            <span className="h-3 w-3 rounded-full bg-[#facc15]" />
+                                            <span className="h-3 w-3 rounded-full bg-[#4ade80]" />
+                                        </div>
+                                    </div>
+                                    <div className="pixel-screen pixel-scroll h-[640px] overflow-y-auto bg-[#fcfaf4]">
+                                        <div className="mx-auto max-w-[688px]">
+                                            <PreviewFrame />
+                                        </div>
+                                    </div>
+                                </div>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
+                </div>
             </div>
         </div>
     );

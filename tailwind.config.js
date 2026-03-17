@@ -10,24 +10,45 @@ export default {
     theme: {
         extend: {
             colors: {
+                pixel: {
+                    ink: '#1a1a1a',
+                    body: '#f6e5c0',
+                    panel: '#fff9ed',
+                    red: '#e64a4e',
+                    green: '#5b9e54',
+                    orange: '#e58c3a',
+                    blue: '#3666b3',
+                    yellow: '#e8c440',
+                    purple: '#8e52a3',
+                    focus: '#e0f7fa',
+                    sky: '#9cd3db',
+                },
                 neo: {
-                    bg: '#FFFDF5', // Cream/Off-White
-                    ink: '#000000', // Pure Black
-                    accent: '#FF6B6B', // Hot Red
-                    secondary: '#FFD93D', // Vivid Yellow
-                    muted: '#C4B5FD', // Soft Violet
-                    white: '#FFFFFF',
+                    bg: '#fff9ed',
+                    cream: '#f6e5c0',
+                    ink: '#1a1a1a',
+                    accent: '#e64a4e',
+                    secondary: '#e58c3a',
+                    muted: '#d5c39c',
+                    white: '#fffdf7',
+                    yellow: '#e8c440',
+                    green: '#5b9e54',
+                    purple: '#8e52a3',
+                    blue: '#3666b3',
                 }
             },
             fontFamily: {
-                sans: ['"Space Grotesk"', 'sans-serif'],
-                cnhy: ['"ZCOOL QingKe HuangYou"', 'sans-serif'], // Chinese Digital Punk
+                sans: ['"Fusion Pixel"', '"PingFang SC"', '"Microsoft YaHei"', 'sans-serif'],
+                mono: ['"Fusion Pixel Mono"', '"Fusion Pixel"', 'monospace'],
+                cnhy: ['"Fusion Pixel"', '"PingFang SC"', '"Microsoft YaHei"', 'sans-serif'],
+                'pixel-display': ['"Press Start 2P"', 'monospace'],
+                'pixel-ui': ['"Silkscreen"', 'monospace'],
             },
             boxShadow: {
-                'neo-sm': '4px 4px 0px 0px #000',
-                'neo-md': '8px 8px 0px 0px #000',
-                'neo-lg': '12px 12px 0px 0px #000',
-                'neo-xl': '16px 16px 0px 0px #000',
+                'neo-sm': '4px 4px 0px 0px #1a1a1a',
+                'neo-md': '8px 8px 0px 0px #1a1a1a',
+                'neo-lg': '12px 12px 0px 0px #1a1a1a',
+                'neo-xl': '16px 16px 0px 0px #1a1a1a',
             },
             borderWidth: {
                 DEFAULT: '4px',

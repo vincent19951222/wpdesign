@@ -55,21 +55,15 @@ export const TypewriterLogo: React.FC<{ size?: number }> = ({ size = 40 }) => {
         <motion.div
             style={{ width: size, height: size }}
             className="relative cursor-pointer"
-            whileHover={{ y: 2 }}
-            whileTap={{ y: 4 }}
+            whileHover={{ x: -2, y: -2 }}
+            whileTap={{ x: 4, y: 4 }}
         >
-            {/* Keycap Side (Depth) */}
-            <div className="absolute inset-x-0 bottom-0 top-1 bg-gray-800 rounded-[0.4rem] translate-y-[2px]" />
-
-            {/* Keycap Top */}
-            <div className="absolute inset-0 bg-neo-ink rounded-[0.4rem] border-2 border-white shadow-sm flex items-center justify-center z-10 overflow-hidden">
-                {/* Inner Ring/Decoration - Optional, keeping it subtle or removing if distracting. Let's keep a grid or something technical. */}
-                {/* Let's try a pure SVG PL that looks engineered */}
+            <div className="absolute inset-0 translate-x-[4px] translate-y-[4px] border-4 border-neo-ink bg-pixel-yellow" />
+            <div className="absolute inset-0 flex items-center justify-center overflow-hidden border-4 border-neo-ink bg-pixel-panel">
                 <svg width="60%" height="60%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    {/* W */}
                     <motion.path
                         d="M3 7 L6 17 L9 7 L12 17 L15 7"
-                        stroke="#FFDE59"
+                        stroke="#1a1a1a"
                         strokeWidth="2.5"
                         strokeLinecap="round"
                         strokeLinejoin="round"
@@ -77,10 +71,9 @@ export const TypewriterLogo: React.FC<{ size?: number }> = ({ size = 40 }) => {
                         animate={{ pathLength: 1, opacity: 1 }}
                         transition={{ duration: 1, ease: "circOut" }}
                     />
-                    {/* P */}
                     <motion.path
                         d="M17 7 V17 M17 7 H20 C21.5 7 22.5 8 22.5 9.5 C22.5 11 21.5 12 20 12 H17"
-                        stroke="#FFDE59"
+                        stroke="#1a1a1a"
                         strokeWidth="2.5"
                         strokeLinecap="round"
                         strokeLinejoin="round"
