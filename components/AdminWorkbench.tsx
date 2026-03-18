@@ -1,7 +1,6 @@
 import React from 'react';
 import {
   ArrowLeft,
-  Beaker,
   FlaskConical,
   Lock,
   LogOut,
@@ -10,7 +9,6 @@ import {
   Sparkles,
   Wrench
 } from 'lucide-react';
-import { Button } from './ui/button';
 
 interface AdminWorkbenchProps {
   onBack: () => void;
@@ -19,9 +17,9 @@ interface AdminWorkbenchProps {
 }
 
 const adminStats = [
-  { label: '内部工具', value: '01', hint: '当前保留中' },
-  { label: '暂停实验', value: '02', hint: '等待后续判断' },
-  { label: '正式主流程', value: '03', hint: '保持前台清爽' }
+  { label: '内部工具', value: '01', hint: '当前保留中', tone: 'yellow' },
+  { label: '暂停实验', value: '02', hint: '等待后续判断', tone: 'blue' },
+  { label: '正式主流程', value: '03', hint: '保持前台清爽', tone: 'green' }
 ];
 
 const pausedTools = [
@@ -39,115 +37,140 @@ const pausedTools = [
 
 const AdminWorkbench: React.FC<AdminWorkbenchProps> = ({ onBack, onLogout, onOpenThemeExtractor }) => {
   return (
-    <div className="min-h-screen bg-[#f3ecde] text-neo-ink">
-      <div className="mx-auto max-w-7xl px-4 py-6 md:px-8 md:py-8">
-        <div className="mb-8 flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
-          <div className="flex flex-wrap items-center gap-3">
-            <Button variant="outline" size="sm" onClick={onBack}>
-              <ArrowLeft size={16} className="mr-2" /> 返回首页
-            </Button>
-            <Button variant="ghost" size="sm" onClick={onLogout}>
-              <LogOut size={16} className="mr-2" /> 退出后台
-            </Button>
+    <div className="landing-flow-shell studio-flow-shell landing-flow-font px-4 py-6 md:px-8 md:py-8">
+      <div className="mx-auto max-w-[1520px]">
+        <div className="studio-flow-page-head">
+          <div className="studio-flow-page-intro">
+            <div className="studio-flow-icon-btn" aria-hidden="true">
+              <ShieldCheck strokeWidth={3} />
+            </div>
+            <div>
+              <div className="studio-flow-kicker">Internal workbench</div>
+              <h1 className="studio-flow-title">后台工作台</h1>
+              <p className="studio-flow-copy">
+                这里继续沿用同一套 bright studio 视觉，但语义上只服务内部管理。前台负责稳定工作流，后台只保留低频实验、小工具和等待验证的能力。
+              </p>
+              <div className="studio-flow-chip-row">
+                <span className="studio-flow-chip">Admin access</span>
+                <span className="studio-flow-chip">Hidden tools</span>
+                <span className="studio-flow-chip">Paused experiments</span>
+              </div>
+            </div>
           </div>
 
-          <div className="flex flex-wrap gap-3">
-            <div className="inline-flex items-center gap-2 border-4 border-neo-ink bg-white px-3 py-1 font-mono text-xs font-black uppercase tracking-[0.2em] shadow-neo-sm">
-              <Lock size={14} />
-              Admin Access
+          <div className="studio-flow-toolbar">
+            <div className="studio-flow-action-row">
+              <button type="button" className="landing-flow-secondary-btn" onClick={onBack}>
+                <ArrowLeft size={18} />
+                返回首页
+              </button>
+              <button type="button" className="landing-flow-secondary-btn" onClick={onLogout}>
+                <LogOut size={18} />
+                退出后台
+              </button>
             </div>
-            <div className="inline-flex items-center gap-2 border-4 border-neo-ink bg-neo-yellow px-3 py-1 font-mono text-xs font-black uppercase tracking-[0.2em] shadow-neo-sm">
-              <ShieldCheck size={14} />
-              Internal Workbench
+            <div className="workbench-flow-badge-row">
+              <span className="workbench-flow-badge">
+                <Lock size={14} />
+                Admin Access
+              </span>
+              <span className="workbench-flow-badge workbench-flow-badge--yellow">
+                <ShieldCheck size={14} />
+                Internal Only
+              </span>
             </div>
           </div>
         </div>
 
-        <section className="mb-10 grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
-          <div className="border-4 border-neo-ink bg-white p-6 shadow-neo-xl md:p-8">
-            <div className="mb-4 inline-flex items-center gap-2 border-4 border-neo-ink bg-neo-accent px-3 py-1 text-xs font-black uppercase tracking-[0.16em] text-white shadow-neo-sm">
-              <FlaskConical size={14} />
-              Backstage Only
-            </div>
-            <h1 className="max-w-4xl text-4xl font-black leading-[0.92] tracking-tight md:text-6xl">
+        <section className="mt-8 grid gap-6 xl:grid-cols-[minmax(0,1.12fr)_360px]">
+          <div className="studio-flow-panel">
+            <div className="studio-flow-kicker">Backstage only</div>
+            <h2 className="mt-4 text-[clamp(2.3rem,4.3vw,4.6rem)] font-[900] leading-[0.92] tracking-[-0.06em] text-[#1d1d1f]">
               把实验功能收在后台，
-              <span className="mt-2 block text-neo-accent">不要打断正式工作流。</span>
-            </h1>
-            <p className="mt-6 max-w-3xl text-lg leading-relaxed text-neo-ink/72 md:text-xl">
-              这里是内部工作台。前台负责稳定的 Markdown、主题和发布链路；后台只承接实验、小工具和还没验证完价值的能力。
+              <span className="block text-[#4d58ff]">不要打断正式工作流。</span>
+            </h2>
+            <p className="studio-flow-copy max-w-[60ch]">
+              后台不是另一个产品首页，而是内部工具架。这里保留的能力都不应该稀释主站焦点，只有在高频验证后，才值得重新回到前台。
             </p>
-
-            <div className="mt-8 grid gap-4 md:grid-cols-3">
+            <div className="studio-flow-compact-stat-grid mt-6">
               {adminStats.map((item) => (
-                <div key={item.label} className="border-4 border-neo-ink bg-[#fff8e9] p-4 shadow-neo-sm">
-                  <div className="font-mono text-xs font-black uppercase tracking-[0.2em] text-neo-ink/45">{item.label}</div>
-                  <div className="mt-2 text-3xl font-black">{item.value}</div>
-                  <div className="mt-1 text-sm font-bold text-neo-ink/65">{item.hint}</div>
+                <div
+                  key={item.label}
+                  className={`studio-flow-compact-stat ${
+                    item.tone === 'yellow'
+                      ? 'studio-flow-compact-stat--yellow'
+                      : item.tone === 'blue'
+                        ? 'studio-flow-compact-stat--blue'
+                        : 'studio-flow-compact-stat--green'
+                  }`}
+                >
+                  <div className="studio-flow-compact-stat-label">{item.label}</div>
+                  <div className="studio-flow-compact-stat-value">{item.value}</div>
+                  <div className="mt-2 text-sm font-semibold text-black/55">{item.hint}</div>
                 </div>
               ))}
             </div>
           </div>
 
-          <div className="border-4 border-neo-ink bg-[#1c1a17] p-6 text-[#f5ecd0] shadow-neo-xl md:p-8">
-            <div className="mb-4 inline-flex items-center gap-2 border-2 border-[#f5ecd0] px-3 py-1 font-mono text-xs font-black uppercase tracking-[0.2em]">
-              管理约定
-            </div>
-            <div className="space-y-5">
+          <div className="studio-flow-panel workbench-flow-dark-card">
+            <div className="studio-flow-kicker !text-white/50">管理约定</div>
+            <div className="mt-5 space-y-5">
               <div>
-                <div className="mb-2 font-mono text-xs uppercase tracking-[0.2em] text-[#f5ecd0]/55">01</div>
-                <p className="text-lg font-bold">主站只保留真正会反复使用的能力，实验入口全部后移。</p>
+                <div className="mb-2 text-xs font-black uppercase tracking-[0.2em] text-white/45">01</div>
+                <p className="text-lg font-bold leading-relaxed text-white">主站只保留真正会反复使用的能力，实验入口全部后移。</p>
               </div>
               <div>
-                <div className="mb-2 font-mono text-xs uppercase tracking-[0.2em] text-[#f5ecd0]/55">02</div>
-                <p className="text-lg font-bold">实验工具默认是暂停状态，只有当它进入高频使用，才值得回到前台。</p>
+                <div className="mb-2 text-xs font-black uppercase tracking-[0.2em] text-white/45">02</div>
+                <p className="text-lg font-bold leading-relaxed text-white">实验工具默认暂停，只有进入高频使用，才值得重新回到前台。</p>
               </div>
               <div>
-                <div className="mb-2 font-mono text-xs uppercase tracking-[0.2em] text-[#f5ecd0]/55">03</div>
-                <p className="text-lg font-bold">后台不是另一个产品页，而是一个干净的内部工具架。</p>
+                <div className="mb-2 text-xs font-black uppercase tracking-[0.2em] text-white/45">03</div>
+                <p className="text-lg font-bold leading-relaxed text-white">后台是内部工具架，不是另一个花哨产品页。</p>
               </div>
             </div>
           </div>
         </section>
 
-        <section className="mb-12">
+        <section className="mt-8">
           <div className="mb-5 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
             <div>
-              <p className="mb-2 font-mono text-xs uppercase tracking-[0.24em] text-neo-ink/50">Primary Tool</p>
-              <h2 className="text-3xl font-black md:text-5xl">当前保留中的内部工具</h2>
+              <p className="studio-flow-kicker">Primary tool</p>
+              <h2 className="mt-3 text-[clamp(2rem,3vw,3.2rem)] font-[900] leading-[0.96] tracking-[-0.05em]">
+                当前保留中的内部工具
+              </h2>
             </div>
-            <div className="border-4 border-neo-ink bg-white px-4 py-2 text-sm font-bold shadow-neo-sm">
-              当前只保留 1 个可操作工具
-            </div>
+            <div className="studio-flow-chip">当前只保留 1 个可操作工具</div>
           </div>
 
-          <article className="grid gap-6 border-4 border-neo-ink bg-white p-6 shadow-neo-xl md:grid-cols-[1.1fr_0.9fr] md:p-8">
+          <article className="workbench-flow-tool-card">
             <div>
               <div className="mb-5 flex items-start justify-between gap-4">
-                <div className="inline-flex h-16 w-16 items-center justify-center border-4 border-neo-ink bg-neo-yellow shadow-neo-sm">
+                <div className="workbench-flow-tool-icon">
                   <Sparkles size={28} strokeWidth={2.4} />
                 </div>
-                <div className="inline-flex items-center gap-2 border-4 border-neo-ink bg-[#fff1c4] px-3 py-1 text-xs font-black uppercase tracking-[0.18em] shadow-neo-sm">
+                <div className="workbench-flow-badge workbench-flow-badge--soft">
                   <PauseCircle size={14} />
                   Paused / Internal
                 </div>
               </div>
-              <h3 className="text-3xl font-black">主题提取器</h3>
-              <p className="mt-4 max-w-2xl text-lg leading-relaxed text-neo-ink/72">
-                从参考 HTML 抽取样式骨架，生成可编辑的主题 JSON。现在它不再占据首页，而是作为内部小工具保留，用于对照、实验和偶发需求。
+              <h3 className="text-[clamp(2rem,3vw,3rem)] font-[900] leading-[0.96] tracking-[-0.05em] text-[#1d1d1f]">
+                主题提取器
+              </h3>
+              <p className="mt-4 max-w-[58ch] text-lg leading-8 text-black/64">
+                从参考 HTML 抽取样式骨架，生成可编辑的主题 JSON。它现在继续保留，但只作为内部实验小工具存在，不再占据前台首页的注意力。
               </p>
               <div className="mt-6 flex flex-wrap gap-3">
-                <Button onClick={onOpenThemeExtractor}>
-                  打开工具
-                </Button>
-                <div className="border-4 border-neo-ink bg-[#fff6e8] px-3 py-2 text-xs font-bold uppercase tracking-wide shadow-neo-sm">
-                  不纳入正式主流程
-                </div>
+                <button type="button" className="landing-flow-primary-btn" onClick={onOpenThemeExtractor}>
+                  OPEN TOOL
+                  <FlaskConical size={18} />
+                </button>
+                <span className="studio-flow-chip">不纳入正式主流程</span>
               </div>
             </div>
 
-            <div className="border-4 border-neo-ink bg-[#fff8ea] p-5 shadow-neo-sm">
-              <p className="mb-3 font-mono text-xs uppercase tracking-[0.2em] text-neo-ink/45">Why kept here</p>
-              <div className="space-y-4 text-sm font-bold leading-relaxed text-neo-ink/75">
+            <div className="studio-flow-panel !p-6">
+              <div className="studio-flow-kicker">Why kept here</div>
+              <div className="mt-4 grid gap-4 text-sm font-semibold leading-7 text-black/64">
                 <p>更适合低频、内部使用，而不是给每个用户一个显性入口。</p>
                 <p>当前更高优先级的是 preset 主题、API-safe 和发布链路，而不是开放式自动抽主题。</p>
                 <p>保留工具，不等于继续投入主线资源。</p>
@@ -156,44 +179,46 @@ const AdminWorkbench: React.FC<AdminWorkbenchProps> = ({ onBack, onLogout, onOpe
           </article>
         </section>
 
-        <section className="mb-12">
+        <section className="mt-8">
           <div className="mb-5">
-            <p className="mb-2 font-mono text-xs uppercase tracking-[0.24em] text-neo-ink/50">Paused Shelf</p>
-            <h2 className="text-3xl font-black md:text-5xl">暂停中的实验槽位</h2>
+            <p className="studio-flow-kicker">Paused shelf</p>
+            <h2 className="mt-3 text-[clamp(2rem,3vw,3.2rem)] font-[900] leading-[0.96] tracking-[-0.05em]">
+              暂停中的实验槽位
+            </h2>
           </div>
           <div className="grid gap-6 xl:grid-cols-2">
             {pausedTools.map((tool) => (
-              <article key={tool.title} className="border-4 border-neo-ink bg-[#f8f4eb] p-6 shadow-neo-md">
+              <article key={tool.title} className="studio-flow-panel">
                 <div className="mb-5 flex items-start justify-between gap-4">
-                  <div className="inline-flex h-14 w-14 items-center justify-center border-4 border-neo-ink bg-white shadow-neo-sm">
+                  <div className="workbench-flow-tool-icon workbench-flow-tool-icon--soft">
                     <Wrench size={24} strokeWidth={2.4} />
                   </div>
-                  <div className="border-4 border-neo-ink bg-white px-3 py-1 text-xs font-black uppercase tracking-[0.18em] shadow-neo-sm">
-                    {tool.badge}
-                  </div>
+                  <span className="workbench-flow-badge">{tool.badge}</span>
                 </div>
-                <h3 className="text-2xl font-black">{tool.title}</h3>
-                <p className="mt-3 text-base leading-relaxed text-neo-ink/68">{tool.description}</p>
+                <h3 className="text-[1.9rem] font-[900] leading-[1] tracking-[-0.04em] text-[#1d1d1f]">{tool.title}</h3>
+                <p className="mt-4 text-base leading-8 text-black/64">{tool.description}</p>
               </article>
             ))}
           </div>
         </section>
 
-        <section className="border-4 border-neo-ink bg-white p-6 shadow-neo-xl md:p-8">
-          <p className="mb-2 font-mono text-xs uppercase tracking-[0.24em] text-neo-ink/50">Operating Notes</p>
-          <h2 className="text-2xl font-black md:text-4xl">后台使用原则</h2>
+        <section className="mt-8 studio-flow-panel">
+          <p className="studio-flow-kicker">Operating notes</p>
+          <h2 className="mt-3 text-[clamp(1.9rem,2.8vw,3rem)] font-[900] leading-[0.98] tracking-[-0.05em] text-[#1d1d1f]">
+            后台使用原则
+          </h2>
           <div className="mt-6 grid gap-4 md:grid-cols-3">
-            <div className="border-4 border-neo-ink bg-[#fff8ea] p-4 shadow-neo-sm">
-              <div className="mb-2 text-sm font-black uppercase">只放低频工具</div>
-              <p className="text-sm leading-relaxed text-neo-ink/70">一旦某个功能开始高频使用，就应该重新评估它是否要回到主流程，而不是长期躲在后台。</p>
+            <div className="studio-flow-check-item">
+              <div className="mb-2 text-sm font-black uppercase tracking-[0.08em] text-[#1d1d1f]">只放低频工具</div>
+              一旦某个功能开始高频使用，就应该重新评估它是否要回到主流程，而不是长期躲在后台。
             </div>
-            <div className="border-4 border-neo-ink bg-[#fff8ea] p-4 shadow-neo-sm">
-              <div className="mb-2 text-sm font-black uppercase">保留实验，不保留噪音</div>
-              <p className="text-sm leading-relaxed text-neo-ink/70">后台不是功能垃圾场。只有还值得观察的工具才留着，已经证明没价值的就应该删除。</p>
+            <div className="studio-flow-check-item">
+              <div className="mb-2 text-sm font-black uppercase tracking-[0.08em] text-[#1d1d1f]">保留实验，不保留噪音</div>
+              后台不是功能垃圾场。只有还值得观察的工具才留着，已经证明没价值的就应该删除。
             </div>
-            <div className="border-4 border-neo-ink bg-[#fff8ea] p-4 shadow-neo-sm">
-              <div className="mb-2 text-sm font-black uppercase">主站保持单纯</div>
-              <p className="text-sm leading-relaxed text-neo-ink/70">首页继续只服务写作、预览和发布，避免被实验能力稀释掉焦点。</p>
+            <div className="studio-flow-check-item">
+              <div className="mb-2 text-sm font-black uppercase tracking-[0.08em] text-[#1d1d1f]">主站保持单纯</div>
+              首页继续只服务写作、预览和发布，避免被实验能力稀释掉焦点。
             </div>
           </div>
         </section>

@@ -138,25 +138,14 @@ export const LandingPage: React.FC<{
     isLoading: boolean;
     onEnterStudio: () => void;
     onOpenDocs: () => void;
-    onAdminTrigger: () => void;
     onSelectTheme: (theme: ITheme, templateId?: string) => void;
     currentThemeId: string;
-}> = ({ templates, isLoading, onEnterStudio, onOpenDocs, onAdminTrigger, onSelectTheme, currentThemeId }) => {
+}> = ({ templates, isLoading, onEnterStudio, onOpenDocs, onSelectTheme, currentThemeId }) => {
     const [query, setQuery] = React.useState('');
     const [activeFilter, setActiveFilter] = React.useState<DiscoveryFilter>('all');
     const [activeCategory, setActiveCategory] = React.useState<TemplateCategory | 'all'>('all');
-    const [adminTapCount, setAdminTapCount] = React.useState(0);
     const [displayReadyThemeCount, setDisplayReadyThemeCount] = React.useState(8000);
     const [typedHeroAccent, setTypedHeroAccent] = React.useState('');
-    const adminTapResetRef = React.useRef<number | null>(null);
-
-    React.useEffect(() => {
-        return () => {
-            if (adminTapResetRef.current) {
-                window.clearTimeout(adminTapResetRef.current);
-            }
-        };
-    }, []);
 
     React.useEffect(() => {
         const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -333,25 +322,6 @@ export const LandingPage: React.FC<{
         ];
     }, []);
 
-    const handleAdminTap = () => {
-        const nextCount = adminTapCount + 1;
-        setAdminTapCount(nextCount);
-
-        if (adminTapResetRef.current) {
-            window.clearTimeout(adminTapResetRef.current);
-        }
-
-        if (nextCount >= 5) {
-            setAdminTapCount(0);
-            onAdminTrigger();
-            return;
-        }
-
-        adminTapResetRef.current = window.setTimeout(() => {
-            setAdminTapCount(0);
-        }, 1600);
-    };
-
     const handleSelectTemplate = (template: Template & { theme: ITheme }) => {
         onSelectTheme(template.theme, template.id);
         onEnterStudio();
@@ -366,14 +336,9 @@ export const LandingPage: React.FC<{
             <header className="landing-flow-nav">
                 <div className="mx-auto flex max-w-[1480px] items-center justify-between gap-4 px-4 py-4 md:px-8">
                     <div className="flex items-center gap-3 md:gap-4">
-                        <button
-                            type="button"
-                            onClick={handleAdminTap}
-                            className="landing-flow-admin-trigger"
-                            aria-label="Hidden admin trigger"
-                        >
+                        <div className="landing-flow-admin-trigger" aria-label="Logo">
                             P
-                        </button>
+                        </div>
                         <div>
                             <div className="landing-flow-brand-name">Pixel Lab</div>
                             <div className="landing-flow-brand-subtitle">Theme-first writing studio</div>

@@ -1,6 +1,13 @@
 import React from 'react';
-import { Button } from './ui/button';
-import { ChevronLeft, Copy, Check } from 'lucide-react';
+import {
+    BookOpen,
+    Check,
+    ChevronLeft,
+    Copy,
+    FileText,
+    Send,
+    Sparkles
+} from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
@@ -251,12 +258,13 @@ const CopyButton = ({ text }: { text: string }) => {
 
     return (
         <button
+            type="button"
             onClick={handleCopy}
-            className="absolute right-4 top-4 inline-flex h-10 w-10 items-center justify-center rounded-xl border border-slate-600 bg-[#0f172a] text-slate-200 transition hover:border-slate-400 hover:bg-[#172033] z-10"
+            className="docs-flow-copy-btn"
             title="Copy code"
         >
             {copied ? (
-                <Check size={16} className="stroke-[3px] text-emerald-400" />
+                <Check size={16} className="stroke-[3px]" />
             ) : (
                 <Copy size={16} className="stroke-[3px]" />
             )}
@@ -270,74 +278,78 @@ interface HelpProps {
 
 export const Help: React.FC<HelpProps> = ({ onBack }) => {
     return (
-        <div className="lab-shell font-home-sans">
-            <div className="flex min-h-screen flex-col">
-                <nav className="lab-header sticky top-0 z-50">
-                    <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-5 md:px-8">
-                        <div className="flex items-center gap-3">
-                            <div className="homepage-coin font-en-display text-[10px] leading-none">P</div>
-                            <div>
-                                <div lang="en" className="font-en-display text-sm text-white md:text-base">Pixel Lab</div>
-                                <div className="text-xs font-medium uppercase tracking-[0.24em] text-slate-400">帮助文档</div>
-                            </div>
+        <div className="landing-flow-shell studio-flow-shell landing-flow-font">
+            <nav className="landing-flow-nav">
+                <div className="mx-auto flex max-w-[1520px] items-center justify-between gap-4 px-4 py-5 md:px-8">
+                    <div className="flex items-center gap-4">
+                        <div className="landing-flow-admin-trigger text-[1.2rem]" aria-hidden="true">
+                            P
                         </div>
-                        <Button size="sm" className="homepage-ghost-btn px-4 py-3 text-sm font-medium" onClick={onBack}>
-                            <ChevronLeft size={16} className="mr-2" /> 返回首页
-                        </Button>
+                        <div>
+                            <div className="landing-flow-brand-name text-[1.9rem] md:text-[2.2rem]">Pixel Lab</div>
+                            <div className="landing-flow-brand-subtitle">Documentation Studio</div>
+                        </div>
                     </div>
-                </nav>
 
-                <main className="relative z-10 mx-auto flex w-full max-w-6xl flex-1 px-4 py-8 md:px-8 md:py-12">
-                    <div className="lab-panel w-full p-6 md:p-10">
-                        <div className="mb-8 flex flex-col gap-4 border-b border-[#243042] pb-6 md:flex-row md:items-end md:justify-between">
-                            <div>
-                                <div className="homepage-section-kicker text-[10px] md:text-xs">Documentation</div>
-                                <h1 className="mt-4 text-4xl font-semibold tracking-tight text-white md:text-5xl">
-                                    排版实验室使用说明
-                                </h1>
-                                <p className="mt-4 max-w-3xl text-base leading-8 text-slate-300 md:text-lg">
-                                    这份文档聚焦产品本身：如何选主题、怎么写 Markdown、什么时候使用 API-safe，以及怎样把内容送进公众号链路。
-                                </p>
-                            </div>
-                            <div className="lab-chip px-4 py-2 text-sm font-medium">DOCS v2</div>
+                    <button type="button" className="landing-flow-secondary-btn" onClick={onBack}>
+                        <ChevronLeft size={18} />
+                        返回首页
+                    </button>
+                </div>
+            </nav>
+
+            <main className="mx-auto w-full max-w-[1520px] px-4 py-6 md:px-8 md:py-8">
+                <div className="studio-flow-page-head">
+                    <div className="studio-flow-page-intro">
+                        <div className="studio-flow-icon-btn" aria-hidden="true">
+                            <BookOpen strokeWidth={3} />
                         </div>
+                        <div>
+                            <div className="studio-flow-kicker">Documentation hub</div>
+                            <h1 className="studio-flow-title">查看文档</h1>
+                            <p className="studio-flow-copy">
+                                这份说明页现在也和首页、编辑台、预览页统一到同一套 bright studio 风格。
+                                重点还是产品本身：怎么选主题、怎么写 Markdown、什么时候用 API-safe，以及怎样送进公众号链路。
+                            </p>
+                            <div className="studio-flow-chip-row">
+                                <span className="studio-flow-chip">Markdown workflow</span>
+                                <span className="studio-flow-chip">Theme system</span>
+                                <span className="studio-flow-chip">Publish notes</span>
+                            </div>
+                        </div>
+                    </div>
 
-                        <div className="lab-prose font-home-sans">
+                    <div className="studio-flow-action-row">
+                        <span className="studio-flow-chip">DOCS v3</span>
+                    </div>
+                </div>
+
+                <div className="mt-8 grid gap-6 xl:grid-cols-[minmax(0,1fr)_320px]">
+                    <article className="studio-flow-panel docs-flow-article">
+                        <div className="docs-flow-prose">
                             <ReactMarkdown
                                 remarkPlugins={[remarkGfm]}
                                 components={{
-                                    h1: ({ node, ...props }) => <h1 className="mb-8 mt-12 border-b border-[#243042] pb-4 text-4xl font-semibold tracking-tight first:mt-0 md:text-5xl" {...props} />,
-                                    h2: ({ node, ...props }) => <h2 className="mt-12 mb-6 text-2xl font-semibold tracking-tight text-white md:text-3xl" {...props} />,
-                                    h3: ({ node, ...props }) => <h3 className="mt-8 mb-4 flex items-center gap-3 text-xl font-semibold text-white md:text-2xl before:block before:h-3 before:w-3 before:rounded-full before:bg-cyan-400 before:content-['']" {...props} />,
-                                    h4: ({ node, ...props }) => <h4 className="mt-6 mb-3 border-l-2 border-cyan-400 pl-3 text-lg font-semibold text-white md:text-xl" {...props} />,
-                                    p: ({ node, ...props }) => <p className="mb-6 text-base leading-8 text-slate-300 md:text-lg" {...props} />,
-                                    strong: ({ node, ...props }) => <strong className="font-semibold text-white" {...props} />,
-                                    em: ({ node, ...props }) => <em className="not-italic font-medium text-cyan-300" {...props} />,
-                                    ul: ({ node, ...props }) => <ul className="mb-6 space-y-2 list-none" {...props} />,
-                                    ol: ({ node, ...props }) => <ol className="mb-6 space-y-2 list-decimal list-inside text-base leading-8 text-slate-300" {...props} />,
-                                    li: ({ node, ...props }) => (
-                                        <li className="flex items-start gap-3 text-base leading-8 text-slate-300 md:text-lg">
-                                            <span className="mt-3 h-2.5 w-2.5 shrink-0 rounded-full bg-cyan-400" />
-                                            <span>{props.children}</span>
-                                        </li>
-                                    ),
-                                    blockquote: ({ node, ...props }) => (
-                                        <blockquote className="relative my-8 rounded-2xl border border-[#334155] bg-[#0d1422] p-6">
-                                            <span className="absolute -top-3 right-4 rounded-full border border-[#334155] bg-[#0f172a] px-3 py-1 text-xs font-semibold uppercase tracking-[0.22em] text-cyan-300">NOTE</span>
-                                            {props.children}
-                                        </blockquote>
-                                    ),
+                                    h1: ({ node, ...props }) => <h1 className="docs-flow-h1" {...props} />,
+                                    h2: ({ node, ...props }) => <h2 className="docs-flow-h2" {...props} />,
+                                    h3: ({ node, ...props }) => <h3 className="docs-flow-h3" {...props} />,
+                                    h4: ({ node, ...props }) => <h4 className="docs-flow-h4" {...props} />,
+                                    p: ({ node, ...props }) => <p className="docs-flow-p" {...props} />,
+                                    strong: ({ node, ...props }) => <strong className="docs-flow-strong" {...props} />,
+                                    em: ({ node, ...props }) => <em className="docs-flow-em" {...props} />,
+                                    ul: ({ node, ...props }) => <ul className="docs-flow-list docs-flow-list--unordered" {...props} />,
+                                    ol: ({ node, ...props }) => <ol className="docs-flow-list docs-flow-list--ordered" {...props} />,
+                                    li: ({ node, ...props }) => <li className="docs-flow-list-item" {...props} />,
+                                    blockquote: ({ node, ...props }) => <blockquote className="docs-flow-blockquote" {...props} />,
                                     code: ({ node, inline, className, children, ...props }: any) => {
                                         const match = /language-(\w+)/.exec(className || '');
                                         const codeContent = String(children).replace(/\n$/, '');
 
                                         if (!inline && match) {
                                             return (
-                                                <div className="relative my-6 overflow-visible rounded-2xl border border-[#334155] bg-[#020617] p-5 text-slate-200">
-                                                    <div className="absolute -top-3 right-4 flex gap-2">
-                                                        <div className="rounded-full border border-[#334155] bg-[#0f172a] px-3 py-1 text-xs font-semibold uppercase tracking-[0.22em] text-cyan-300">
-                                                            {match[1]}
-                                                        </div>
+                                                <div className="docs-flow-code-block">
+                                                    <div className="docs-flow-code-head">
+                                                        <span className="docs-flow-code-lang">{match[1]}</span>
                                                     </div>
                                                     <CopyButton text={codeContent} />
                                                     <code className={className} {...props}>
@@ -348,48 +360,95 @@ export const Help: React.FC<HelpProps> = ({ onBack }) => {
                                         }
 
                                         return (
-                                            <code className="rounded-md border border-[#334155] bg-[#0f172a] px-2 py-1 text-sm text-cyan-300" {...props}>
+                                            <code className="docs-flow-inline-code" {...props}>
                                                 {children}
                                             </code>
                                         );
                                     },
                                     table: ({ node, ...props }) => (
-                                        <div className="mb-8 overflow-x-auto rounded-2xl border border-[#334155]">
-                                            <table className="w-full text-left" {...props} />
+                                        <div className="docs-flow-table-wrap">
+                                            <table className="docs-flow-table" {...props} />
                                         </div>
                                     ),
-                                    thead: ({ node, ...props }) => <thead className="border-b border-[#334155] bg-[#0f172a] text-slate-100" {...props} />,
-                                    th: ({ node, ...props }) => <th className="border-r border-[#334155] p-4 text-sm font-semibold uppercase tracking-[0.22em] last:border-r-0" {...props} />,
-                                    td: ({ node, ...props }) => <td className="border-r border-t border-[#243042] bg-[#101624] p-4 text-base text-slate-300 last:border-r-0" {...props} />,
+                                    thead: ({ node, ...props }) => <thead className="docs-flow-thead" {...props} />,
+                                    th: ({ node, ...props }) => <th className="docs-flow-th" {...props} />,
+                                    td: ({ node, ...props }) => <td className="docs-flow-td" {...props} />,
                                     a: ({ node, ...props }) => (
                                         <a
-                                            className="font-medium text-cyan-300 underline decoration-cyan-500/60 underline-offset-4 transition hover:text-white"
+                                            className="docs-flow-link"
                                             target="_blank"
                                             rel="noopener noreferrer"
                                             {...props}
                                         />
                                     ),
-                                    hr: ({ node, ...props }) => <hr className="my-8 border-t border-dashed border-[#334155]" {...props} />,
+                                    hr: ({ node, ...props }) => <hr className="docs-flow-divider" {...props} />,
                                 }}
                             >
                                 {HELP_CONTENT}
                             </ReactMarkdown>
 
-                            <div className="mt-12 border-t border-[#243042] pt-6 text-center">
-                                <p className="text-base text-slate-400 md:text-lg">
-                                    <strong className="font-semibold text-white">排版实验室</strong> · Markdown → 主题 → 预览 → 复制 / 草稿同步
+                            <div className="docs-flow-outro">
+                                <p className="docs-flow-p !mb-0 !text-center">
+                                    <strong className="docs-flow-strong">排版实验室</strong> · Markdown → 主题 → 预览 → 复制 / 草稿同步
                                 </p>
                             </div>
                         </div>
-                    </div>
-                </main>
+                    </article>
 
-                <footer className="border-t border-[#243042] px-4 py-8 text-center text-sm text-slate-500 md:px-8">
-                    <div className="mx-auto max-w-6xl">
-                        排版实验室帮助中心 · 面向微信公众号排版与发布流程
-                    </div>
-                </footer>
-            </div>
+                    <aside className="grid gap-6 self-start xl:sticky xl:top-28">
+                        <section className="studio-flow-panel">
+                            <div className="studio-flow-kicker">Quick route</div>
+                            <div className="mt-4 space-y-4">
+                                <div className="studio-flow-note-card">
+                                    <div className="studio-flow-note-icon">
+                                        <Sparkles size={18} />
+                                    </div>
+                                    <div>
+                                        <div className="studio-flow-note-title">1. 先选主题</div>
+                                        <div className="studio-flow-note-copy">在首页挑一个合适的视觉方向，再开始写内容。</div>
+                                    </div>
+                                </div>
+                                <div className="studio-flow-note-card">
+                                    <div className="studio-flow-note-icon studio-flow-note-icon--yellow">
+                                        <FileText size={18} />
+                                    </div>
+                                    <div>
+                                        <div className="studio-flow-note-title">2. 再写 Markdown</div>
+                                        <div className="studio-flow-note-copy">正文源文件独立，主题只负责最后的呈现风格。</div>
+                                    </div>
+                                </div>
+                                <div className="studio-flow-note-card">
+                                    <div className="studio-flow-note-icon studio-flow-note-icon--green">
+                                        <Send size={18} />
+                                    </div>
+                                    <div>
+                                        <div className="studio-flow-note-title">3. 最后预览与发布</div>
+                                        <div className="studio-flow-note-copy">确认版式后复制 HTML，或使用 API-safe 草稿同步链路。</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+
+                        <section className="studio-flow-panel">
+                            <div className="studio-flow-kicker">When to sync</div>
+                            <div className="mt-4 studio-flow-panel-title">什么时候用草稿同步</div>
+                            <div className="studio-flow-panel-note">
+                                只有 API-safe 主题适合直接进公众号草稿箱。其他主题仍建议走复制 HTML 的方式，能更稳定地保留样式。
+                            </div>
+                            <div className="mt-4 grid gap-3">
+                                <div className="studio-flow-check-item">经典像素 API：适合草稿同步</div>
+                                <div className="studio-flow-check-item">其他主题：优先复制 HTML</div>
+                            </div>
+                        </section>
+                    </aside>
+                </div>
+            </main>
+
+            <footer className="border-t border-black/8 px-4 py-8 text-center text-sm text-black/45 md:px-8">
+                <div className="mx-auto max-w-[1520px]">
+                    排版实验室帮助中心 · 面向微信公众号排版与发布流程
+                </div>
+            </footer>
         </div>
     );
 };

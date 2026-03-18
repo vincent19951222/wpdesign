@@ -1,15 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { LandingPage } from './components/LandingPage';
 import { Editor } from './components/Editor';
 import { Preview } from './components/Preview';
 import { Help } from './components/Help';
-import ThemeExtractorUI from './components/ThemeExtractorUI';
-import AdminWorkbench from './components/AdminWorkbench';
 import { Template } from './types';
 import { ITheme } from './types/ITheme';
-import { Input } from './components/ui/input';
-import { Button } from './components/ui/button';
-import { Badge } from './components/ui/badge';
 import pixelThemeDefault from './themes/pixel-theme.json';
 import classicThemeDefault from './themes/classic-theme.json';
 import defaultThemeDefault from './themes/default-theme.json';
@@ -153,25 +148,13 @@ const INITIAL_TEMPLATES: (Template & { theme: ITheme })[] = [
 ];
 
 const App: React.FC = () => {
-  const [step, setStep] = useState<1 | 2 | 3 | 4 | 5>(1);
+  const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
   const [markdown, setMarkdown] = useState(DEFAULT_MD);
   const [copied, setCopied] = useState(false);
   const [currentTheme, setCurrentTheme] = useState<ITheme>(pixelThemeDefault as unknown as ITheme);
   const [currentThemeId, setCurrentThemeId] = useState('pixel-classic');
-  const [showExtractor, setShowExtractor] = useState(false);
-  const [showAdminAuth, setShowAdminAuth] = useState(false);
-  const [adminPassword, setAdminPassword] = useState('');
-  const [adminError, setAdminError] = useState('');
-  const [templates, setTemplates] = useState<(Template & { theme: ITheme })[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setTemplates(INITIAL_TEMPLATES);
-      setIsLoading(false);
-    }, 1000);
-    return () => clearTimeout(timer);
-  }, []);
+  const [templates] = useState<(Template & { theme: ITheme })[]>(INITIAL_TEMPLATES);
+  const [isLoading] = useState(false);
 
   const handleThemeUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -229,36 +212,6 @@ const App: React.FC = () => {
     }
   };
 
-  const handleOpenAdminAuth = () => {
-    setAdminPassword('');
-    setAdminError('');
-    setShowAdminAuth(true);
-  };
-
-  const handleAdminSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-
-    if (adminPassword.trim() !== 'admin') {
-      setAdminError('密码不正确');
-      return;
-    }
-
-    window.sessionStorage.setItem('wpdesign-admin-access', 'granted');
-    setShowAdminAuth(false);
-    setAdminPassword('');
-    setAdminError('');
-    setStep(5);
-  };
-
-  const handleAdminLogout = () => {
-    window.sessionStorage.removeItem('wpdesign-admin-access');
-    setShowExtractor(false);
-    setShowAdminAuth(false);
-    setAdminPassword('');
-    setAdminError('');
-    setStep(1);
-  };
-
   return (
     <div className="min-h-screen bg-neo-cream font-sans text-neo-ink">
       {step === 1 && (
@@ -267,7 +220,6 @@ const App: React.FC = () => {
           isLoading={isLoading}
           onEnterStudio={() => setStep(2)}
           onOpenDocs={() => setStep(4)}
-          onAdminTrigger={handleOpenAdminAuth}
           onSelectTheme={(theme, templateId) => {
             setCurrentTheme(theme);
             setCurrentThemeId(templateId || 'custom-theme');
@@ -300,81 +252,6 @@ const App: React.FC = () => {
 
       {step === 4 && (
         <Help onBack={() => setStep(1)} />
-      )}
-
-      {step === 5 && (
-        <AdminWorkbench
-          onBack={() => setStep(1)}
-          onLogout={handleAdminLogout}
-          onOpenThemeExtractor={() => setShowExtractor(true)}
-        />
-      )}
-
-      {showExtractor && (
-        <ThemeExtractorUI
-          onThemeExtracted={(theme) => {
-            setCurrentTheme(theme);
-            setCurrentThemeId('extracted-theme');
-            setShowExtractor(false);
-            setStep(2);
-          }}
-          onClose={() => setShowExtractor(false)}
-        />
-      )}
-
-      {showAdminAuth && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/65 p-4">
-          <div className="pixel-panel w-full max-w-md p-6 md:p-8">
-            <Badge className="font-en-ui mb-4">HIDDEN ENTRANCE</Badge>
-            <h2 className="text-3xl font-black uppercase">后台验证</h2>
-            <p className="mt-3 text-base leading-relaxed text-neo-ink/70">
-              输入后台密码后进入实验工具工作台。
-            </p>
-
-            <form className="mt-6 space-y-4" onSubmit={handleAdminSubmit}>
-              <div>
-                <label className="mb-2 block text-xs text-neo-ink/60">
-                  密码
-                </label>
-                <Input
-                  type="password"
-                  value={adminPassword}
-                  onChange={(event) => {
-                    setAdminPassword(event.target.value);
-                    if (adminError) setAdminError('');
-                  }}
-                  autoFocus
-                  className="text-base"
-                  placeholder="请输入密码"
-                />
-              </div>
-
-              {adminError && (
-                <div className="pixel-chip bg-[#ffe2e2] px-4 py-3 text-sm text-neo-accent">
-                  {adminError}
-                </div>
-              )}
-
-              <div className="flex gap-3">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => setShowAdminAuth(false)}
-                  className="flex-1"
-                >
-                  取消
-                </Button>
-                <Button
-                  type="submit"
-                  variant="destructive"
-                  className="flex-1"
-                >
-                  进入后台
-                </Button>
-              </div>
-            </form>
-          </div>
-        </div>
       )}
     </div>
   );
