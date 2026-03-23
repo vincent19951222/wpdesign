@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>小红书新粗野主义排版原型</title>
+    <style>
+        :root {
+            /* 提取截图中的核心色彩 */
+            --bg-color: #FAFAFA; /* 整体背景偏一点点灰白，不刺眼 */
+            --primary-yellow: #F0C808;
+            --primary-red: #E64A57;
+            --terminal-dark: #1E1E1E;
+            --terminal-green: #00FF00;
+            --text-main: #222222;
+            --text-light: #888888;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: #e0e0e0; /* 外围环境色 */
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .header-info {
+            margin-bottom: 20px;
+            text-align: center;
+            color: #333;
+        }
+
+        /* 模拟小红书滑动容器 */
+        .xhs-carousel {
+            display: flex;
+            gap: 20px;
+            overflow-x: auto;
+            padding: 20px;
+            max-width: 100%;
+            /* 隐藏滚动条但允许滚动 */
+            scrollbar-width: none; 
+            -ms-overflow-style: none;
+        }
+        .xhs-carousel::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* 核心：3:4 小红书卡片 */
+        /* 以 360x480 为基础演示尺寸，保持 3:4 比例 */
+        .xhs-card {
+            flex: 0 0 auto;
+            width: 360px;
+            height: 480px; 
+            background-color: var(--bg-color);
+            position: relative;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid #ddd;
+        }
+
+        /* 模拟小红书安全区参考线 (Hover时显示) */
+        .xhs-card::after {
+            content: '';
+            position: absolute;
+            top: 12%; bottom: 18%; left: 8%; right: 8%;
+            border: 1px dashed rgba(255, 0, 0, 0.2);
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .xhs-card:hover::after {
+            opacity: 1;
+        }
+
+        /* 卡片内容区域：避开顶部和底部 UI */
+        .card-content {
+            padding: 15% 10% 20% 10%;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* 封面卡片特殊居中排版 */
+        .cover-content {
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        /* --- 新粗野主义 UI 元素库 --- */
+
+        /* 1. H1 大标题 (对应封面) */
+        .brutal-h1-box {
+            background-color: var(--primary-yellow);
+            border: 3px solid #000;
+            padding: 15px 25px;
+            font-size: 28px;
+            font-weight: 900;
+            color: #000;
+            box-shadow: 6px 6px 0px 0px #000;
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+            transform: rotate(-2deg); /* 封面来点倾斜增加动感 */
+        }
+
+        .cover-subtitle {
+            font-family: monospace;
+            color: var(--text-light);
+            letter-spacing: 1px;
+            font-size: 14px;
+            text-transform: uppercase;
+        }
+
+        /* 2. H2 标题 (对应每一页的标题) */
+        .brutal-h2-box {
+            background-color: var(--primary-red);
+            border: 3px solid #000;
+            padding: 8px 16px;
+            font-size: 20px;
+            font-weight: bold;
+            color: #fff;
+            box-shadow: 4px 4px 0px 0px #000;
+            display: inline-block;
+            margin-bottom: 30px;
+            align-self: flex-start; /* 靠左对齐 */
+        }
+
+        /* 3. 正文排版 */
+        .body-text {
+            font-size: 16px;
+            line-height: 1.8;
+            color: var(--text-main);
+            margin-bottom: 20px;
+        }
+
+        /* 4. 混合排版元素 */
+        .brutal-strong {
+            background-color: var(--primary-yellow);
+            font-weight: 900;
+            padding: 0 4px;
+            border-bottom: 2px solid #000; /* 加强底部厚重感 */
+        }
+
+        .brutal-em {
+            font-style: italic;
+            color: #666;
+        }
+
+        .brutal-code {
+            background-color: var(--terminal-dark);
+            color: var(--terminal-green);
+            font-family: monospace;
+            padding: 2px 6px;
+            border-radius: 2px;
+            font-size: 0.9em;
+        }
+
+        .brutal-link {
+            color: var(--primary-red);
+            text-decoration: none;
+            border-bottom: 2px dashed var(--primary-red);
+            font-weight: bold;
+        }
+
+        /* 5. 列表与引用 (H3/H4级视觉) */
+        .brutal-h3 {
+            font-size: 18px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .brutal-h3::before {
+            content: '';
+            display: inline-block;
+            width: 16px;
+            height: 8px;
+            background-color: #000;
+            margin-right: 10px;
+            border-radius: 4px;
+        }
+
+        .brutal-h4 {
+            font-size: 16px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            margin-top: 20px;
+        }
+        .brutal-h4::before {
+            content: '';
+            display: inline-block;
+            width: 4px;
+            height: 16px;
+            background-color: var(--primary-yellow);
+            margin-right: 8px;
+        }
+
+        .brutal-list {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 15px 0;
+        }
+        .brutal-list li {
+            margin-bottom: 10px;
+            position: relative;
+            padding-left: 20px;
+            line-height: 1.6;
+        }
+        .brutal-list li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 6px;
+            width: 8px;
+            height: 8px;
+            background-color: var(--terminal-dark);
+            border: 2px solid var(--primary-red);
+            box-sizing: border-box;
+        }
+
+        /* 极客风顶部状态栏装饰 */
+        .geek-top-bar {
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 30px;
+            background-color: var(--terminal-dark);
+            color: var(--terminal-green);
+            font-family: monospace;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            padding: 0 15px;
+            justify-content: space-between;
+        }
+        .geek-top-bar span.battery {
+            display: inline-block;
+            width: 20px; height: 10px;
+            border: 1px solid var(--terminal-green);
+            position: relative;
+        }
+        .geek-top-bar span.battery::after {
+            content:''; position: absolute; top: 1px; left: 1px; bottom: 1px; right: 1px;
+            background-color: var(--primary-yellow);
+        }
+
+        /* 翻页提示器 */
+        .page-indicator {
+            position: absolute;
+            bottom: 20px;
+            left: 0; right: 0;
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+        }
+        .dot {
+            width: 6px; height: 6px; border-radius: 50%;
+            background-color: #ccc;
+        }
+        .dot.active {
+            background-color: #000;
+            width: 12px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header-info">
+        <h3>小红书 3:4 比例原型（横向滑动查看）</h3>
+        <p style="font-size: 14px; color: #666;">注：鼠标悬浮在卡片上可查看红色虚线的“安全区”。文字不要越过安全区，避免被小红书UI遮挡。</p>
+    </div>
+
+    <div class="xhs-carousel">
+
+        <!-- 第1页：封面 (对应 Markdown 的 H1) -->
+        <div class="xhs-card">
+            <div class="geek-top-bar">
+                <span>👾 心情: 编码中 📡 AI: 99%</span>
+                <span>电源 <span class="battery"></span></span>
+            </div>
+            <div class="card-content cover-content">
+                <div class="brutal-h1-box">排版实验室 DEMO</div>
+                <div class="cover-subtitle">BUILDING WITH AI & CATS</div>
+            </div>
+            <div class="page-indicator">
+                <div class="dot active"></div><div class="dot"></div><div class="dot"></div>
+            </div>
+        </div>
+
+        <!-- 第2页：内页1 (对应第一个 H2) -->
+        <div class="xhs-card">
+            <div class="geek-top-bar">
+                <span>> Paging_Sys.exe /load p2</span>
+            </div>
+            <div class="card-content">
+                <div class="brutal-h2-box">1. 基础排版元素</div>
+                
+                <div class="body-text">
+                    这是普通段落 (p)，通过简单的 Markdown 转换，我们生成符合主题风格的小红书排版。
+                </div>
+                
+                <div class="body-text">
+                    这里展示了 <span class="brutal-strong">加粗文字 (strong)</span> 和 <span class="brutal-em">斜体文字 (em)</span> 以及 <span class="brutal-code">代码 (code)</span> 的混合排版效果。
+                </div>
+
+                <div class="body-text" style="margin-top: auto;">
+                    你可以访问 <a href="#" class="brutal-link">排版实验室 (Link)</a> 了解更多详情。
+                </div>
+            </div>
+            <div class="page-indicator">
+                <div class="dot"></div><div class="dot active"></div><div class="dot"></div>
+            </div>
+        </div>
+
+        <!-- 第3页：内页2 (对应第二个 H2) -->
+        <div class="xhs-card">
+            <div class="geek-top-bar">
+                <span>> Paging_Sys.exe /load p3</span>
+            </div>
+            <div class="card-content">
+                <div class="brutal-h2-box">2. 列表与引用</div>
+                
+                <div class="brutal-h4">无序列表 (H4)</div>
+                <ul class="brutal-list">
+                    <li>列表项一：自动识别样式</li>
+                    <li>列表项二：支持多级嵌套，但在小红书上建议保持扁平化，控制在单行最佳。</li>
+                </ul>
+
+                <div style="margin-top: 30px; border-left: 4px solid #000; padding-left: 15px; font-style: italic; background: #eee; padding: 10px;">
+                    "在小红书，信息密度不宜过高。保持呼吸感是留住读者的关键。" 
+                    <br><br>- 晓风
+                </div>
+            </div>
+            <div class="page-indicator">
+                <div class="dot"></div><div class="dot"></div><div class="dot active"></div>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+</html>

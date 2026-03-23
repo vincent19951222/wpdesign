@@ -5,17 +5,17 @@ import { Preview } from './components/Preview';
 import { Help } from './components/Help';
 import { Template } from './types';
 import { ITheme } from './types/ITheme';
+import type { EditorMode } from './types/publish';
 import pixelThemeDefault from './themes/pixel-theme.json';
 import classicThemeDefault from './themes/classic-theme.json';
 import defaultThemeDefault from './themes/default-theme.json';
 import handDrawnThemeDefault from './themes/hand-drawn-theme.json';
-
 import techMinimalistThemeDefault from './themes/tech-minimalist-theme.json';
 import pixelV4ThemeDefault from './themes/pixel-v4-theme.json';
 import pixelV4ApiSafeThemeDefault from './themes/pixel-v4-api-safe-theme.json';
 import pixelClassicApiSafeThemeDefault from './themes/pixel-classic-api-safe-theme.json';
 
-const DEFAULT_MD = `# 排版实验室 DEMO
+const DEFAULT_ARTICLE_MD = `# 排版实验室 DEMO
 
 ## 1. 基础排版元素
 
@@ -72,6 +72,34 @@ function pixelArt() {
 (上方是分割线 HR)
 `;
 
+const DEFAULT_CARD_MD = `# 用一篇文章拆出 4 张小红书卡片
+
+## 先讲核心结论
+
+微信公众号适合连续阅读，小红书图文更适合一页一个观点。
+
+- 标题必须足够直给
+- 每页只讲一个重点
+- 文字密度不能太高
+
+## 再拆第一个主要点
+
+把最重要的结论放在最前面，让用户在第二页就知道这组图文值不值得继续看。
+
+> 一张卡片最好只承担一个“读完就能复述”的信息点。
+
+## 然后讲第二个主要点
+
+正文不要像长文一样连续铺陈，而是要更像提纲和卡片笔记：
+
+1. 先给判断
+2. 再给解释
+3. 最后补一个例子
+
+## 最后一页做总结
+
+把前面的观点压缩成一句可带走的结论，形成完整闭环。`;
+
 const INITIAL_TEMPLATES: (Template & { theme: ITheme })[] = [
   {
     id: 'pixel-classic',
@@ -80,7 +108,7 @@ const INITIAL_TEMPLATES: (Template & { theme: ITheme })[] = [
     thumbnailColor: '#FFD700',
     thumbnailUrl: '/thumbnails/pixel-classic.jpg',
     category: 'standard',
-    theme: pixelThemeDefault as unknown as ITheme
+    theme: pixelThemeDefault as unknown as ITheme,
   },
   {
     id: 'pixel-v4',
@@ -89,7 +117,7 @@ const INITIAL_TEMPLATES: (Template & { theme: ITheme })[] = [
     thumbnailColor: '#ebe4d7',
     thumbnailUrl: '/thumbnails/pixel-classic.jpg',
     category: 'standard',
-    theme: pixelV4ThemeDefault as unknown as ITheme
+    theme: pixelV4ThemeDefault as unknown as ITheme,
   },
   {
     id: 'pixel-v4-api-safe',
@@ -98,7 +126,7 @@ const INITIAL_TEMPLATES: (Template & { theme: ITheme })[] = [
     thumbnailColor: '#ffffff',
     thumbnailUrl: '/thumbnails/pixel-classic.jpg',
     category: 'api-safe',
-    theme: pixelV4ApiSafeThemeDefault as unknown as ITheme
+    theme: pixelV4ApiSafeThemeDefault as unknown as ITheme,
   },
   {
     id: 'pixel-classic-api-safe',
@@ -107,7 +135,7 @@ const INITIAL_TEMPLATES: (Template & { theme: ITheme })[] = [
     thumbnailColor: '#fff2c4',
     thumbnailUrl: '/thumbnails/pixel-classic.jpg',
     category: 'api-safe',
-    theme: pixelClassicApiSafeThemeDefault as unknown as ITheme
+    theme: pixelClassicApiSafeThemeDefault as unknown as ITheme,
   },
   {
     id: 'tech-minimalist',
@@ -116,7 +144,7 @@ const INITIAL_TEMPLATES: (Template & { theme: ITheme })[] = [
     thumbnailColor: '#f5f8fc',
     thumbnailUrl: '/thumbnails/tech-minimalist.jpg',
     category: 'standard',
-    theme: techMinimalistThemeDefault as unknown as ITheme
+    theme: techMinimalistThemeDefault as unknown as ITheme,
   },
   {
     id: 'classic-theme',
@@ -125,7 +153,7 @@ const INITIAL_TEMPLATES: (Template & { theme: ITheme })[] = [
     thumbnailColor: '#0056b3',
     thumbnailUrl: '/thumbnails/classic-theme.jpg',
     category: 'standard',
-    theme: classicThemeDefault as unknown as ITheme
+    theme: classicThemeDefault as unknown as ITheme,
   },
   {
     id: 'default-theme',
@@ -134,7 +162,7 @@ const INITIAL_TEMPLATES: (Template & { theme: ITheme })[] = [
     thumbnailColor: '#f2f2f2',
     thumbnailUrl: '/thumbnails/default-theme.jpg',
     category: 'standard',
-    theme: defaultThemeDefault as unknown as ITheme
+    theme: defaultThemeDefault as unknown as ITheme,
   },
   {
     id: 'hand-drawn-theme',
@@ -143,18 +171,22 @@ const INITIAL_TEMPLATES: (Template & { theme: ITheme })[] = [
     thumbnailColor: '#ffb347',
     thumbnailUrl: '/thumbnails/hand-drawn.jpg',
     category: 'standard',
-    theme: handDrawnThemeDefault as unknown as ITheme
-  }
+    theme: handDrawnThemeDefault as unknown as ITheme,
+  },
 ];
 
 const App: React.FC = () => {
   const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
-  const [markdown, setMarkdown] = useState(DEFAULT_MD);
+  const [editorMode, setEditorMode] = useState<EditorMode>('article');
+  const [articleMarkdown, setArticleMarkdown] = useState(DEFAULT_ARTICLE_MD);
+  const [cardMarkdown, setCardMarkdown] = useState(DEFAULT_CARD_MD);
   const [copied, setCopied] = useState(false);
   const [currentTheme, setCurrentTheme] = useState<ITheme>(pixelThemeDefault as unknown as ITheme);
   const [currentThemeId, setCurrentThemeId] = useState('pixel-classic');
   const [templates] = useState<(Template & { theme: ITheme })[]>(INITIAL_TEMPLATES);
   const [isLoading] = useState(false);
+
+  const currentMarkdown = editorMode === 'article' ? articleMarkdown : cardMarkdown;
 
   const handleThemeUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -180,9 +212,14 @@ const App: React.FC = () => {
     const reader = new FileReader();
     reader.onload = (e) => {
       const content = e.target?.result;
-      if (typeof content === 'string') {
-        setMarkdown(content);
+      if (typeof content !== 'string') return;
+
+      if (editorMode === 'article') {
+        setArticleMarkdown(content);
+        return;
       }
+
+      setCardMarkdown(content);
     };
     reader.readAsText(file);
     event.target.value = '';
@@ -230,8 +267,10 @@ const App: React.FC = () => {
 
       {step === 2 && (
         <Editor
-          markdown={markdown}
-          setMarkdown={setMarkdown}
+          editorMode={editorMode}
+          onEditorModeChange={setEditorMode}
+          markdown={currentMarkdown}
+          setMarkdown={editorMode === 'article' ? setArticleMarkdown : setCardMarkdown}
           onBack={() => setStep(1)}
           onPreview={() => setStep(3)}
           onThemeUpload={handleThemeUpload}
@@ -241,7 +280,9 @@ const App: React.FC = () => {
 
       {step === 3 && (
         <Preview
-          markdown={markdown}
+          editorMode={editorMode}
+          onEditorModeChange={setEditorMode}
+          markdown={currentMarkdown}
           theme={currentTheme}
           currentThemeId={currentThemeId}
           copied={copied}
@@ -250,9 +291,7 @@ const App: React.FC = () => {
         />
       )}
 
-      {step === 4 && (
-        <Help onBack={() => setStep(1)} />
-      )}
+      {step === 4 && <Help onBack={() => setStep(1)} />}
     </div>
   );
 };
